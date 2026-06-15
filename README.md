@@ -1,7 +1,7 @@
 # image-inspector - Base Images, Digests & Vulnerabilities
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="400">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="300">
 </p>
 
 A modern, interactive terminal tool for selecting an **official container
