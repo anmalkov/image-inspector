@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: nightly-scan
@@ -15,7 +15,22 @@ concurrency:
 
 jobs:
   scan:
+    name: Scan ${{ matrix.language }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - python
+          - dotnet
+          - java
+          - go
+          - node
+          - rust
+          - cpp
+          - ubuntu
+          - debian
+          - alpine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,8 +48,43 @@ jobs:
         with:
           version: v0.71.1
 
-      - name: Run scanner
-        run: uv run image-inspector-scan
+      - name: Scan ${{ matrix.language }}
+        run: uv run image-inspector-scan -l ${{ matrix.language }} -o report-${{ matrix.language }}.json
+
+      - name: Upload partial report
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ matrix.language }}
+          path: report-${{ matrix.language }}.json
+          retention-days: 1
+
+  combine:
+    name: Combine and commit
+    needs: scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Download partial reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports
+          pattern: report-*
+          merge-multiple: true
+
+      - name: Merge into a single report
+        run: uv run image-inspector-merge reports/*.json -o src/image_inspector/data/report.json
 
       - name: Commit updated report
         run: |

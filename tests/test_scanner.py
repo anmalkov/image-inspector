@@ -127,3 +127,43 @@ def test_main_no_filter_scans_all(monkeypatch):
     assert scanner.main([]) == 0
     assert captured["languages"] is scanner.LANGUAGES
 
+
+def test_merge_reports_unions_images_by_digest():
+    a = {
+        "generated_at": "2026-06-15T02:00:00Z",
+        "trivy_version": "0.71.1",
+        "images": {"sha256:py": {"reference": "python:3.13.14", "total": 1}},
+    }
+    b = {
+        "generated_at": "2026-06-15T02:05:00Z",
+        "trivy_version": None,
+        "images": {"sha256:al": {"reference": "alpine:3.21.0", "total": 0}},
+    }
+    merged = scanner.merge_reports([a, b])
+    assert set(merged["images"]) == {"sha256:py", "sha256:al"}
+    # trivy_version taken from the first input that has one.
+    assert merged["trivy_version"] == "0.71.1"
+    # generated_at is the latest of the inputs.
+    assert merged["generated_at"] == "2026-06-15T02:05:00Z"
+
+
+def test_merge_main_writes_combined_report(tmp_path):
+    a = tmp_path / "report-python.json"
+    b = tmp_path / "report-alpine.json"
+    a.write_text('{"images": {"sha256:py": {"reference": "python:3.13.14"}}}', encoding="utf-8")
+    b.write_text('{"images": {"sha256:al": {"reference": "alpine:3.21.0"}}}', encoding="utf-8")
+    out = tmp_path / "combined.json"
+
+    assert scanner.merge_main([str(a), str(b), "-o", str(out)]) == 0
+
+    import json
+
+    combined = json.loads(out.read_text(encoding="utf-8"))
+    assert set(combined["images"]) == {"sha256:py", "sha256:al"}
+
+
+def test_merge_main_reports_unreadable_input(tmp_path):
+    missing = tmp_path / "nope.json"
+    out = tmp_path / "combined.json"
+    assert scanner.merge_main([str(missing), "-o", str(out)]) == 1
+    assert not out.exists()

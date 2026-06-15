@@ -125,6 +125,18 @@ uv run image-inspector-scan -o report.json # write somewhere else
 `rust`, `cpp`, `ubuntu`, `debian`, `alpine`) and may be repeated; omit it to scan
 everything.
 
+The nightly workflow uses this to **fan out one scan per language in a matrix**,
+then combines the per-language reports into a single `report.json` with
+`image-inspector-merge`:
+
+```bash
+uv run image-inspector-merge report-python.json report-alpine.json \
+  -o src/image_inspector/data/report.json
+```
+
+`image-inspector-merge` takes any number of partial reports and unions their
+images by digest, so parallel matrix jobs still produce one combined report.
+
 ## How it works
 
 1. Pick a language/runtime.

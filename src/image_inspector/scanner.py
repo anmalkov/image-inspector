@@ -203,12 +203,64 @@ def main(argv: list[str] | None = None) -> int:
         _update_db()
 
     report = build_report(selected)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(
-        f"Wrote {len(report['images'])} image(s) to {args.output}",
-        file=sys.stderr,
+    _write_report(report, args.output)
+    return 0
+
+
+def merge_reports(payloads: list[dict]) -> dict:
+    """Combine several per-language reports into one (union of images by digest)."""
+    images: dict[str, dict] = {}
+    trivy: str | None = None
+    generated: list[str] = []
+    for payload in payloads:
+        images.update(payload.get("images") or {})
+        trivy = trivy or payload.get("trivy_version")
+        if payload.get("generated_at"):
+            generated.append(payload["generated_at"])
+    return {
+        "schema_version": SCHEMA_VERSION,
+        # ISO-8601 UTC strings sort lexicographically, so max() is the latest.
+        "generated_at": max(generated) if generated else _utcnow_iso(),
+        "trivy_version": trivy,
+        "images": images,
+    }
+
+
+def _write_report(report: dict, output: Path) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(f"Wrote {len(report['images'])} image(s) to {output}", file=sys.stderr)
+
+
+def merge_main(argv: list[str] | None = None) -> int:
+    """Entry point for ``image-inspector-merge``: combine per-language reports."""
+    parser = argparse.ArgumentParser(
+        description="Merge per-language scan reports (e.g. from a CI matrix) into one report.",
     )
+    parser.add_argument(
+        "inputs",
+        nargs="+",
+        type=Path,
+        help="Report JSON files to merge.",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=_DEFAULT_OUTPUT,
+        help="Where to write the combined report (default: packaged data/report.json).",
+    )
+    args = parser.parse_args(argv)
+
+    payloads: list[dict] = []
+    for path in args.inputs:
+        try:
+            payloads.append(json.loads(path.read_text(encoding="utf-8")))
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"error: cannot read report {path}: {exc}", file=sys.stderr)
+            return 1
+
+    _write_report(merge_reports(payloads), args.output)
     return 0
 
 
