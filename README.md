@@ -1,13 +1,11 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="200">
-</p>
-
-<h1 align="center">image-inspector</h1>
+# image-inspector
 
 <p align="center">
-  A modern, interactive terminal tool for picking an <strong>official container
-  base image</strong> and pinning it by digest for your Dockerfile.
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="300">
 </p>
+
+A modern, interactive terminal tool for picking an **official container
+base image** and pinning it by digest for your Dockerfile.
 
 Pick a language, pick a version, pick a variant — entirely with the arrow keys —
 and `image-inspector` shows you the exact image reference, its creation date, its
