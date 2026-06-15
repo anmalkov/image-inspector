@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from .models import LANGUAGES, Language
+from .models import LANGUAGES, LANGUAGES_BY_KEY, Language
 from .registry import RegistryError, get_provider, make_client
 from .report import SCHEMA_VERSION
 from .versions import select_versions, tag_for_selection, variants_for_version
@@ -171,6 +171,18 @@ def main(argv: list[str] | None = None) -> int:
         help="Where to write the JSON report (default: packaged data/report.json).",
     )
     parser.add_argument(
+        "-l",
+        "--language",
+        action="append",
+        dest="languages",
+        metavar="KEY",
+        choices=[lang.key for lang in LANGUAGES],
+        help=(
+            "Only scan this language/image (repeatable, e.g. -l python -l alpine). "
+            "Choices: " + ", ".join(lang.key for lang in LANGUAGES) + ". Default: all."
+        ),
+    )
+    parser.add_argument(
         "--skip-db-update",
         action="store_true",
         help="Do not pre-download the Trivy vulnerability database.",
@@ -181,10 +193,16 @@ def main(argv: list[str] | None = None) -> int:
         print("error: trivy is not installed or not on PATH.", file=sys.stderr)
         return 1
 
+    if args.languages:
+        # Preserve order, drop duplicates.
+        selected = tuple(dict.fromkeys(LANGUAGES_BY_KEY[key] for key in args.languages))
+    else:
+        selected = LANGUAGES
+
     if not args.skip_db_update:
         _update_db()
 
-    report = build_report()
+    report = build_report(selected)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(

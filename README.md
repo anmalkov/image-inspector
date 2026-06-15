@@ -116,9 +116,14 @@ The scanner is a separate entry point in this repo. You need
 [Trivy](https://trivy.dev/) installed and on your `PATH`:
 
 ```bash
-uv run image-inspector-scan                # writes the packaged data/report.json
+uv run image-inspector-scan                # scan every image, writes packaged data/report.json
+uv run image-inspector-scan -l alpine      # only scan Alpine (repeatable: -l python -l go)
 uv run image-inspector-scan -o report.json # write somewhere else
 ```
+
+`--language`/`-l` accepts an image key (`python`, `dotnet`, `java`, `go`, `node`,
+`rust`, `cpp`, `ubuntu`, `debian`, `alpine`) and may be repeated; omit it to scan
+everything.
 
 ## How it works
 

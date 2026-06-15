@@ -87,3 +87,43 @@ def test_build_report_skips_failed_scans(monkeypatch):
     assert set(report["images"]) == {"sha256:ok"}
     assert report["images"]["sha256:ok"]["high"] == 1
     assert report["images"]["sha256:ok"]["reference"] == "python:3.13.14"
+
+
+def test_main_language_filter_selects_subset(monkeypatch):
+    from image_inspector.models import LANGUAGES_BY_KEY
+
+    monkeypatch.setattr(scanner.shutil, "which", lambda _: "/usr/bin/trivy")
+    monkeypatch.setattr(scanner, "_update_db", lambda: None)
+    monkeypatch.setattr(scanner.json, "dumps", lambda *a, **k: "{}")
+    monkeypatch.setattr("pathlib.Path.write_text", lambda self, *a, **k: None)
+
+    captured = {}
+
+    def _fake_build(languages=scanner.LANGUAGES):
+        captured["languages"] = languages
+        return {"images": {}}
+
+    monkeypatch.setattr(scanner, "build_report", _fake_build)
+
+    assert scanner.main(["--language", "alpine", "-l", "python", "-l", "alpine"]) == 0
+    # Order preserved, duplicates removed.
+    assert captured["languages"] == (LANGUAGES_BY_KEY["alpine"], LANGUAGES_BY_KEY["python"])
+
+
+def test_main_no_filter_scans_all(monkeypatch):
+    monkeypatch.setattr(scanner.shutil, "which", lambda _: "/usr/bin/trivy")
+    monkeypatch.setattr(scanner, "_update_db", lambda: None)
+    monkeypatch.setattr(scanner.json, "dumps", lambda *a, **k: "{}")
+    monkeypatch.setattr("pathlib.Path.write_text", lambda self, *a, **k: None)
+
+    captured = {}
+
+    def _fake_build(languages=scanner.LANGUAGES):
+        captured["languages"] = languages
+        return {"images": {}}
+
+    monkeypatch.setattr(scanner, "build_report", _fake_build)
+
+    assert scanner.main([]) == 0
+    assert captured["languages"] is scanner.LANGUAGES
+
