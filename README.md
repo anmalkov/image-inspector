@@ -29,6 +29,8 @@ FROM python:3.13.14-slim@sha256:205e60d0b78f024817...
 - **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible
   builds.
 - **Size shown** — the compressed download size of the `linux/amd64` image.
+- **Vulnerability counts** — shows **critical / high / total** vulnerabilities for
+  the selected image, sourced from a nightly Trivy scan that ships with the tool.
 - **Multi-registry** — Python, Java, Go, Node, Rust, C/C++ and the OS base images
   (Ubuntu, Debian, Alpine) come from Docker Hub; **.NET** comes from Microsoft
   Container Registry (MCR), all behind one interface.
@@ -90,6 +92,34 @@ You can also run it as a module:
 uv run python -m image_inspector
 ```
 
+## Vulnerability scanning
+
+When you resolve an image, `image-inspector` also shows how many
+vulnerabilities it has — **critical**, **high** and **total** — plus the date
+the scan was taken.
+
+These counts come from a JSON report (`src/image_inspector/data/report.json`)
+that ships with the tool, so the interactive picker stays fast and needs no
+Docker or Trivy on your machine. The report is regenerated **nightly** by a
+GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against every
+selectable image (all versions and variants) and commits the refreshed report
+back to the repository.
+
+The report is keyed by the image's immutable **digest**, so the counts always
+match the exact `name:tag@sha256:…` reference the tool pins. If an image isn't in
+the report yet (e.g. a brand-new tag), the panel shows `no scan data` rather than
+guessing.
+
+### Running a scan yourself
+
+The scanner is a separate entry point in this repo. You need
+[Trivy](https://trivy.dev/) installed and on your `PATH`:
+
+```bash
+uv run image-inspector-scan                # writes the packaged data/report.json
+uv run image-inspector-scan -o report.json # write somewhere else
+```
+
 ## How it works
 
 1. Pick a language/runtime.
@@ -116,4 +146,7 @@ src/image_inspector/
   registry.py   # RegistryProvider protocol + Docker Hub & MCR clients
   versions.py   # tag parsing, version-scheme selection (semver/major), variants
   ui.py         # theme, banner, prompts, spinners, result panel
+  report.py     # loads the bundled Trivy vulnerability report
+  scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
+  data/         # bundled report.json (refreshed nightly in CI)
 ```

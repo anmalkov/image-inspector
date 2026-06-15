@@ -1,0 +1,49 @@
+name: Nightly vulnerability scan
+
+on:
+  schedule:
+    # 02:00 UTC every day
+    - cron: "0 2 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3
+        with:
+          version: v0.58.0
+
+      - name: Run scanner
+        run: uv run image-inspector-scan
+
+      - name: Commit updated report
+        run: |
+          if [[ -n "$(git status --porcelain src/image_inspector/data/report.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/image_inspector/data/report.json
+            git commit -m "chore: update nightly vulnerability report"
+            git push
+          else
+            echo "Report unchanged; nothing to commit."
+          fi
