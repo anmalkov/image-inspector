@@ -1,4 +1,4 @@
-# 🐳 image-inspector - Base Images, Digests, Vulnerabilities
+# 🐳 image-inspector - Base Images, Digests & Vulnerabilities
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="300">
