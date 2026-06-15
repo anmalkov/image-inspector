@@ -1,10 +1,10 @@
-# 🐳 image-inspector - Base Images, Digests & Vulnerabilities
+# 🐳 image-inspector - Images, Digests & Vulnerabilities
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="250">
 </p>
 
-**image-inspector** is a modern, interactive terminal tool for selecting an **official container
+**Image inspector** is a modern, interactive terminal tool for selecting an **official container
 image** and pinning it by digest for reproducible Docker builds.
 
 Pick a language, pick a version, pick a variant — entirely with the arrow keys —
