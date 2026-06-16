@@ -15,10 +15,6 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo" width="720">
-</p>
-
 ---
 
 ## What is this?
@@ -44,6 +40,10 @@ when it was built — so you can choose a good base image with confidence.
 > base image, every time. That's what makes a build reproducible.
 
 You don't need Docker or any scanner installed to use it.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo">
+</p>
 
 ## Quick start
 
