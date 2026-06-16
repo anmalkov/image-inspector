@@ -49,11 +49,16 @@ The version is derived **from the git tag** at release time:
    ```
 
 4. The **Release** workflow triggers automatically and will:
+   - verify the tagged commit is on `main` (the release fails fast otherwise),
    - set the project version from the tag (`uv version`),
    - build the source distribution and wheel (`uv build`),
    - publish them to PyPI via Trusted Publishing (`uv publish`),
    - create a GitHub Release for the tag with auto-generated notes and the built
      artifacts attached.
+
+   > Tags are not tied to a branch in Git, so the workflow guards against accidental releases by
+   > checking that the tagged commit is reachable from `main`. Always tag a commit that is already on
+   > `main`.
 
 5. Verify the result:
    - the [GitHub Releases page](https://github.com/anmalkov/image-inspector/releases) shows the new release,
