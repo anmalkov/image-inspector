@@ -350,7 +350,7 @@ def show_result(image: ResolvedImage) -> None:
         grid.add_column(style="value")
         for label, value in rows:
             grid.add_row(label, value)
-        blocks.append(Text(title, style="accent"))
+        blocks.append(Text(title, style="muted"))
         blocks.append(Padding(grid, (0, 0, 1, 2)))
 
     dockerfile = Syntax(
@@ -359,7 +359,7 @@ def show_result(image: ResolvedImage) -> None:
         theme="ansi_dark",
         background_color="default",
     )
-    blocks.append(Text("DOCKERFILE", style="accent"))
+    blocks.append(Text("DOCKERFILE", style="muted"))
     blocks.append(Padding(dockerfile, (0, 0, 0, 2)))
 
     console.print(
