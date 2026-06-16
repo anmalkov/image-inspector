@@ -83,38 +83,51 @@ _PROMPT_STYLE = Style(
 )
 
 
-def _two_tone_wordmark() -> Text:
-    """Render the figlet wordmark with ``image`` in white and ``inspector`` orange."""
+def _two_tone_wordmark() -> tuple[Text, int]:
+    """Render the figlet wordmark (white ``image``, orange ``inspector``).
+
+    Returns the rendered art and the total block width in cells.
+    """
     words = (("image", "label"), ("inspector", "orange"))
     rendered = []
     for word, style in words:
         lines = pyfiglet.figlet_format(word, font="small").rstrip("\n").split("\n")
         width = max((len(line) for line in lines), default=0)
-        rendered.append(([line.ljust(width) for line in lines], style))
-    height = max(len(lines) for lines, _ in rendered)
+        rendered.append(([line.ljust(width) for line in lines], style, width))
+    height = max(len(lines) for lines, _, _ in rendered)
+    total_width = sum(width for _, _, width in rendered) + (len(rendered) - 1)
 
     art = Text()
     for row in range(height):
-        for index, (lines, style) in enumerate(rendered):
+        for index, (lines, style, _) in enumerate(rendered):
             if index:
                 art.append(" ")
             art.append(lines[row] if row < len(lines) else "", style=style)
         if row < height - 1:
             art.append("\n")
-    return art
+    return art, total_width
 
 
 def banner() -> None:
     """Print the branded launch banner inside a bordered panel."""
-    tagline = Text(justify="center")
-    tagline.append("🐳  Select • inspect • pin", style="muted")
-    tagline.append("  ·  ", style="muted")
-    tagline.append(f"v{__version__}", style="accent")
-    inner = Group(
-        Align.center(_two_tone_wordmark()),
-        Align.center(tagline),
+    wordmark, width = _two_tone_wordmark()
+    tagline, version = "Select • inspect • pin", f"v{__version__}"
+    gap = max(width - len(tagline) - len(version), 1)
+
+    footer = Text()
+    footer.append(tagline, style="muted")
+    footer.append(" " * gap)
+    footer.append(version, style="accent")
+
+    # Fixed-width column keeps the footer's right edge aligned with the wordmark.
+    block = Table.grid()
+    block.add_column(width=width)
+    block.add_row(wordmark)
+    block.add_row(footer)
+
+    console.print(
+        Panel(Align.center(block), border_style="accent", padding=(1, 2))
     )
-    console.print(Panel(inner, border_style="accent", padding=(1, 2)))
 
 
 @contextmanager
