@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Pick an official container base image and lock it to an exact, reproducible version — in seconds, with just your arrow keys.</strong>
+  <strong>Find an official container base image and lock it to an exact, reproducible version in seconds.</strong>
 </p>
 
 <p align="center">
@@ -75,14 +75,14 @@ New here and want the full walkthrough? See the **[Getting started guide](docs/g
 
 ## Features
 
-- ⌨️ **Arrow-key everything** — language, version, and variant are all pick-from-list menus. No typing.
 - 📌 **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible builds.
 - 🛡️ **Security at a glance** — critical / high / total vulnerability counts for the chosen image,
   from a nightly Trivy scan that ships with the tool.
 - 🧱 **Many ecosystems, one interface** — Python, .NET, Java, Go, Node, Rust, C/C++, plus Ubuntu,
   Debian and Alpine base images.
-- 🎨 **Modern UI** — branded banner, themed menus, spinners, and a syntax-highlighted result panel.
 - 🤖 **Automation-friendly** — `--json` for non-interactive use and `--plain` / `NO_COLOR` support.
+- 🎨 **Modern UI** — branded banner, themed menus, spinners, and a syntax-highlighted result panel.
+- ⌨️ **Arrow-key everything** — language, version, and variant are all pick-from-list menus. No typing.
 - 📋 **Quick actions** — after a result, copy the `FROM` line or digest to your clipboard.
 
 ## Supported images
@@ -117,7 +117,7 @@ covered in the [Getting started guide](docs/getting-started.md#supported-images-
 image-inspector
 
 # Non-interactive, machine-readable output for scripts/CI:
-image-inspector --json -l ubuntu --version 24.04 --variant '(none)'
+image-inspector --json -l ubuntu --version 24.04'
 ```
 
 The full list of flags lives in the [Getting started guide](docs/getting-started.md#command-line-options).
