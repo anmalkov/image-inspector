@@ -17,6 +17,7 @@ from rich.text import Text
 from rich.theme import Theme
 
 from .models import Category, Language, ResolvedImage
+from .report import ImageVulnerabilities
 
 _THEME = Theme(
     {
@@ -126,6 +127,24 @@ def format_size(num_bytes: int | None) -> str:
     return f"{size:.1f} GB"
 
 
+def format_vulnerabilities(vulns: ImageVulnerabilities | None) -> Text:
+    """Render vulnerability counts as a styled line for the result panel."""
+    if vulns is None:
+        return Text("no scan data", style="muted")
+
+    critical_style = "err" if vulns.critical else "ok"
+    high_style = "warn" if vulns.high else "ok"
+    total_style = "warn" if vulns.total else "ok"
+
+    line = Text()
+    line.append(f"Critical: {vulns.critical}", style=critical_style)
+    line.append("  ·  ")
+    line.append(f"High: {vulns.high}", style=high_style)
+    line.append("  ·  ")
+    line.append(f"Total: {vulns.total}", style=total_style)
+    return line
+
+
 def show_result(image: ResolvedImage) -> None:
     """Render the final selection as a panel with a copy-paste Dockerfile line."""
     table = Table.grid(padding=(0, 2))
@@ -136,6 +155,7 @@ def show_result(image: ResolvedImage) -> None:
     created = image.created.strftime("%Y-%m-%d %H:%M:%S %Z").strip() if image.created else "unknown"
     table.add_row("Created", created)
     table.add_row("Download", f"{format_size(image.size)} (compressed, linux/amd64)")
+    table.add_row("Vulnerabilities", format_vulnerabilities(image.vulnerabilities))
     table.add_row("Digest", image.digest)
 
     dockerfile = Syntax(
@@ -150,9 +170,13 @@ def show_result(image: ResolvedImage) -> None:
         Text("\nDockerfile:", style="muted"),
         dockerfile,
     )
+    renderables = [body]
+    if image.vulnerabilities is not None and image.vulnerabilities.scanned_at is not None:
+        scanned = image.vulnerabilities.scanned_at.strftime("%Y-%m-%d").strip()
+        renderables.append(Text(f"\nVulnerability scan as of {scanned}", style="muted"))
     console.print(
         Panel(
-            body,
+            Group(*renderables),
             title="[ok]✓ resolved image",
             border_style="ok",
             padding=(1, 2),

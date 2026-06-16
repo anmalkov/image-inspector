@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 
 from image_inspector import cli, ui
 from image_inspector.models import LANGUAGES_BY_KEY, ImageTag
+from image_inspector.report import ImageVulnerabilities, VulnerabilityReport
 
 
 class FakeProvider:
@@ -47,6 +48,28 @@ def test_main_happy_path(monkeypatch):
     assert fake.resolved_tag == "3.13.14-slim"
     assert captured["image"].pinned_reference == "python:3.13.14-slim@sha256:deadbeef"
     assert captured["image"].size == 12345
+
+
+def test_main_attaches_vulnerabilities_from_report(monkeypatch):
+    fake = FakeProvider()
+    python = LANGUAGES_BY_KEY["python"]
+    report = VulnerabilityReport(
+        images={"sha256:deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)}
+    )
+
+    monkeypatch.setattr(cli, "make_client", _fake_client)
+    monkeypatch.setattr(cli, "get_provider", lambda lang, client: fake)
+    monkeypatch.setattr(cli, "load_report", lambda: report)
+    monkeypatch.setattr(ui, "banner", lambda: None)
+    monkeypatch.setattr(ui, "select_language", lambda languages: python)
+    monkeypatch.setattr(ui, "select_version", lambda versions, lts=frozenset(): "3.13.14")
+    monkeypatch.setattr(ui, "select_variant", lambda variants: "slim")
+
+    captured = {}
+    monkeypatch.setattr(ui, "show_result", lambda image: captured.update(image=image))
+
+    assert cli.main() == 0
+    assert captured["image"].vulnerabilities == ImageVulnerabilities(critical=1, high=2, total=7)
 
 
 def test_main_cancel_language(monkeypatch):

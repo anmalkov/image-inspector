@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
+from .report import ImageVulnerabilities
+
 
 class RegistryKind(StrEnum):
     """Which registry backend a language's images live on."""
@@ -120,6 +122,7 @@ class ResolvedImage:
     digest: str
     created: datetime | None
     size: int | None = None
+    vulnerabilities: ImageVulnerabilities | None = None
 
     @property
     def reference(self) -> str:

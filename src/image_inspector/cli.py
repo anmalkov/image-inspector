@@ -5,6 +5,7 @@ from __future__ import annotations
 from . import ui
 from .models import LANGUAGES, Language, ResolvedImage
 from .registry import RegistryError, RegistryProvider, get_provider, make_client
+from .report import VulnerabilityReport, load_report
 from .versions import (
     is_ubuntu_lts,
     select_versions,
@@ -22,7 +23,7 @@ def _lts_versions(language: Language, versions: list[str]) -> frozenset[str]:
     return frozenset(v for v in versions if is_ubuntu_lts(v))
 
 
-def _run(provider: RegistryProvider, language: Language) -> int:
+def _run(provider: RegistryProvider, language: Language, report: VulnerabilityReport) -> int:
     with ui.working(f"Fetching {language.label} tags…"):
         tag_names = provider.list_tag_names(want_minors=MINOR_VERSION_COUNT)
 
@@ -60,6 +61,7 @@ def _run(provider: RegistryProvider, language: Language) -> int:
             digest=image_tag.digest,
             created=image_tag.last_updated,
             size=image_tag.size,
+            vulnerabilities=report.lookup(image_tag.digest),
         )
     )
     return 0
@@ -77,7 +79,7 @@ def main() -> int:
     try:
         with make_client() as client:
             provider = get_provider(language, client)
-            return _run(provider, language)
+            return _run(provider, language, load_report())
     except RegistryError as exc:
         ui.error(str(exc))
         return 1
