@@ -55,9 +55,10 @@ def _resolve(
     if len(variants) == 1:
         variant = variants[0]
     else:
-        variant = ui.select_variant(variants)
-        if variant is None:
+        selected = ui.select_variant(variants)
+        if selected is None:
             return None
+        variant = selected
 
     tag = tag_for_selection(version, variant)
     with ui.working(f"Resolving {language.image_name}:{tag}…"):
@@ -143,8 +144,7 @@ def _choose_variant_for_json(requested: str | None, variants: list[str]) -> str 
     if PLAIN_VARIANT in variants:
         return PLAIN_VARIANT
     ui.error(
-        f"Multiple variants available; choose one with --variant. "
-        f"Options: {', '.join(variants)}"
+        f"Multiple variants available; choose one with --variant. Options: {', '.join(variants)}"
     )
     return None
 

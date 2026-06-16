@@ -190,7 +190,12 @@ images by digest, so parallel matrix jobs still produce one combined report.
 uv run pytest        # run the test suite
 uv run ruff check .  # lint
 uv run ruff format . # format
+uv run mypy src      # type-check
 ```
+
+See [docs/development.md](docs/development.md) for full setup instructions (prerequisites, dev
+environment, running locally, and quality checks), and [docs/releasing.md](docs/releasing.md) for how
+to publish a new release.
 
 ### Project layout
 
