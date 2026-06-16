@@ -93,7 +93,7 @@ def _two_tone_wordmark() -> Text:
         rendered.append(([line.ljust(width) for line in lines], style))
     height = max(len(lines) for lines, _ in rendered)
 
-    art = Text(justify="center")
+    art = Text()
     for row in range(height):
         for index, (lines, style) in enumerate(rendered):
             if index:
