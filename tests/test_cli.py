@@ -187,4 +187,3 @@ def test_main_json_non_interactive(monkeypatch, capsys):
 def test_main_json_requires_version(monkeypatch):
     rc = cli.main(["--json", "-l", "python"])
     assert rc == 2
-

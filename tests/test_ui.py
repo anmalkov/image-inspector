@@ -100,9 +100,7 @@ def test_result_payload_shape():
         version="3.13.14",
         variant="slim",
         vulnerabilities=ImageVulnerabilities(critical=1, high=2, total=7),
-        scan_source=ScanSource(
-            version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)
-        ),
+        scan_source=ScanSource(version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)),
     )
     payload = result_payload(image)
     assert payload["language"] == "python"
@@ -135,9 +133,7 @@ def test_result_sections_structure():
         vulnerabilities=ImageVulnerabilities(
             critical=1, high=2, total=7, scanned_at=datetime(2026, 6, 15, tzinfo=UTC)
         ),
-        scan_source=ScanSource(
-            version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)
-        ),
+        scan_source=ScanSource(version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)),
     )
     sections = _result_sections(image)
     titles = [title for title, _ in sections]
@@ -163,4 +159,3 @@ def test_copy_to_clipboard_emits_osc52(capsys):
     out = capsys.readouterr().out
     # base64 of "FROM ubuntu:24.04"
     assert out == "\033]52;c;RlJPTSB1YnVudHU6MjQuMDQ=\a"
-

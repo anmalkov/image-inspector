@@ -54,6 +54,7 @@ dev = [
     "pytest>=8.0",
     "respx>=0.21",
     "ruff>=0.6",
+    "mypy>=1.11",
 ]
 
 [tool.ruff]
@@ -65,3 +66,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src"]
+ignore_missing_imports = true

@@ -1,53 +1,93 @@
-# 🐳 image-inspector - Images, Digests & Vulnerabilities
+<h1 align="center">🐳 image-inspector</h1>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="250">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="220">
 </p>
 
-**Image inspector** is a modern, interactive terminal tool for selecting an **official container
-image** and pinning it by digest for reproducible Docker builds.
+<p align="center">
+  <strong>Find an official container base image and lock it to an exact, reproducible version in seconds.</strong>
+</p>
 
-Pick a language, pick a version, pick a variant — entirely with the arrow keys —
-and `image-inspector` shows you the exact image reference, its creation date, its
-compressed size, and
-its SHA256 digest, plus a ready-to-paste `FROM` line.
+<p align="center">
+  <a href="https://github.com/anmalkov/image-inspector/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/anmalkov/image-inspector/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/anmalkov/image-inspector/releases"><img src="https://img.shields.io/github/v/release/anmalkov/image-inspector?include_prereleases&style=for-the-badge" alt="Latest release"></a>
+  <a href="https://pypi.org/project/image-inspector/"><img src="https://img.shields.io/pypi/v/image-inspector?style=for-the-badge" alt="PyPI version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
+</p>
 
-```
+<!--
+  📸 Demo placeholder — add a terminal screenshot or GIF here.
+  Drop the file at docs/assets/demo.gif (or .png) and uncomment the block below.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo" width="720">
+</p>
+-->
+
+---
+
+## What is this?
+
+When you write a `Dockerfile`, you start from a **base image** like `python:3.13` or `node:22`.
+The problem: tags like `python:3.13` are **moving targets** — the image behind that tag changes over
+time. So a build that works today might pull a different image tomorrow, and "it works on my machine"
+quietly breaks.
+
+**image-inspector** fixes that. You pick a language or OS, a version, and a variant — all with the
+arrow keys — and it gives you a base image **pinned to an exact, unchangeable version** plus a
+ready-to-paste `FROM` line:
+
+```dockerfile
 FROM python:3.13.14-slim@sha256:205e60d0b78f024817...
 ```
 
+It also shows you, up front, **how many known security vulnerabilities** that image has, its size, and
+when it was built — so you can choose a good base image with confidence.
+
+> **What's that `@sha256:...` part?** It's the image's **digest** — a unique fingerprint of the exact
+> image contents. Pinning to a digest means everyone who builds your `Dockerfile` gets the *identical*
+> base image, every time. That's what makes a build reproducible.
+
+You don't need Docker or any scanner installed to use it.
+
+## Quick start
+
+**1. Install it** (pick whichever you have):
+
+```bash
+uv tool install image-inspector     # recommended
+# or
+pipx install image-inspector
+# or
+pip install image-inspector
+```
+
+**2. Run it:**
+
+```bash
+image-inspector
+```
+
+**3. Pick with the arrow keys** — language/OS → version → variant — and copy the `FROM` line it
+prints. That's it. 🎉
+
+New here and want the full walkthrough? See the **[Getting started guide](docs/getting-started.md)**.
+
 ## Features
 
-- **Arrow-key everything** — language, version, and variant are all pick-from-list
-  menus (`questionary`). No typing required. The first menu is **grouped** into
-  "Languages & runtimes" and "OS base images" for easy scanning.
-- **Latest 5 minor versions** — shows the newest patch of each of the 5 most recent
-  minor releases (e.g. `3.14.x`, `3.13.x`, …); Java/Debian instead list the latest
-  feature/major releases (e.g. `26`, `25`, `21`, …) and Ubuntu lists the 5 newest
-  calendar releases (e.g. `26.04`, `25.10`, …) with **LTS** releases marked.
-- **Variant aware** — choose `slim`, `alpine`, `bookworm`, `jdk`/`jre`, etc.
-- **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible
-  builds.
-- **Size shown** — the compressed download size of the `linux/amd64` image.
-- **Sectioned result panel** — the resolved image is grouped into **SELECTED**,
-  **IMAGE**, **SECURITY** and **DOCKERFILE** sections so it's easy to scan.
-- **Vulnerability counts** — the SECURITY section shows **critical / high / total**
-  vulnerabilities for the selected image, when it was scanned, and the Trivy
-  version + DB date behind it — sourced from a nightly Trivy scan that ships with
-  the tool.
-- **Multi-registry** — Python, Java, Go, Node, Rust, C/C++ and the OS base images
-  (Ubuntu, Debian, Alpine) come from Docker Hub; **.NET** comes from Microsoft
-  Container Registry (MCR), all behind one interface.
-- **Modern UI** — branded banner, themed menus, animated spinners, and a
-  syntax-highlighted result panel (`rich` + `pyfiglet`).
-- **Automation-friendly** — `--plain` (uncolored) and `--json` (non-interactive)
-  output modes, plus `NO_COLOR` support.
-- **Quick actions** — after a result, copy the `FROM` line or digest to your
-  clipboard (OSC 52), start a new selection, or exit.
+- 📌 **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible builds.
+- 🛡️ **Security at a glance** — critical / high / total vulnerability counts for the chosen image,
+  from a nightly Trivy scan that ships with the tool.
+- 🧱 **Many ecosystems, one interface** — Python, .NET, Java, Go, Node, Rust, C/C++, plus Ubuntu,
+  Debian and Alpine base images.
+- 🤖 **Automation-friendly** — `--json` for non-interactive use and `--plain` / `NO_COLOR` support.
+- 🎨 **Modern UI** — branded banner, themed menus, spinners, and a syntax-highlighted result panel.
+- ⌨️ **Arrow-key everything** — language, version, and variant are all pick-from-list menus. No typing.
+- 📋 **Quick actions** — after a result, copy the `FROM` line or digest to your clipboard.
 
 ## Supported images
 
-### Languages & runtimes
+### Languages &amp; runtimes
 
 | Language | Registry | Repository | Versioning |
 |----------|----------|------------|------------|
@@ -67,141 +107,29 @@ FROM python:3.13.14-slim@sha256:205e60d0b78f024817...
 | Debian | Docker Hub | `library/debian` | major (11 / 12 / 13) + `-slim` variant |
 | Alpine | Docker Hub | `library/alpine` | semver (latest 5 minors) |
 
-**Notes:**
+Per-image details (Java feature releases, the `gcc` compiler image, Ubuntu LTS, Debian variants) are
+covered in the [Getting started guide](docs/getting-started.md#supported-images-in-detail).
 
-- **Java** uses the Docker Official OpenJDK image (`eclipse-temurin`), which is
-  versioned by *feature release* rather than `X.Y.Z`. You pick a feature version
-  (e.g. `21`) and a variant (`jdk`, `jre`, `jdk-noble`, `ubi9-minimal`, …).
-- **C / C++** uses the official `gcc` image — a *compiler / build* base. You'll
-  typically multi-stage from it into a slim runtime (e.g. `debian:*-slim` or
-  distroless). There is no official `clang` image.
-- **Ubuntu** is versioned by calendar release (`YY.MM`). The picker shows the 5
-  newest releases including interim ones and tags **LTS** releases (April of an
-  even year, e.g. `24.04`, `22.04`) so you can tell them apart from interim
-  releases (e.g. `25.10`).
-- **Debian** images are tagged by major release (`11`, `12`, `13`); pick `(none)`
-  for the full image or `slim` for the smaller variant.
-
-## Requirements
-
-- Python **3.13+**
-- [`uv`](https://docs.astral.sh/uv/)
-
-## Install & run
+## Examples
 
 ```bash
-uv sync          # create the venv and install dependencies
-uv run image-inspector
+# Interactive — pick everything with the arrow keys:
+image-inspector
+
+# Non-interactive, machine-readable output for scripts/CI:
+image-inspector --json -l ubuntu --version 24.04'
 ```
 
-You can also run it as a module:
+The full list of flags lives in the [Getting started guide](docs/getting-started.md#command-line-options).
 
-```bash
-uv run python -m image_inspector
-```
+## Documentation
 
-### Command-line options
+- 📖 **[Getting started guide](docs/getting-started.md)** — full usage, all flags, JSON output, and
+  vulnerability scanning.
+- 🛠️ **[Development guide](docs/development.md)** — set up locally, run the tool from source, lint,
+  type-check, and test.
+- 🚀 **[Releasing guide](docs/releasing.md)** — how releases are built and published.
 
-```bash
-uv run image-inspector --help
-```
+## License
 
-| Flag | Description |
-| --- | --- |
-| `--no-banner` | Skip the launch banner. |
-| `--plain` | Plain, uncolored output (selection stays interactive). Also honored via the `NO_COLOR` environment variable. |
-| `--json` | Non-interactive: print the resolved image as JSON. Requires `--language` and `--version`. |
-| `-l`, `--language` | Image key to resolve (`python`, `dotnet`, `java`, `go`, `node`, `rust`, `cpp`, `ubuntu`, `debian`, `alpine`). |
-| `--version VERSION` | Image version to resolve, e.g. `3.13.14` or `24.04`. |
-| `--variant VARIANT` | Image variant, e.g. `slim` or `alpine` (`'(none)'` for the plain tag). |
-| `--app-version` | Print the `image-inspector` version and exit. |
-
-`NO_COLOR` is respected automatically (see <https://no-color.org>).
-
-```bash
-# Non-interactive, machine-readable output for automation:
-uv run image-inspector --json -l ubuntu --version 24.04 --variant '(none)'
-```
-
-After a result, an interactive action menu lets you `[f]` copy the `FROM` line,
-`[d]` copy the digest (both via the OSC 52 clipboard escape), `[n]` start a new
-selection, or press `[enter]` to exit.
-
-## Vulnerability scanning
-
-When you resolve an image, the result panel's **SECURITY** section shows how many
-vulnerabilities it has — **critical**, **high** and **total** — the date the scan
-was taken, and the scan source (the Trivy version plus the vulnerability-DB
-update date, e.g. `Trivy v0.71.1 · DB Jun 14, 2026`).
-
-These counts come from a JSON report (`src/image_inspector/data/report.json`)
-that ships with the tool, so the interactive picker stays fast and needs no
-Docker or Trivy on your machine. The report is regenerated **nightly** by a
-GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against every
-selectable image (all versions and variants) and commits the refreshed report
-back to the repository. The report header records the Trivy version and DB date
-once; `--json` output surfaces them in a `scanner` block alongside the flat
-`vulnerabilities` counts.
-
-The report is keyed by the image's immutable **digest**, so the counts always
-match the exact `name:tag@sha256:…` reference the tool pins. If an image isn't in
-the report yet (e.g. a brand-new tag), the panel shows `no scan data` rather than
-guessing.
-
-### Running a scan yourself
-
-The scanner is a separate entry point in this repo. You need
-[Trivy](https://trivy.dev/) installed and on your `PATH`:
-
-```bash
-uv run image-inspector-scan                # scan every image, writes packaged data/report.json
-uv run image-inspector-scan -l alpine      # only scan Alpine (repeatable: -l python -l go)
-uv run image-inspector-scan -o report.json # write somewhere else
-```
-
-`--language`/`-l` accepts an image key (`python`, `dotnet`, `java`, `go`, `node`,
-`rust`, `cpp`, `ubuntu`, `debian`, `alpine`) and may be repeated; omit it to scan
-everything.
-
-The nightly workflow uses this to **fan out one scan per language in a matrix**,
-then combines the per-language reports into a single `report.json` with
-`image-inspector-merge`:
-
-```bash
-uv run image-inspector-merge report-python.json report-alpine.json \
-  -o src/image_inspector/data/report.json
-```
-
-`image-inspector-merge` takes any number of partial reports and unions their
-images by digest, so parallel matrix jobs still produce one combined report.
-
-## How it works
-
-1. Pick a language/runtime.
-2. The tool queries the matching registry and lists the latest patch of the 5
-   newest minor versions.
-3. Pick a version, then pick a variant.
-4. It resolves the concrete tag to a digest, creation date and compressed size,
-   then prints the pinned Dockerfile reference.
-
-## Development
-
-```bash
-uv run pytest        # run the test suite
-uv run ruff check .  # lint
-uv run ruff format . # format
-```
-
-### Project layout
-
-```
-src/image_inspector/
-  cli.py        # entry point + flow orchestration
-  models.py     # dataclasses + language -> registry mapping
-  registry.py   # RegistryProvider protocol + Docker Hub & MCR clients
-  versions.py   # tag parsing, version-scheme selection (semver/major), variants
-  ui.py         # theme, banner, prompts, spinners, result panel
-  report.py     # loads the bundled Trivy vulnerability report
-  scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
-  data/         # bundled report.json (refreshed nightly in CI)
-```
+Released under the [MIT License](LICENSE).

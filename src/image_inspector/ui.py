@@ -9,12 +9,13 @@ import sys
 from collections.abc import Iterator
 from contextlib import contextmanager, suppress
 from datetime import datetime
+from typing import Any
 
 import pyfiglet
 import questionary
 from questionary import Choice, Separator, Style
 from rich.align import Align
-from rich.console import Console, Group
+from rich.console import Console, Group, RenderableType
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.syntax import Syntax
@@ -66,6 +67,7 @@ def configure(*, plain: bool = False) -> None:
     _ensure_utf8_stream(sys.stdout)
     _ensure_utf8_stream(sys.stderr)
     console = _build_console(plain=plain)
+
 
 # questionary menu styling kept visually consistent with the rich theme.
 _PROMPT_STYLE = Style(
@@ -131,9 +133,7 @@ def banner() -> None:
     block.add_row(wordmark)
     block.add_row(footer)
 
-    console.print(
-        Panel(Align.center(block), border_style="accent", padding=(0,2,1,2))
-    )
+    console.print(Panel(Align.center(block), border_style="accent", padding=(0, 2, 1, 2)))
 
 
 @contextmanager
@@ -143,7 +143,7 @@ def working(message: str) -> Iterator[None]:
         yield
 
 
-def _ask(message: str, choices: list) -> object | None:
+def _ask(message: str, choices: list) -> Any:
     """Run an arrow-key select; return ``None`` if the user cancels."""
     return questionary.select(
         message,
@@ -252,10 +252,10 @@ def format_scan_source(source: ScanSource | None) -> str | None:
     return label
 
 
-def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, object]]]]:
+def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, str | Text]]]]:
     """Group the resolved-image details into labelled (title, rows) sections."""
     vulns = image.vulnerabilities
-    security: list[tuple[str, object]] = [
+    security: list[tuple[str, str | Text]] = [
         ("Vulnerabilities", format_vulnerabilities(vulns)),
     ]
     if vulns is not None and vulns.scanned_at is not None:
@@ -343,7 +343,7 @@ def show_result(image: ResolvedImage) -> None:
         _show_result_plain(image)
         return
 
-    blocks: list[object] = []
+    blocks: list[RenderableType] = []
     for title, rows in _result_sections(image):
         grid = Table.grid(padding=(0, 2))
         grid.add_column(style="label", justify="left")
@@ -394,20 +394,20 @@ def _read_key() -> str:
         line = sys.stdin.readline()
         return line.strip()[:1]
     try:
-        import msvcrt  # Windows
+        import msvcrt  # type: ignore  # Windows
     except ImportError:
         import termios
         import tty
 
         fd = sys.stdin.fileno()
-        old = termios.tcgetattr(fd)
+        old = termios.tcgetattr(fd)  # type: ignore
         try:
-            tty.setraw(fd)
+            tty.setraw(fd)  # type: ignore
             return sys.stdin.read(1)
         finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old)
+            termios.tcsetattr(fd, termios.TCSADRAIN, old)  # type: ignore
     else:
-        return msvcrt.getwch()
+        return msvcrt.getwch()  # type: ignore
 
 
 def result_actions(image: ResolvedImage) -> bool:
