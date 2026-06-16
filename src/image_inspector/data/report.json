@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-16T10:47:47Z",
+  "generated_at": "2026-06-16T14:54:44Z",
   "images": {
     "sha256:004eb71d32ba3d025f6483aaff73dbdbd8e5b663c76ec7a372c4d118f99e3212": {
       "critical": 2,
@@ -7,7 +7,7 @@
       "low": 2,
       "medium": 6,
       "reference": "eclipse-temurin:11-jre-alpine-3.21",
-      "scanned_at": "2026-06-16T10:28:44Z",
+      "scanned_at": "2026-06-16T14:38:43Z",
       "total": 13,
       "unknown": 0
     },
@@ -17,7 +17,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:28:08Z",
+      "scanned_at": "2026-06-16T14:37:55Z",
       "total": 0,
       "unknown": 0
     },
@@ -27,7 +27,7 @@
       "low": 653,
       "medium": 363,
       "reference": "golang:1.25.11",
-      "scanned_at": "2026-06-16T10:25:16Z",
+      "scanned_at": "2026-06-16T14:34:46Z",
       "total": 1117,
       "unknown": 12
     },
@@ -37,7 +37,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-jre-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:28:53Z",
+      "scanned_at": "2026-06-16T14:38:52Z",
       "total": 0,
       "unknown": 0
     },
@@ -47,7 +47,7 @@
       "low": 36,
       "medium": 100,
       "reference": "eclipse-temurin:25-noble",
-      "scanned_at": "2026-06-16T10:26:31Z",
+      "scanned_at": "2026-06-16T14:36:02Z",
       "total": 138,
       "unknown": 0
     },
@@ -57,7 +57,7 @@
       "low": 0,
       "medium": 0,
       "reference": "python:3.14.6-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:16Z",
+      "scanned_at": "2026-06-16T14:34:32Z",
       "total": 0,
       "unknown": 0
     },
@@ -67,7 +67,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-16T10:47:21Z",
+      "scanned_at": "2026-06-16T14:54:19Z",
       "total": 11,
       "unknown": 0
     },
@@ -77,7 +77,7 @@
       "low": 30,
       "medium": 12,
       "reference": "eclipse-temurin:17-jdk-alpine-3.22",
-      "scanned_at": "2026-06-16T10:27:39Z",
+      "scanned_at": "2026-06-16T14:37:21Z",
       "total": 45,
       "unknown": 0
     },
@@ -87,7 +87,7 @@
       "low": 32,
       "medium": 18,
       "reference": "eclipse-temurin:11-jdk-alpine-3.22",
-      "scanned_at": "2026-06-16T10:28:26Z",
+      "scanned_at": "2026-06-16T14:38:22Z",
       "total": 58,
       "unknown": 0
     },
@@ -97,7 +97,7 @@
       "low": 199,
       "medium": 185,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:36:00Z",
+      "scanned_at": "2026-06-16T14:44:14Z",
       "total": 527,
       "unknown": 12
     },
@@ -107,7 +107,7 @@
       "low": 76,
       "medium": 41,
       "reference": "python:3.13.14-slim-bookworm",
-      "scanned_at": "2026-06-16T10:25:37Z",
+      "scanned_at": "2026-06-16T14:34:54Z",
       "total": 137,
       "unknown": 6
     },
@@ -117,7 +117,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.95.0-alpine3.22",
-      "scanned_at": "2026-06-16T10:27:12Z",
+      "scanned_at": "2026-06-16T14:36:37Z",
       "total": 30,
       "unknown": 0
     },
@@ -127,7 +127,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy-arm32v7",
-      "scanned_at": "2026-06-16T10:42:03Z",
+      "scanned_at": "2026-06-16T14:49:17Z",
       "total": 275,
       "unknown": 0
     },
@@ -137,7 +137,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-aot",
-      "scanned_at": "2026-06-16T10:25:16Z",
+      "scanned_at": "2026-06-16T14:34:36Z",
       "total": 30,
       "unknown": 0
     },
@@ -147,7 +147,7 @@
       "low": 1142,
       "medium": 1266,
       "reference": "node:26.1.0-bookworm",
-      "scanned_at": "2026-06-16T10:27:02Z",
+      "scanned_at": "2026-06-16T14:36:28Z",
       "total": 2858,
       "unknown": 85
     },
@@ -157,7 +157,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:26-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:25:49Z",
+      "scanned_at": "2026-06-16T14:35:15Z",
       "total": 0,
       "unknown": 0
     },
@@ -167,7 +167,7 @@
       "low": 187,
       "medium": 169,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:45:15Z",
+      "scanned_at": "2026-06-16T14:52:18Z",
       "total": 490,
       "unknown": 24
     },
@@ -177,7 +177,7 @@
       "low": 39,
       "medium": 23,
       "reference": "rust:1.92.0-alpine3.22",
-      "scanned_at": "2026-06-16T10:31:52Z",
+      "scanned_at": "2026-06-16T14:41:29Z",
       "total": 82,
       "unknown": 0
     },
@@ -187,7 +187,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-16T10:43:55Z",
+      "scanned_at": "2026-06-16T14:51:08Z",
       "total": 11,
       "unknown": 0
     },
@@ -197,7 +197,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-nanoserver-1809",
-      "scanned_at": "2026-06-16T10:46:43Z",
+      "scanned_at": "2026-06-16T14:53:42Z",
       "total": 11,
       "unknown": 0
     },
@@ -207,7 +207,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy",
-      "scanned_at": "2026-06-16T10:41:55Z",
+      "scanned_at": "2026-06-16T14:49:08Z",
       "total": 275,
       "unknown": 0
     },
@@ -217,7 +217,7 @@
       "low": 20,
       "medium": 9,
       "reference": "node:26.3.0-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:23Z",
+      "scanned_at": "2026-06-16T14:34:48Z",
       "total": 31,
       "unknown": 0
     },
@@ -227,7 +227,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19",
-      "scanned_at": "2026-06-16T10:35:26Z",
+      "scanned_at": "2026-06-16T14:43:45Z",
       "total": 109,
       "unknown": 0
     },
@@ -237,7 +237,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23-arm64v8",
-      "scanned_at": "2026-06-16T10:29:31Z",
+      "scanned_at": "2026-06-16T14:38:34Z",
       "total": 40,
       "unknown": 0
     },
@@ -247,7 +247,7 @@
       "low": 189,
       "medium": 177,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:36:25Z",
+      "scanned_at": "2026-06-16T14:44:34Z",
       "total": 534,
       "unknown": 24
     },
@@ -257,7 +257,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-16T10:28:19Z",
+      "scanned_at": "2026-06-16T14:37:26Z",
       "total": 0,
       "unknown": 0
     },
@@ -267,7 +267,7 @@
       "low": 20,
       "medium": 11,
       "reference": "node:24.16.0-alpine3.22",
-      "scanned_at": "2026-06-16T10:27:27Z",
+      "scanned_at": "2026-06-16T14:36:55Z",
       "total": 33,
       "unknown": 0
     },
@@ -277,7 +277,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:21-jre",
-      "scanned_at": "2026-06-16T10:27:06Z",
+      "scanned_at": "2026-06-16T14:36:42Z",
       "total": 137,
       "unknown": 0
     },
@@ -287,7 +287,7 @@
       "low": 6,
       "medium": 58,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-arm64v8",
-      "scanned_at": "2026-06-16T10:27:36Z",
+      "scanned_at": "2026-06-16T14:36:44Z",
       "total": 65,
       "unknown": 0
     },
@@ -297,7 +297,7 @@
       "low": 6,
       "medium": 58,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute",
-      "scanned_at": "2026-06-16T10:27:10Z",
+      "scanned_at": "2026-06-16T14:36:24Z",
       "total": 65,
       "unknown": 0
     },
@@ -307,7 +307,7 @@
       "low": 1097,
       "medium": 1125,
       "reference": "rust:1.96.0-bookworm",
-      "scanned_at": "2026-06-16T10:26:00Z",
+      "scanned_at": "2026-06-16T14:35:21Z",
       "total": 2583,
       "unknown": 85
     },
@@ -317,7 +317,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:21-jre-jammy",
-      "scanned_at": "2026-06-16T10:27:12Z",
+      "scanned_at": "2026-06-16T14:36:50Z",
       "total": 76,
       "unknown": 0
     },
@@ -327,7 +327,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-16T10:26:34Z",
+      "scanned_at": "2026-06-16T14:35:48Z",
       "total": 0,
       "unknown": 0
     },
@@ -337,7 +337,7 @@
       "low": 850,
       "medium": 1956,
       "reference": "golang:1.24.13-bookworm",
-      "scanned_at": "2026-06-16T10:25:33Z",
+      "scanned_at": "2026-06-16T14:35:14Z",
       "total": 3439,
       "unknown": 13
     },
@@ -347,7 +347,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble-arm32v7",
-      "scanned_at": "2026-06-16T10:30:52Z",
+      "scanned_at": "2026-06-16T14:39:43Z",
       "total": 55,
       "unknown": 0
     },
@@ -357,7 +357,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19-arm64v8",
-      "scanned_at": "2026-06-16T10:35:42Z",
+      "scanned_at": "2026-06-16T14:43:58Z",
       "total": 107,
       "unknown": 0
     },
@@ -367,7 +367,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:17-jre-noble",
-      "scanned_at": "2026-06-16T10:28:02Z",
+      "scanned_at": "2026-06-16T14:37:47Z",
       "total": 67,
       "unknown": 0
     },
@@ -377,7 +377,7 @@
       "low": 994,
       "medium": 486,
       "reference": "python:3.14.6",
-      "scanned_at": "2026-06-16T10:25:13Z",
+      "scanned_at": "2026-06-16T14:34:30Z",
       "total": 1721,
       "unknown": 85
     },
@@ -387,7 +387,7 @@
       "low": 82,
       "medium": 43,
       "reference": "node:26.2.0-trixie-slim",
-      "scanned_at": "2026-06-16T10:26:49Z",
+      "scanned_at": "2026-06-16T14:36:16Z",
       "total": 144,
       "unknown": 6
     },
@@ -397,7 +397,7 @@
       "low": 32,
       "medium": 18,
       "reference": "eclipse-temurin:11-jre-alpine-3.22",
-      "scanned_at": "2026-06-16T10:28:47Z",
+      "scanned_at": "2026-06-16T14:38:46Z",
       "total": 58,
       "unknown": 0
     },
@@ -407,7 +407,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim",
-      "scanned_at": "2026-06-16T10:29:47Z",
+      "scanned_at": "2026-06-16T14:38:45Z",
       "total": 274,
       "unknown": 12
     },
@@ -417,7 +417,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble-arm64v8",
-      "scanned_at": "2026-06-16T10:30:58Z",
+      "scanned_at": "2026-06-16T14:39:49Z",
       "total": 55,
       "unknown": 0
     },
@@ -427,7 +427,7 @@
       "low": 1121,
       "medium": 1138,
       "reference": "python:3.12.13-bookworm",
-      "scanned_at": "2026-06-16T10:25:44Z",
+      "scanned_at": "2026-06-16T14:35:01Z",
       "total": 2622,
       "unknown": 85
     },
@@ -437,7 +437,7 @@
       "low": 43,
       "medium": 91,
       "reference": "eclipse-temurin:21-resolute",
-      "scanned_at": "2026-06-16T10:27:21Z",
+      "scanned_at": "2026-06-16T14:37:00Z",
       "total": 145,
       "unknown": 0
     },
@@ -447,7 +447,7 @@
       "low": 0,
       "medium": 3,
       "reference": "node:24.16.0-alpine3.24",
-      "scanned_at": "2026-06-16T10:27:31Z",
+      "scanned_at": "2026-06-16T14:36:58Z",
       "total": 3,
       "unknown": 0
     },
@@ -457,7 +457,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy-arm64v8",
-      "scanned_at": "2026-06-16T10:42:11Z",
+      "scanned_at": "2026-06-16T14:49:24Z",
       "total": 275,
       "unknown": 0
     },
@@ -467,7 +467,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23",
-      "scanned_at": "2026-06-16T10:29:20Z",
+      "scanned_at": "2026-06-16T14:38:24Z",
       "total": 40,
       "unknown": 0
     },
@@ -477,7 +477,7 @@
       "low": 184,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:40:43Z",
+      "scanned_at": "2026-06-16T14:48:09Z",
       "total": 464,
       "unknown": 12
     },
@@ -487,7 +487,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20-arm64v8",
-      "scanned_at": "2026-06-16T10:44:42Z",
+      "scanned_at": "2026-06-16T14:51:48Z",
       "total": 117,
       "unknown": 0
     },
@@ -497,7 +497,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-16T10:31:44Z",
+      "scanned_at": "2026-06-16T14:40:33Z",
       "total": 12,
       "unknown": 0
     },
@@ -507,7 +507,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19-amd64",
-      "scanned_at": "2026-06-16T10:35:26Z",
+      "scanned_at": "2026-06-16T14:43:45Z",
       "total": 109,
       "unknown": 0
     },
@@ -517,7 +517,7 @@
       "low": 65,
       "medium": 56,
       "reference": "eclipse-temurin:26-jdk-jammy",
-      "scanned_at": "2026-06-16T10:25:26Z",
+      "scanned_at": "2026-06-16T14:34:50Z",
       "total": 123,
       "unknown": 0
     },
@@ -527,7 +527,7 @@
       "low": 30,
       "medium": 12,
       "reference": "eclipse-temurin:25-jre-alpine-3.22",
-      "scanned_at": "2026-06-16T10:26:21Z",
+      "scanned_at": "2026-06-16T14:35:52Z",
       "total": 45,
       "unknown": 0
     },
@@ -537,7 +537,7 @@
       "low": 0,
       "medium": 0,
       "reference": "ubuntu:25.04",
-      "scanned_at": "2026-06-16T10:25:06Z",
+      "scanned_at": "2026-06-16T14:34:23Z",
       "total": 1,
       "unknown": 0
     },
@@ -547,7 +547,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-16T10:43:20Z",
+      "scanned_at": "2026-06-16T14:50:31Z",
       "total": 11,
       "unknown": 0
     },
@@ -557,7 +557,7 @@
       "low": 1383,
       "medium": 2084,
       "reference": "rust:1.95.0-bullseye",
-      "scanned_at": "2026-06-16T10:27:33Z",
+      "scanned_at": "2026-06-16T14:36:59Z",
       "total": 4087,
       "unknown": 52
     },
@@ -567,7 +567,7 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.24.1",
-      "scanned_at": "2026-06-16T10:25:04Z",
+      "scanned_at": "2026-06-16T14:34:21Z",
       "total": 0,
       "unknown": 0
     },
@@ -577,7 +577,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-16T10:34:27Z",
+      "scanned_at": "2026-06-16T14:42:52Z",
       "total": 20,
       "unknown": 0
     },
@@ -587,7 +587,7 @@
       "low": 20,
       "medium": 11,
       "reference": "node:24.16.0-alpine3.23",
-      "scanned_at": "2026-06-16T10:27:30Z",
+      "scanned_at": "2026-06-16T14:36:57Z",
       "total": 33,
       "unknown": 0
     },
@@ -597,7 +597,7 @@
       "low": 187,
       "medium": 169,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim-amd64",
-      "scanned_at": "2026-06-16T10:45:08Z",
+      "scanned_at": "2026-06-16T14:52:11Z",
       "total": 490,
       "unknown": 24
     },
@@ -607,7 +607,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy",
-      "scanned_at": "2026-06-16T10:46:12Z",
+      "scanned_at": "2026-06-16T14:53:08Z",
       "total": 275,
       "unknown": 0
     },
@@ -617,7 +617,7 @@
       "low": 68,
       "medium": 42,
       "reference": "node:24.16.0-slim",
-      "scanned_at": "2026-06-16T10:27:44Z",
+      "scanned_at": "2026-06-16T14:37:12Z",
       "total": 126,
       "unknown": 6
     },
@@ -627,7 +627,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-windowsservercore-ltsc2025",
-      "scanned_at": "2026-06-16T10:29:10Z",
+      "scanned_at": "2026-06-16T14:38:14Z",
       "total": 0,
       "unknown": 0
     },
@@ -637,7 +637,7 @@
       "low": 43,
       "medium": 76,
       "reference": "eclipse-temurin:25-resolute",
-      "scanned_at": "2026-06-16T10:26:32Z",
+      "scanned_at": "2026-06-16T14:36:03Z",
       "total": 130,
       "unknown": 0
     },
@@ -647,7 +647,7 @@
       "low": 184,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim",
-      "scanned_at": "2026-06-16T10:40:21Z",
+      "scanned_at": "2026-06-16T14:47:53Z",
       "total": 464,
       "unknown": 12
     },
@@ -657,7 +657,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19",
-      "scanned_at": "2026-06-16T10:44:03Z",
+      "scanned_at": "2026-06-16T14:51:15Z",
       "total": 69,
       "unknown": 0
     },
@@ -667,7 +667,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:25-jdk-alpine-3.23",
-      "scanned_at": "2026-06-16T10:26:06Z",
+      "scanned_at": "2026-06-16T14:35:34Z",
       "total": 46,
       "unknown": 0
     },
@@ -677,7 +677,7 @@
       "low": 20,
       "medium": 8,
       "reference": "alpine:3.22.4",
-      "scanned_at": "2026-06-16T10:25:06Z",
+      "scanned_at": "2026-06-16T14:34:22Z",
       "total": 30,
       "unknown": 0
     },
@@ -687,7 +687,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:11-jdk-jammy",
-      "scanned_at": "2026-06-16T10:28:27Z",
+      "scanned_at": "2026-06-16T14:38:22Z",
       "total": 76,
       "unknown": 0
     },
@@ -697,7 +697,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:21-jre-resolute",
-      "scanned_at": "2026-06-16T10:27:15Z",
+      "scanned_at": "2026-06-16T14:36:53Z",
       "total": 137,
       "unknown": 0
     },
@@ -707,7 +707,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:26-jre-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:25:46Z",
+      "scanned_at": "2026-06-16T14:35:12Z",
       "total": 0,
       "unknown": 0
     },
@@ -717,7 +717,7 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal-arm64v8",
-      "scanned_at": "2026-06-16T10:46:04Z",
+      "scanned_at": "2026-06-16T14:53:03Z",
       "total": 57,
       "unknown": 0
     },
@@ -727,7 +727,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-16T10:42:40Z",
+      "scanned_at": "2026-06-16T14:49:51Z",
       "total": 11,
       "unknown": 0
     },
@@ -737,7 +737,7 @@
       "low": 35,
       "medium": 76,
       "reference": "eclipse-temurin:26-jre",
-      "scanned_at": "2026-06-16T10:25:36Z",
+      "scanned_at": "2026-06-16T14:35:01Z",
       "total": 122,
       "unknown": 0
     },
@@ -747,7 +747,7 @@
       "low": 17,
       "medium": 11,
       "reference": "rust:1.92.0-alpine3.20",
-      "scanned_at": "2026-06-16T10:31:32Z",
+      "scanned_at": "2026-06-16T14:41:09Z",
       "total": 46,
       "unknown": 0
     },
@@ -757,7 +757,7 @@
       "low": 40,
       "medium": 155,
       "reference": "golang:1.24.13-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:29Z",
+      "scanned_at": "2026-06-16T14:35:07Z",
       "total": 450,
       "unknown": 0
     },
@@ -767,7 +767,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:11-noble",
-      "scanned_at": "2026-06-16T10:28:57Z",
+      "scanned_at": "2026-06-16T14:38:57Z",
       "total": 67,
       "unknown": 0
     },
@@ -777,7 +777,7 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal-arm32v7",
-      "scanned_at": "2026-06-16T10:45:56Z",
+      "scanned_at": "2026-06-16T14:52:56Z",
       "total": 57,
       "unknown": 0
     },
@@ -787,7 +787,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20-amd64",
-      "scanned_at": "2026-06-16T10:44:23Z",
+      "scanned_at": "2026-06-16T14:51:34Z",
       "total": 119,
       "unknown": 0
     },
@@ -797,7 +797,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:32:52Z",
+      "scanned_at": "2026-06-16T14:41:31Z",
       "total": 284,
       "unknown": 12
     },
@@ -807,7 +807,7 @@
       "low": 982,
       "medium": 478,
       "reference": "gcc:15.2.0-trixie",
-      "scanned_at": "2026-06-16T10:25:32Z",
+      "scanned_at": "2026-06-16T14:35:00Z",
       "total": 1701,
       "unknown": 85
     },
@@ -817,7 +817,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:11-resolute",
-      "scanned_at": "2026-06-16T10:28:58Z",
+      "scanned_at": "2026-06-16T14:38:57Z",
       "total": 137,
       "unknown": 0
     },
@@ -827,7 +827,7 @@
       "low": 583,
       "medium": 281,
       "reference": "rust:1.96.0-slim-trixie",
-      "scanned_at": "2026-06-16T10:26:37Z",
+      "scanned_at": "2026-06-16T14:35:59Z",
       "total": 919,
       "unknown": 6
     },
@@ -837,7 +837,7 @@
       "low": 1052,
       "medium": 655,
       "reference": "node:26.1.0-trixie",
-      "scanned_at": "2026-06-16T10:27:03Z",
+      "scanned_at": "2026-06-16T14:36:30Z",
       "total": 2044,
       "unknown": 85
     },
@@ -847,7 +847,7 @@
       "low": 20,
       "medium": 16,
       "reference": "rust:1.93.1-alpine3.22",
-      "scanned_at": "2026-06-16T10:30:17Z",
+      "scanned_at": "2026-06-16T14:39:51Z",
       "total": 52,
       "unknown": 0
     },
@@ -857,7 +857,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-nanoserver-1809",
-      "scanned_at": "2026-06-16T10:33:32Z",
+      "scanned_at": "2026-06-16T14:42:04Z",
       "total": 20,
       "unknown": 0
     },
@@ -867,7 +867,7 @@
       "low": 994,
       "medium": 486,
       "reference": "python:3.14.6-trixie",
-      "scanned_at": "2026-06-16T10:25:29Z",
+      "scanned_at": "2026-06-16T14:34:46Z",
       "total": 1721,
       "unknown": 85
     },
@@ -877,7 +877,7 @@
       "low": 69,
       "medium": 40,
       "reference": "node:26.3.0-bookworm-slim",
-      "scanned_at": "2026-06-16T10:25:38Z",
+      "scanned_at": "2026-06-16T14:35:03Z",
       "total": 125,
       "unknown": 6
     },
@@ -887,7 +887,7 @@
       "low": 995,
       "medium": 489,
       "reference": "python:3.12.13-trixie",
-      "scanned_at": "2026-06-16T10:25:47Z",
+      "scanned_at": "2026-06-16T14:35:04Z",
       "total": 1725,
       "unknown": 85
     },
@@ -897,7 +897,7 @@
       "low": 1097,
       "medium": 1128,
       "reference": "node:24.16.0-bookworm",
-      "scanned_at": "2026-06-16T10:27:32Z",
+      "scanned_at": "2026-06-16T14:36:59Z",
       "total": 2586,
       "unknown": 85
     },
@@ -907,7 +907,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:11-jre-jammy",
-      "scanned_at": "2026-06-16T10:28:49Z",
+      "scanned_at": "2026-06-16T14:38:48Z",
       "total": 76,
       "unknown": 0
     },
@@ -917,7 +917,7 @@
       "low": 971,
       "medium": 479,
       "reference": "node:24.16.0-trixie",
-      "scanned_at": "2026-06-16T10:27:50Z",
+      "scanned_at": "2026-06-16T14:37:17Z",
       "total": 1689,
       "unknown": 85
     },
@@ -927,7 +927,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-nanoserver-ltsc2025",
-      "scanned_at": "2026-06-16T10:26:51Z",
+      "scanned_at": "2026-06-16T14:36:04Z",
       "total": 0,
       "unknown": 0
     },
@@ -937,7 +937,7 @@
       "low": 89,
       "medium": 1558,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-aot",
-      "scanned_at": "2026-06-16T10:26:52Z",
+      "scanned_at": "2026-06-16T14:36:06Z",
       "total": 1695,
       "unknown": 0
     },
@@ -947,7 +947,7 @@
       "low": 2,
       "medium": 6,
       "reference": "eclipse-temurin:11-jdk-alpine-3.21",
-      "scanned_at": "2026-06-16T10:28:25Z",
+      "scanned_at": "2026-06-16T14:38:21Z",
       "total": 13,
       "unknown": 0
     },
@@ -957,7 +957,7 @@
       "low": 63,
       "medium": 32,
       "reference": "python:3.14.6-slim-trixie",
-      "scanned_at": "2026-06-16T10:25:28Z",
+      "scanned_at": "2026-06-16T14:34:45Z",
       "total": 113,
       "unknown": 6
     },
@@ -967,7 +967,7 @@
       "low": 62,
       "medium": 35,
       "reference": "node:24.16.0-trixie-slim",
-      "scanned_at": "2026-06-16T10:27:53Z",
+      "scanned_at": "2026-06-16T14:37:20Z",
       "total": 114,
       "unknown": 6
     },
@@ -977,7 +977,7 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-amd64",
-      "scanned_at": "2026-06-16T10:26:51Z",
+      "scanned_at": "2026-06-16T14:36:05Z",
       "total": 45,
       "unknown": 0
     },
@@ -987,7 +987,7 @@
       "low": 1311,
       "medium": 3075,
       "reference": "gcc:15.1.0-bookworm",
-      "scanned_at": "2026-06-16T10:25:40Z",
+      "scanned_at": "2026-06-16T14:35:09Z",
       "total": 5806,
       "unknown": 89
     },
@@ -997,7 +997,7 @@
       "low": 982,
       "medium": 478,
       "reference": "gcc:16.1.0-trixie",
-      "scanned_at": "2026-06-16T10:25:14Z",
+      "scanned_at": "2026-06-16T14:34:40Z",
       "total": 1701,
       "unknown": 85
     },
@@ -1007,7 +1007,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:17-jre-jammy",
-      "scanned_at": "2026-06-16T10:27:59Z",
+      "scanned_at": "2026-06-16T14:37:44Z",
       "total": 76,
       "unknown": 0
     },
@@ -1017,7 +1017,7 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.21.7",
-      "scanned_at": "2026-06-16T10:25:07Z",
+      "scanned_at": "2026-06-16T14:34:22Z",
       "total": 0,
       "unknown": 0
     },
@@ -1027,7 +1027,7 @@
       "low": 68,
       "medium": 39,
       "reference": "debian:12",
-      "scanned_at": "2026-06-16T10:25:17Z",
+      "scanned_at": "2026-06-16T14:34:28Z",
       "total": 123,
       "unknown": 6
     },
@@ -1037,7 +1037,7 @@
       "low": 1120,
       "medium": 1135,
       "reference": "python:3.13.14-bookworm",
-      "scanned_at": "2026-06-16T10:25:35Z",
+      "scanned_at": "2026-06-16T14:34:52Z",
       "total": 2618,
       "unknown": 85
     },
@@ -1047,7 +1047,7 @@
       "low": 58,
       "medium": 103,
       "reference": "ubuntu:25.10",
-      "scanned_at": "2026-06-16T10:25:04Z",
+      "scanned_at": "2026-06-16T14:34:22Z",
       "total": 164,
       "unknown": 0
     },
@@ -1057,7 +1057,7 @@
       "low": 184,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:40:30Z",
+      "scanned_at": "2026-06-16T14:48:02Z",
       "total": 464,
       "unknown": 12
     },
@@ -1067,7 +1067,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-cbl-mariner2.0",
-      "scanned_at": "2026-06-16T10:45:32Z",
+      "scanned_at": "2026-06-16T14:52:34Z",
       "total": 467,
       "unknown": 0
     },
@@ -1077,7 +1077,7 @@
       "low": 69,
       "medium": 478,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-aot-arm64v8",
-      "scanned_at": "2026-06-16T10:27:28Z",
+      "scanned_at": "2026-06-16T14:36:36Z",
       "total": 571,
       "unknown": 0
     },
@@ -1087,7 +1087,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20-arm64v8",
-      "scanned_at": "2026-06-16T10:40:13Z",
+      "scanned_at": "2026-06-16T14:47:46Z",
       "total": 117,
       "unknown": 0
     },
@@ -1097,7 +1097,7 @@
       "low": 62,
       "medium": 32,
       "reference": "debian:13-slim",
-      "scanned_at": "2026-06-16T10:25:15Z",
+      "scanned_at": "2026-06-16T14:34:25Z",
       "total": 111,
       "unknown": 6
     },
@@ -1107,7 +1107,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-arm64v8",
-      "scanned_at": "2026-06-16T10:25:32Z",
+      "scanned_at": "2026-06-16T14:34:47Z",
       "total": 30,
       "unknown": 0
     },
@@ -1117,7 +1117,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:21-jdk-alpine-3.23",
-      "scanned_at": "2026-06-16T10:26:52Z",
+      "scanned_at": "2026-06-16T14:36:25Z",
       "total": 46,
       "unknown": 0
     },
@@ -1127,7 +1127,7 @@
       "low": 971,
       "medium": 476,
       "reference": "rust:1.96.0-trixie",
-      "scanned_at": "2026-06-16T10:26:37Z",
+      "scanned_at": "2026-06-16T14:36:00Z",
       "total": 1686,
       "unknown": 85
     },
@@ -1137,7 +1137,7 @@
       "low": 20,
       "medium": 16,
       "reference": "rust:1.93.1-alpine3.23",
-      "scanned_at": "2026-06-16T10:30:17Z",
+      "scanned_at": "2026-06-16T14:39:51Z",
       "total": 52,
       "unknown": 0
     },
@@ -1147,7 +1147,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19-arm64v8",
-      "scanned_at": "2026-06-16T10:44:18Z",
+      "scanned_at": "2026-06-16T14:51:30Z",
       "total": 67,
       "unknown": 0
     },
@@ -1157,7 +1157,7 @@
       "low": 189,
       "medium": 177,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:36:20Z",
+      "scanned_at": "2026-06-16T14:44:27Z",
       "total": 534,
       "unknown": 24
     },
@@ -1167,7 +1167,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-16T10:34:37Z",
+      "scanned_at": "2026-06-16T14:43:02Z",
       "total": 20,
       "unknown": 0
     },
@@ -1177,7 +1177,7 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble",
-      "scanned_at": "2026-06-16T10:26:51Z",
+      "scanned_at": "2026-06-16T14:36:05Z",
       "total": 45,
       "unknown": 0
     },
@@ -1187,7 +1187,7 @@
       "low": 20,
       "medium": 11,
       "reference": "node:26.2.0-alpine3.22",
-      "scanned_at": "2026-06-16T10:26:15Z",
+      "scanned_at": "2026-06-16T14:35:41Z",
       "total": 33,
       "unknown": 0
     },
@@ -1197,7 +1197,7 @@
       "low": 10,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-azurelinux3.0-amd64",
-      "scanned_at": "2026-06-16T10:29:36Z",
+      "scanned_at": "2026-06-16T14:38:39Z",
       "total": 153,
       "unknown": 0
     },
@@ -1207,7 +1207,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:11-jdk",
-      "scanned_at": "2026-06-16T10:28:24Z",
+      "scanned_at": "2026-06-16T14:38:20Z",
       "total": 137,
       "unknown": 0
     },
@@ -1217,7 +1217,7 @@
       "low": 838,
       "medium": 1822,
       "reference": "golang:1.24.13-trixie",
-      "scanned_at": "2026-06-16T10:25:34Z",
+      "scanned_at": "2026-06-16T14:35:17Z",
       "total": 3272,
       "unknown": 13
     },
@@ -1227,7 +1227,7 @@
       "low": 0,
       "medium": 0,
       "reference": "python:3.13.14-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:33Z",
+      "scanned_at": "2026-06-16T14:34:50Z",
       "total": 0,
       "unknown": 0
     },
@@ -1237,7 +1237,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal-arm32v7",
-      "scanned_at": "2026-06-16T10:41:39Z",
+      "scanned_at": "2026-06-16T14:48:55Z",
       "total": 51,
       "unknown": 0
     },
@@ -1247,7 +1247,7 @@
       "low": 1322,
       "medium": 1659,
       "reference": "node:26.3.0-bullseye",
-      "scanned_at": "2026-06-16T10:25:48Z",
+      "scanned_at": "2026-06-16T14:35:14Z",
       "total": 3449,
       "unknown": 52
     },
@@ -1257,7 +1257,7 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.93.1-alpine3.20",
-      "scanned_at": "2026-06-16T10:30:00Z",
+      "scanned_at": "2026-06-16T14:39:32Z",
       "total": 20,
       "unknown": 0
     },
@@ -1267,7 +1267,7 @@
       "low": 20,
       "medium": 8,
       "reference": "alpine:3.23.4",
-      "scanned_at": "2026-06-16T10:25:05Z",
+      "scanned_at": "2026-06-16T14:34:22Z",
       "total": 30,
       "unknown": 0
     },
@@ -1277,7 +1277,7 @@
       "low": 715,
       "medium": 1460,
       "reference": "rust:1.93.1-slim-bookworm",
-      "scanned_at": "2026-06-16T10:30:56Z",
+      "scanned_at": "2026-06-16T14:40:31Z",
       "total": 2453,
       "unknown": 7
     },
@@ -1287,7 +1287,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19-amd64",
-      "scanned_at": "2026-06-16T10:39:30Z",
+      "scanned_at": "2026-06-16T14:47:13Z",
       "total": 67,
       "unknown": 0
     },
@@ -1297,7 +1297,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy-arm32v7",
-      "scanned_at": "2026-06-16T10:36:59Z",
+      "scanned_at": "2026-06-16T14:45:03Z",
       "total": 304,
       "unknown": 0
     },
@@ -1307,7 +1307,7 @@
       "low": 35,
       "medium": 76,
       "reference": "eclipse-temurin:25-jre",
-      "scanned_at": "2026-06-16T10:26:16Z",
+      "scanned_at": "2026-06-16T14:35:45Z",
       "total": 122,
       "unknown": 0
     },
@@ -1317,7 +1317,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal",
-      "scanned_at": "2026-06-16T10:41:31Z",
+      "scanned_at": "2026-06-16T14:48:48Z",
       "total": 51,
       "unknown": 0
     },
@@ -1327,7 +1327,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:17-jdk-alpine-3.23",
-      "scanned_at": "2026-06-16T10:27:40Z",
+      "scanned_at": "2026-06-16T14:37:21Z",
       "total": 46,
       "unknown": 0
     },
@@ -1337,7 +1337,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy-arm64v8",
-      "scanned_at": "2026-06-16T10:37:08Z",
+      "scanned_at": "2026-06-16T14:45:11Z",
       "total": 304,
       "unknown": 0
     },
@@ -1347,7 +1347,7 @@
       "low": 21,
       "medium": 252,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-cbl-mariner2.0-amd64",
-      "scanned_at": "2026-06-16T10:36:35Z",
+      "scanned_at": "2026-06-16T14:44:42Z",
       "total": 505,
       "unknown": 0
     },
@@ -1357,7 +1357,7 @@
       "low": 1311,
       "medium": 3075,
       "reference": "gcc:14.3.0-bookworm",
-      "scanned_at": "2026-06-16T10:25:54Z",
+      "scanned_at": "2026-06-16T14:35:23Z",
       "total": 5806,
       "unknown": 89
     },
@@ -1367,7 +1367,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:21-jre-noble",
-      "scanned_at": "2026-06-16T10:27:15Z",
+      "scanned_at": "2026-06-16T14:36:53Z",
       "total": 67,
       "unknown": 0
     },
@@ -1377,7 +1377,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20-amd64",
-      "scanned_at": "2026-06-16T10:39:59Z",
+      "scanned_at": "2026-06-16T14:47:33Z",
       "total": 119,
       "unknown": 0
     },
@@ -1387,7 +1387,7 @@
       "low": 752,
       "medium": 1005,
       "reference": "golang:1.26.4-bookworm",
-      "scanned_at": "2026-06-16T10:25:11Z",
+      "scanned_at": "2026-06-16T14:34:37Z",
       "total": 1981,
       "unknown": 13
     },
@@ -1397,7 +1397,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-amd64",
-      "scanned_at": "2026-06-16T10:25:09Z",
+      "scanned_at": "2026-06-16T14:34:31Z",
       "total": 30,
       "unknown": 0
     },
@@ -1407,7 +1407,7 @@
       "low": 1120,
       "medium": 1135,
       "reference": "python:3.14.6-bookworm",
-      "scanned_at": "2026-06-16T10:25:24Z",
+      "scanned_at": "2026-06-16T14:34:41Z",
       "total": 2618,
       "unknown": 85
     },
@@ -1417,7 +1417,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jdk-alpine-3.21",
-      "scanned_at": "2026-06-16T10:27:39Z",
+      "scanned_at": "2026-06-16T14:37:21Z",
       "total": 0,
       "unknown": 0
     },
@@ -1427,7 +1427,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.95.0-alpine3.23",
-      "scanned_at": "2026-06-16T10:27:13Z",
+      "scanned_at": "2026-06-16T14:36:38Z",
       "total": 30,
       "unknown": 0
     },
@@ -1437,7 +1437,7 @@
       "low": 36,
       "medium": 101,
       "reference": "eclipse-temurin:17-noble",
-      "scanned_at": "2026-06-16T10:28:07Z",
+      "scanned_at": "2026-06-16T14:37:54Z",
       "total": 139,
       "unknown": 0
     },
@@ -1447,7 +1447,7 @@
       "low": 878,
       "medium": 1760,
       "reference": "rust:1.93.1-slim-bullseye",
-      "scanned_at": "2026-06-16T10:31:04Z",
+      "scanned_at": "2026-06-16T14:40:39Z",
       "total": 3017,
       "unknown": 7
     },
@@ -1457,7 +1457,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:26:32Z",
+      "scanned_at": "2026-06-16T14:36:03Z",
       "total": 0,
       "unknown": 0
     },
@@ -1467,7 +1467,7 @@
       "low": 0,
       "medium": 40,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-aot-arm64v8",
-      "scanned_at": "2026-06-16T10:26:19Z",
+      "scanned_at": "2026-06-16T14:35:34Z",
       "total": 163,
       "unknown": 0
     },
@@ -1477,7 +1477,7 @@
       "low": 1142,
       "medium": 1263,
       "reference": "rust:1.95.0-bookworm",
-      "scanned_at": "2026-06-16T10:27:23Z",
+      "scanned_at": "2026-06-16T14:36:49Z",
       "total": 2855,
       "unknown": 85
     },
@@ -1487,7 +1487,7 @@
       "low": 153,
       "medium": 109,
       "reference": "eclipse-temurin:21-jre-ubi9-minimal",
-      "scanned_at": "2026-06-16T10:27:19Z",
+      "scanned_at": "2026-06-16T14:36:57Z",
       "total": 263,
       "unknown": 0
     },
@@ -1497,7 +1497,7 @@
       "low": 35,
       "medium": 76,
       "reference": "eclipse-temurin:26-jre-resolute",
-      "scanned_at": "2026-06-16T10:25:44Z",
+      "scanned_at": "2026-06-16T14:35:10Z",
       "total": 122,
       "unknown": 0
     },
@@ -1507,7 +1507,7 @@
       "low": 1182,
       "medium": 1823,
       "reference": "rust:1.94.1-trixie",
-      "scanned_at": "2026-06-16T10:29:31Z",
+      "scanned_at": "2026-06-16T14:39:03Z",
       "total": 3640,
       "unknown": 86
     },
@@ -1517,7 +1517,7 @@
       "low": 20,
       "medium": 8,
       "reference": "golang:1.25.11-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:17Z",
+      "scanned_at": "2026-06-16T14:34:48Z",
       "total": 30,
       "unknown": 0
     },
@@ -1527,7 +1527,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble-amd64",
-      "scanned_at": "2026-06-16T10:30:46Z",
+      "scanned_at": "2026-06-16T14:39:37Z",
       "total": 55,
       "unknown": 0
     },
@@ -1537,7 +1537,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.96.0-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:50Z",
+      "scanned_at": "2026-06-16T14:35:10Z",
       "total": 30,
       "unknown": 0
     },
@@ -1547,7 +1547,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:26-jdk-alpine-3.23",
-      "scanned_at": "2026-06-16T10:25:26Z",
+      "scanned_at": "2026-06-16T14:34:49Z",
       "total": 46,
       "unknown": 0
     },
@@ -1557,7 +1557,7 @@
       "low": 43,
       "medium": 76,
       "reference": "eclipse-temurin:26-jdk",
-      "scanned_at": "2026-06-16T10:25:25Z",
+      "scanned_at": "2026-06-16T14:34:49Z",
       "total": 130,
       "unknown": 0
     },
@@ -1567,7 +1567,7 @@
       "low": 95,
       "medium": 46,
       "reference": "debian:11",
-      "scanned_at": "2026-06-16T10:25:22Z",
+      "scanned_at": "2026-06-16T14:34:33Z",
       "total": 162,
       "unknown": 6
     },
@@ -1577,7 +1577,7 @@
       "low": 995,
       "medium": 489,
       "reference": "python:3.11.15-trixie",
-      "scanned_at": "2026-06-16T10:25:56Z",
+      "scanned_at": "2026-06-16T14:35:12Z",
       "total": 1728,
       "unknown": 85
     },
@@ -1587,7 +1587,7 @@
       "low": 1196,
       "medium": 2056,
       "reference": "rust:1.94.1-bookworm",
-      "scanned_at": "2026-06-16T10:28:54Z",
+      "scanned_at": "2026-06-16T14:38:25Z",
       "total": 3977,
       "unknown": 85
     },
@@ -1597,7 +1597,7 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.94.1-alpine3.20",
-      "scanned_at": "2026-06-16T10:28:27Z",
+      "scanned_at": "2026-06-16T14:37:55Z",
       "total": 20,
       "unknown": 0
     },
@@ -1607,7 +1607,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:28:58Z",
+      "scanned_at": "2026-06-16T14:38:57Z",
       "total": 0,
       "unknown": 0
     },
@@ -1617,7 +1617,7 @@
       "low": 994,
       "medium": 486,
       "reference": "python:3.13.14-trixie",
-      "scanned_at": "2026-06-16T10:25:38Z",
+      "scanned_at": "2026-06-16T14:34:55Z",
       "total": 1721,
       "unknown": 85
     },
@@ -1627,7 +1627,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-cbl-mariner2.0-arm64v8",
-      "scanned_at": "2026-06-16T10:41:23Z",
+      "scanned_at": "2026-06-16T14:48:40Z",
       "total": 467,
       "unknown": 0
     },
@@ -1637,7 +1637,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19-arm32v7",
-      "scanned_at": "2026-06-16T10:44:11Z",
+      "scanned_at": "2026-06-16T14:51:22Z",
       "total": 67,
       "unknown": 0
     },
@@ -1647,7 +1647,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:11-jre-noble",
-      "scanned_at": "2026-06-16T10:28:51Z",
+      "scanned_at": "2026-06-16T14:38:50Z",
       "total": 67,
       "unknown": 0
     },
@@ -1657,7 +1657,7 @@
       "low": 1121,
       "medium": 1138,
       "reference": "python:3.11.15-bookworm",
-      "scanned_at": "2026-06-16T10:25:53Z",
+      "scanned_at": "2026-06-16T14:35:09Z",
       "total": 2625,
       "unknown": 85
     },
@@ -1667,7 +1667,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:21-jre-alpine-3.23",
-      "scanned_at": "2026-06-16T10:27:11Z",
+      "scanned_at": "2026-06-16T14:36:48Z",
       "total": 46,
       "unknown": 0
     },
@@ -1677,7 +1677,7 @@
       "low": 188,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim",
-      "scanned_at": "2026-06-16T10:44:51Z",
+      "scanned_at": "2026-06-16T14:51:55Z",
       "total": 483,
       "unknown": 12
     },
@@ -1687,7 +1687,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:27:22Z",
+      "scanned_at": "2026-06-16T14:37:01Z",
       "total": 0,
       "unknown": 0
     },
@@ -1697,7 +1697,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23-arm64v8",
-      "scanned_at": "2026-06-16T10:32:34Z",
+      "scanned_at": "2026-06-16T14:41:15Z",
       "total": 50,
       "unknown": 0
     },
@@ -1707,7 +1707,7 @@
       "low": 20,
       "medium": 8,
       "reference": "golang:1.26.4-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:06Z",
+      "scanned_at": "2026-06-16T14:34:30Z",
       "total": 30,
       "unknown": 0
     },
@@ -1717,7 +1717,7 @@
       "low": 10,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-azurelinux3.0-arm64v8",
-      "scanned_at": "2026-06-16T10:32:47Z",
+      "scanned_at": "2026-06-16T14:41:26Z",
       "total": 163,
       "unknown": 0
     },
@@ -1727,7 +1727,7 @@
       "low": 35,
       "medium": 76,
       "reference": "eclipse-temurin:25-jre-resolute",
-      "scanned_at": "2026-06-16T10:26:27Z",
+      "scanned_at": "2026-06-16T14:35:58Z",
       "total": 122,
       "unknown": 0
     },
@@ -1737,7 +1737,7 @@
       "low": 20,
       "medium": 44,
       "reference": "eclipse-temurin:26-jre-noble",
-      "scanned_at": "2026-06-16T10:25:43Z",
+      "scanned_at": "2026-06-16T14:35:09Z",
       "total": 66,
       "unknown": 0
     },
@@ -1747,7 +1747,7 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal-amd64",
-      "scanned_at": "2026-06-16T10:45:49Z",
+      "scanned_at": "2026-06-16T14:52:49Z",
       "total": 57,
       "unknown": 0
     },
@@ -1757,7 +1757,7 @@
       "low": 89,
       "medium": 48,
       "reference": "python:3.12.13-slim-bookworm",
-      "scanned_at": "2026-06-16T10:25:46Z",
+      "scanned_at": "2026-06-16T14:35:03Z",
       "total": 157,
       "unknown": 6
     },
@@ -1767,7 +1767,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.94.1-alpine3.23",
-      "scanned_at": "2026-06-16T10:28:44Z",
+      "scanned_at": "2026-06-16T14:38:14Z",
       "total": 30,
       "unknown": 0
     },
@@ -1777,7 +1777,7 @@
       "low": 1,
       "medium": 3,
       "reference": "python:3.11.15-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:51Z",
+      "scanned_at": "2026-06-16T14:35:07Z",
       "total": 7,
       "unknown": 0
     },
@@ -1787,7 +1787,7 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.95.0-alpine3.21",
-      "scanned_at": "2026-06-16T10:27:04Z",
+      "scanned_at": "2026-06-16T14:36:29Z",
       "total": 0,
       "unknown": 0
     },
@@ -1797,7 +1797,7 @@
       "low": 982,
       "medium": 478,
       "reference": "gcc:14.3.0-trixie",
-      "scanned_at": "2026-06-16T10:25:55Z",
+      "scanned_at": "2026-06-16T14:35:24Z",
       "total": 1701,
       "unknown": 85
     },
@@ -1807,7 +1807,7 @@
       "low": 43,
       "medium": 91,
       "reference": "eclipse-temurin:17-resolute",
-      "scanned_at": "2026-06-16T10:28:08Z",
+      "scanned_at": "2026-06-16T14:37:54Z",
       "total": 145,
       "unknown": 0
     },
@@ -1817,7 +1817,7 @@
       "low": 13,
       "medium": 36,
       "reference": "ubuntu:24.04",
-      "scanned_at": "2026-06-16T10:25:09Z",
+      "scanned_at": "2026-06-16T14:34:27Z",
       "total": 50,
       "unknown": 0
     },
@@ -1827,7 +1827,7 @@
       "low": 1142,
       "medium": 1268,
       "reference": "node:25.9.0-bookworm",
-      "scanned_at": "2026-06-16T10:27:10Z",
+      "scanned_at": "2026-06-16T14:36:37Z",
       "total": 2861,
       "unknown": 85
     },
@@ -1837,7 +1837,7 @@
       "low": 653,
       "medium": 363,
       "reference": "golang:1.26.4",
-      "scanned_at": "2026-06-16T10:25:04Z",
+      "scanned_at": "2026-06-16T14:34:28Z",
       "total": 1117,
       "unknown": 12
     },
@@ -1847,7 +1847,7 @@
       "low": 20,
       "medium": 16,
       "reference": "rust:1.94.1-alpine3.22",
-      "scanned_at": "2026-06-16T10:28:43Z",
+      "scanned_at": "2026-06-16T14:38:14Z",
       "total": 52,
       "unknown": 0
     },
@@ -1857,7 +1857,7 @@
       "low": 187,
       "medium": 167,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim",
-      "scanned_at": "2026-06-16T10:40:44Z",
+      "scanned_at": "2026-06-16T14:48:09Z",
       "total": 484,
       "unknown": 24
     },
@@ -1867,7 +1867,7 @@
       "low": 65,
       "medium": 56,
       "reference": "eclipse-temurin:25-jdk-jammy",
-      "scanned_at": "2026-06-16T10:26:06Z",
+      "scanned_at": "2026-06-16T14:35:35Z",
       "total": 123,
       "unknown": 0
     },
@@ -1877,7 +1877,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:32:57Z",
+      "scanned_at": "2026-06-16T14:41:36Z",
       "total": 284,
       "unknown": 12
     },
@@ -1887,7 +1887,7 @@
       "low": 1197,
       "medium": 2228,
       "reference": "rust:1.93.1-bookworm",
-      "scanned_at": "2026-06-16T10:30:27Z",
+      "scanned_at": "2026-06-16T14:40:02Z",
       "total": 4365,
       "unknown": 85
     },
@@ -1897,7 +1897,7 @@
       "low": 20,
       "medium": 11,
       "reference": "node:26.2.0-alpine3.23",
-      "scanned_at": "2026-06-16T10:26:15Z",
+      "scanned_at": "2026-06-16T14:35:41Z",
       "total": 33,
       "unknown": 0
     },
@@ -1907,7 +1907,7 @@
       "low": 188,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:45:07Z",
+      "scanned_at": "2026-06-16T14:52:11Z",
       "total": 483,
       "unknown": 12
     },
@@ -1917,7 +1917,7 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.96.0-alpine3.21",
-      "scanned_at": "2026-06-16T10:25:33Z",
+      "scanned_at": "2026-06-16T14:34:52Z",
       "total": 0,
       "unknown": 0
     },
@@ -1927,7 +1927,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19-arm64v8",
-      "scanned_at": "2026-06-16T10:39:51Z",
+      "scanned_at": "2026-06-16T14:47:25Z",
       "total": 65,
       "unknown": 0
     },
@@ -1937,7 +1937,7 @@
       "low": 995,
       "medium": 490,
       "reference": "python:3.10.20-trixie",
-      "scanned_at": "2026-06-16T10:26:04Z",
+      "scanned_at": "2026-06-16T14:35:20Z",
       "total": 1729,
       "unknown": 85
     },
@@ -1947,7 +1947,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-noble-arm64v8",
-      "scanned_at": "2026-06-16T10:34:14Z",
+      "scanned_at": "2026-06-16T14:42:41Z",
       "total": 65,
       "unknown": 0
     },
@@ -1957,7 +1957,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal-amd64",
-      "scanned_at": "2026-06-16T10:41:31Z",
+      "scanned_at": "2026-06-16T14:48:48Z",
       "total": 51,
       "unknown": 0
     },
@@ -1967,7 +1967,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:17-jre",
-      "scanned_at": "2026-06-16T10:27:52Z",
+      "scanned_at": "2026-06-16T14:37:36Z",
       "total": 137,
       "unknown": 0
     },
@@ -1977,7 +1977,7 @@
       "low": 65,
       "medium": 57,
       "reference": "eclipse-temurin:21-jdk-jammy",
-      "scanned_at": "2026-06-16T10:26:52Z",
+      "scanned_at": "2026-06-16T14:36:25Z",
       "total": 124,
       "unknown": 0
     },
@@ -1987,7 +1987,7 @@
       "low": 35,
       "medium": 38,
       "reference": "eclipse-temurin:26-jre-jammy",
-      "scanned_at": "2026-06-16T10:25:41Z",
+      "scanned_at": "2026-06-16T14:35:06Z",
       "total": 75,
       "unknown": 0
     },
@@ -1997,7 +1997,7 @@
       "low": 1142,
       "medium": 1266,
       "reference": "node:26.2.0-bookworm",
-      "scanned_at": "2026-06-16T10:26:26Z",
+      "scanned_at": "2026-06-16T14:35:53Z",
       "total": 2858,
       "unknown": 85
     },
@@ -2007,7 +2007,7 @@
       "low": 36,
       "medium": 101,
       "reference": "eclipse-temurin:21-noble",
-      "scanned_at": "2026-06-16T10:27:21Z",
+      "scanned_at": "2026-06-16T14:37:00Z",
       "total": 139,
       "unknown": 0
     },
@@ -2017,7 +2017,7 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.93.1-alpine3.21",
-      "scanned_at": "2026-06-16T10:30:09Z",
+      "scanned_at": "2026-06-16T14:39:43Z",
       "total": 20,
       "unknown": 0
     },
@@ -2027,7 +2027,7 @@
       "low": 17,
       "medium": 11,
       "reference": "rust:1.92.0-alpine3.21",
-      "scanned_at": "2026-06-16T10:31:44Z",
+      "scanned_at": "2026-06-16T14:41:21Z",
       "total": 46,
       "unknown": 0
     },
@@ -2037,7 +2037,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-16T10:30:28Z",
+      "scanned_at": "2026-06-16T14:39:20Z",
       "total": 12,
       "unknown": 0
     },
@@ -2047,7 +2047,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19-arm32v7",
-      "scanned_at": "2026-06-16T10:35:36Z",
+      "scanned_at": "2026-06-16T14:43:53Z",
       "total": 107,
       "unknown": 0
     },
@@ -2057,7 +2057,7 @@
       "low": 187,
       "medium": 169,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425",
-      "scanned_at": "2026-06-16T10:39:16Z",
+      "scanned_at": "2026-06-16T14:47:00Z",
       "total": 490,
       "unknown": 24
     },
@@ -2067,7 +2067,7 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18-arm64v8",
-      "scanned_at": "2026-06-16T10:35:22Z",
+      "scanned_at": "2026-06-16T14:43:40Z",
       "total": 81,
       "unknown": 0
     },
@@ -2077,7 +2077,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-16T10:37:36Z",
+      "scanned_at": "2026-06-16T14:45:34Z",
       "total": 16,
       "unknown": 0
     },
@@ -2087,7 +2087,7 @@
       "low": 43,
       "medium": 91,
       "reference": "eclipse-temurin:17-jdk",
-      "scanned_at": "2026-06-16T10:27:38Z",
+      "scanned_at": "2026-06-16T14:37:20Z",
       "total": 145,
       "unknown": 0
     },
@@ -2097,7 +2097,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy-arm32v7",
-      "scanned_at": "2026-06-16T10:33:15Z",
+      "scanned_at": "2026-06-16T14:41:48Z",
       "total": 76,
       "unknown": 0
     },
@@ -2107,7 +2107,7 @@
       "low": 30,
       "medium": 12,
       "reference": "eclipse-temurin:25-jdk-alpine-3.22",
-      "scanned_at": "2026-06-16T10:26:05Z",
+      "scanned_at": "2026-06-16T14:35:34Z",
       "total": 45,
       "unknown": 0
     },
@@ -2117,7 +2117,7 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18",
-      "scanned_at": "2026-06-16T10:35:04Z",
+      "scanned_at": "2026-06-16T14:43:26Z",
       "total": 83,
       "unknown": 0
     },
@@ -2127,7 +2127,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy",
-      "scanned_at": "2026-06-16T10:33:07Z",
+      "scanned_at": "2026-06-16T14:41:41Z",
       "total": 76,
       "unknown": 0
     },
@@ -2137,7 +2137,7 @@
       "low": 0,
       "medium": 0,
       "reference": "golang:1.25.11-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:18Z",
+      "scanned_at": "2026-06-16T14:34:50Z",
       "total": 0,
       "unknown": 0
     },
@@ -2147,7 +2147,7 @@
       "low": 1,
       "medium": 4,
       "reference": "python:3.10.20-alpine3.24",
-      "scanned_at": "2026-06-16T10:26:00Z",
+      "scanned_at": "2026-06-16T14:35:15Z",
       "total": 8,
       "unknown": 0
     },
@@ -2157,7 +2157,7 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18-arm32v7",
-      "scanned_at": "2026-06-16T10:35:13Z",
+      "scanned_at": "2026-06-16T14:43:34Z",
       "total": 81,
       "unknown": 0
     },
@@ -2167,7 +2167,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy-arm32v7",
-      "scanned_at": "2026-06-16T10:46:21Z",
+      "scanned_at": "2026-06-16T14:53:16Z",
       "total": 275,
       "unknown": 0
     },
@@ -2177,7 +2177,7 @@
       "low": 21,
       "medium": 13,
       "reference": "python:3.10.20-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:59Z",
+      "scanned_at": "2026-06-16T14:35:15Z",
       "total": 39,
       "unknown": 0
     },
@@ -2187,7 +2187,7 @@
       "low": 40,
       "medium": 155,
       "reference": "golang:1.24.13-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:29Z",
+      "scanned_at": "2026-06-16T14:35:08Z",
       "total": 450,
       "unknown": 0
     },
@@ -2197,7 +2197,7 @@
       "low": 187,
       "medium": 167,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:41:01Z",
+      "scanned_at": "2026-06-16T14:48:24Z",
       "total": 484,
       "unknown": 24
     },
@@ -2207,7 +2207,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jre-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:27:17Z",
+      "scanned_at": "2026-06-16T14:36:55Z",
       "total": 0,
       "unknown": 0
     },
@@ -2217,7 +2217,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jre-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:26:28Z",
+      "scanned_at": "2026-06-16T14:36:00Z",
       "total": 0,
       "unknown": 0
     },
@@ -2227,7 +2227,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-nanoserver-ltsc2025",
-      "scanned_at": "2026-06-16T10:30:41Z",
+      "scanned_at": "2026-06-16T14:39:31Z",
       "total": 12,
       "unknown": 0
     },
@@ -2237,7 +2237,7 @@
       "low": 10,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-azurelinux3.0",
-      "scanned_at": "2026-06-16T10:29:36Z",
+      "scanned_at": "2026-06-16T14:38:39Z",
       "total": 153,
       "unknown": 0
     },
@@ -2247,7 +2247,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-noble-amd64",
-      "scanned_at": "2026-06-16T10:34:08Z",
+      "scanned_at": "2026-06-16T14:42:36Z",
       "total": 65,
       "unknown": 0
     },
@@ -2257,7 +2257,7 @@
       "low": 0,
       "medium": 0,
       "reference": "python:3.14.6-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:16Z",
+      "scanned_at": "2026-06-16T14:34:33Z",
       "total": 0,
       "unknown": 0
     },
@@ -2267,7 +2267,7 @@
       "low": 43,
       "medium": 91,
       "reference": "eclipse-temurin:21-jdk",
-      "scanned_at": "2026-06-16T10:26:50Z",
+      "scanned_at": "2026-06-16T14:36:24Z",
       "total": 145,
       "unknown": 0
     },
@@ -2277,7 +2277,7 @@
       "low": 153,
       "medium": 109,
       "reference": "eclipse-temurin:17-ubi9-minimal",
-      "scanned_at": "2026-06-16T10:28:09Z",
+      "scanned_at": "2026-06-16T14:37:55Z",
       "total": 263,
       "unknown": 0
     },
@@ -2287,7 +2287,7 @@
       "low": 62,
       "medium": 33,
       "reference": "node:26.3.0-trixie-slim",
-      "scanned_at": "2026-06-16T10:25:57Z",
+      "scanned_at": "2026-06-16T14:35:22Z",
       "total": 112,
       "unknown": 6
     },
@@ -2297,7 +2297,7 @@
       "low": 189,
       "medium": 177,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim",
-      "scanned_at": "2026-06-16T10:36:10Z",
+      "scanned_at": "2026-06-16T14:44:21Z",
       "total": 534,
       "unknown": 24
     },
@@ -2307,7 +2307,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy-amd64",
-      "scanned_at": "2026-06-16T10:36:50Z",
+      "scanned_at": "2026-06-16T14:44:55Z",
       "total": 304,
       "unknown": 0
     },
@@ -2317,7 +2317,7 @@
       "low": 68,
       "medium": 39,
       "reference": "debian:12-slim",
-      "scanned_at": "2026-06-16T10:25:19Z",
+      "scanned_at": "2026-06-16T14:34:30Z",
       "total": 123,
       "unknown": 6
     },
@@ -2327,7 +2327,7 @@
       "low": 653,
       "medium": 363,
       "reference": "golang:1.25.11-trixie",
-      "scanned_at": "2026-06-16T10:25:22Z",
+      "scanned_at": "2026-06-16T14:34:56Z",
       "total": 1117,
       "unknown": 12
     },
@@ -2337,7 +2337,7 @@
       "low": 95,
       "medium": 49,
       "reference": "node:24.16.0-bullseye-slim",
-      "scanned_at": "2026-06-16T10:27:43Z",
+      "scanned_at": "2026-06-16T14:37:11Z",
       "total": 165,
       "unknown": 6
     },
@@ -2347,7 +2347,7 @@
       "low": 1052,
       "medium": 655,
       "reference": "node:26.2.0-trixie",
-      "scanned_at": "2026-06-16T10:26:48Z",
+      "scanned_at": "2026-06-16T14:36:15Z",
       "total": 2044,
       "unknown": 85
     },
@@ -2357,7 +2357,7 @@
       "low": 0,
       "medium": 40,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-aot-amd64",
-      "scanned_at": "2026-06-16T10:26:08Z",
+      "scanned_at": "2026-06-16T14:35:24Z",
       "total": 163,
       "unknown": 0
     },
@@ -2367,7 +2367,7 @@
       "low": 0,
       "medium": 1,
       "reference": "node:26.3.0-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:23Z",
+      "scanned_at": "2026-06-16T14:34:49Z",
       "total": 1,
       "unknown": 0
     },
@@ -2377,7 +2377,7 @@
       "low": 1097,
       "medium": 1126,
       "reference": "node:26.3.0-bookworm",
-      "scanned_at": "2026-06-16T10:25:34Z",
+      "scanned_at": "2026-06-16T14:35:00Z",
       "total": 2584,
       "unknown": 85
     },
@@ -2387,7 +2387,7 @@
       "low": 30,
       "medium": 12,
       "reference": "eclipse-temurin:21-jre-alpine-3.22",
-      "scanned_at": "2026-06-16T10:27:10Z",
+      "scanned_at": "2026-06-16T14:36:48Z",
       "total": 45,
       "unknown": 0
     },
@@ -2397,7 +2397,7 @@
       "low": 187,
       "medium": 167,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:40:52Z",
+      "scanned_at": "2026-06-16T14:48:17Z",
       "total": 484,
       "unknown": 24
     },
@@ -2407,7 +2407,7 @@
       "low": 1311,
       "medium": 3075,
       "reference": "gcc:15.2.0-bookworm",
-      "scanned_at": "2026-06-16T10:25:31Z",
+      "scanned_at": "2026-06-16T14:34:58Z",
       "total": 5806,
       "unknown": 89
     },
@@ -2417,7 +2417,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-cbl-mariner2.0-amd64",
-      "scanned_at": "2026-06-16T10:45:33Z",
+      "scanned_at": "2026-06-16T14:52:34Z",
       "total": 467,
       "unknown": 0
     },
@@ -2427,7 +2427,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy",
-      "scanned_at": "2026-06-16T10:36:49Z",
+      "scanned_at": "2026-06-16T14:44:55Z",
       "total": 304,
       "unknown": 0
     },
@@ -2437,7 +2437,7 @@
       "low": 21,
       "medium": 252,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-cbl-mariner2.0-arm64v8",
-      "scanned_at": "2026-06-16T10:36:44Z",
+      "scanned_at": "2026-06-16T14:44:49Z",
       "total": 505,
       "unknown": 0
     },
@@ -2447,7 +2447,7 @@
       "low": 189,
       "medium": 177,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim-amd64",
-      "scanned_at": "2026-06-16T10:36:10Z",
+      "scanned_at": "2026-06-16T14:44:21Z",
       "total": 534,
       "unknown": 24
     },
@@ -2457,7 +2457,7 @@
       "low": 6,
       "medium": 58,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-amd64",
-      "scanned_at": "2026-06-16T10:27:10Z",
+      "scanned_at": "2026-06-16T14:36:24Z",
       "total": 65,
       "unknown": 0
     },
@@ -2467,7 +2467,7 @@
       "low": 36,
       "medium": 100,
       "reference": "eclipse-temurin:26-noble",
-      "scanned_at": "2026-06-16T10:25:48Z",
+      "scanned_at": "2026-06-16T14:35:14Z",
       "total": 138,
       "unknown": 0
     },
@@ -2477,7 +2477,7 @@
       "low": 21,
       "medium": 12,
       "reference": "python:3.11.15-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:51Z",
+      "scanned_at": "2026-06-16T14:35:07Z",
       "total": 38,
       "unknown": 0
     },
@@ -2487,7 +2487,7 @@
       "low": 10,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-azurelinux3.0-amd64",
-      "scanned_at": "2026-06-16T10:32:40Z",
+      "scanned_at": "2026-06-16T14:41:20Z",
       "total": 163,
       "unknown": 0
     },
@@ -2497,7 +2497,7 @@
       "low": 187,
       "medium": 167,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1",
-      "scanned_at": "2026-06-16T10:39:24Z",
+      "scanned_at": "2026-06-16T14:47:08Z",
       "total": 484,
       "unknown": 24
     },
@@ -2507,7 +2507,7 @@
       "low": 184,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim-amd64",
-      "scanned_at": "2026-06-16T10:40:21Z",
+      "scanned_at": "2026-06-16T14:47:53Z",
       "total": 464,
       "unknown": 12
     },
@@ -2517,7 +2517,7 @@
       "low": 76,
       "medium": 41,
       "reference": "python:3.14.6-slim-bookworm",
-      "scanned_at": "2026-06-16T10:25:28Z",
+      "scanned_at": "2026-06-16T14:34:45Z",
       "total": 137,
       "unknown": 6
     },
@@ -2527,7 +2527,7 @@
       "low": 32,
       "medium": 19,
       "reference": "eclipse-temurin:11-jre-alpine-3.23",
-      "scanned_at": "2026-06-16T10:28:47Z",
+      "scanned_at": "2026-06-16T14:38:46Z",
       "total": 59,
       "unknown": 0
     },
@@ -2537,7 +2537,7 @@
       "low": 30,
       "medium": 12,
       "reference": "eclipse-temurin:17-jre-alpine-3.22",
-      "scanned_at": "2026-06-16T10:27:57Z",
+      "scanned_at": "2026-06-16T14:37:42Z",
       "total": 45,
       "unknown": 0
     },
@@ -2547,7 +2547,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:17-jre-resolute",
-      "scanned_at": "2026-06-16T10:28:02Z",
+      "scanned_at": "2026-06-16T14:37:47Z",
       "total": 137,
       "unknown": 0
     },
@@ -2557,7 +2557,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20-arm32v7",
-      "scanned_at": "2026-06-16T10:40:06Z",
+      "scanned_at": "2026-06-16T14:47:39Z",
       "total": 117,
       "unknown": 0
     },
@@ -2567,7 +2567,7 @@
       "low": 871,
       "medium": 1721,
       "reference": "rust:1.95.0-slim-bullseye",
-      "scanned_at": "2026-06-16T10:27:59Z",
+      "scanned_at": "2026-06-16T14:37:26Z",
       "total": 2954,
       "unknown": 6
     },
@@ -2577,7 +2577,7 @@
       "low": 199,
       "medium": 185,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim-amd64",
-      "scanned_at": "2026-06-16T10:35:50Z",
+      "scanned_at": "2026-06-16T14:44:05Z",
       "total": 527,
       "unknown": 12
     },
@@ -2587,7 +2587,7 @@
       "low": 844,
       "medium": 1415,
       "reference": "rust:1.96.0-slim-bullseye",
-      "scanned_at": "2026-06-16T10:26:36Z",
+      "scanned_at": "2026-06-16T14:35:59Z",
       "total": 2564,
       "unknown": 6
     },
@@ -2597,7 +2597,7 @@
       "low": 0,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-amd64",
-      "scanned_at": "2026-06-16T10:25:41Z",
+      "scanned_at": "2026-06-16T14:34:58Z",
       "total": 143,
       "unknown": 0
     },
@@ -2607,7 +2607,7 @@
       "low": 100,
       "medium": 69,
       "reference": "node:26.2.0-bullseye-slim",
-      "scanned_at": "2026-06-16T10:26:44Z",
+      "scanned_at": "2026-06-16T14:36:11Z",
       "total": 199,
       "unknown": 6
     },
@@ -2617,7 +2617,7 @@
       "low": 64,
       "medium": 35,
       "reference": "python:3.11.15-slim-trixie",
-      "scanned_at": "2026-06-16T10:25:55Z",
+      "scanned_at": "2026-06-16T14:35:11Z",
       "total": 120,
       "unknown": 6
     },
@@ -2627,7 +2627,7 @@
       "low": 0,
       "medium": 0,
       "reference": "python:3.13.14-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:33Z",
+      "scanned_at": "2026-06-16T14:34:50Z",
       "total": 0,
       "unknown": 0
     },
@@ -2637,7 +2637,7 @@
       "low": 188,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:44:59Z",
+      "scanned_at": "2026-06-16T14:52:03Z",
       "total": 483,
       "unknown": 12
     },
@@ -2647,7 +2647,7 @@
       "low": 69,
       "medium": 478,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-aot-amd64",
-      "scanned_at": "2026-06-16T10:27:18Z",
+      "scanned_at": "2026-06-16T14:36:29Z",
       "total": 571,
       "unknown": 0
     },
@@ -2657,7 +2657,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:17-jre-alpine-3.23",
-      "scanned_at": "2026-06-16T10:27:58Z",
+      "scanned_at": "2026-06-16T14:37:42Z",
       "total": 46,
       "unknown": 0
     },
@@ -2667,7 +2667,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:29:58Z",
+      "scanned_at": "2026-06-16T14:38:57Z",
       "total": 274,
       "unknown": 12
     },
@@ -2677,7 +2677,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20",
-      "scanned_at": "2026-06-16T10:39:58Z",
+      "scanned_at": "2026-06-16T14:47:32Z",
       "total": 119,
       "unknown": 0
     },
@@ -2687,7 +2687,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jdk-alpine-3.21",
-      "scanned_at": "2026-06-16T10:26:51Z",
+      "scanned_at": "2026-06-16T14:36:24Z",
       "total": 0,
       "unknown": 0
     },
@@ -2697,7 +2697,7 @@
       "low": 69,
       "medium": 478,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-aot",
-      "scanned_at": "2026-06-16T10:27:18Z",
+      "scanned_at": "2026-06-16T14:36:29Z",
       "total": 571,
       "unknown": 0
     },
@@ -2707,7 +2707,7 @@
       "low": 199,
       "medium": 185,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:36:09Z",
+      "scanned_at": "2026-06-16T14:44:20Z",
       "total": 527,
       "unknown": 12
     },
@@ -2717,7 +2717,7 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal",
-      "scanned_at": "2026-06-16T10:45:48Z",
+      "scanned_at": "2026-06-16T14:52:48Z",
       "total": 57,
       "unknown": 0
     },
@@ -2727,7 +2727,7 @@
       "low": 1052,
       "medium": 657,
       "reference": "node:25.9.0-trixie",
-      "scanned_at": "2026-06-16T10:27:16Z",
+      "scanned_at": "2026-06-16T14:36:43Z",
       "total": 2047,
       "unknown": 85
     },
@@ -2737,7 +2737,7 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-arm64v8",
-      "scanned_at": "2026-06-16T10:27:04Z",
+      "scanned_at": "2026-06-16T14:36:18Z",
       "total": 45,
       "unknown": 0
     },
@@ -2747,7 +2747,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-cbl-mariner2.0-amd64",
-      "scanned_at": "2026-06-16T10:41:15Z",
+      "scanned_at": "2026-06-16T14:48:33Z",
       "total": 467,
       "unknown": 0
     },
@@ -2757,7 +2757,7 @@
       "low": 1318,
       "medium": 3143,
       "reference": "gcc:14.2.0-bookworm",
-      "scanned_at": "2026-06-16T10:26:07Z",
+      "scanned_at": "2026-06-16T14:35:37Z",
       "total": 5914,
       "unknown": 89
     },
@@ -2767,7 +2767,7 @@
       "low": 0,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0",
-      "scanned_at": "2026-06-16T10:25:41Z",
+      "scanned_at": "2026-06-16T14:34:58Z",
       "total": 143,
       "unknown": 0
     },
@@ -2777,7 +2777,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:26-jre-alpine-3.23",
-      "scanned_at": "2026-06-16T10:25:39Z",
+      "scanned_at": "2026-06-16T14:35:04Z",
       "total": 46,
       "unknown": 0
     },
@@ -2787,7 +2787,7 @@
       "low": 752,
       "medium": 1005,
       "reference": "golang:1.25.11-bookworm",
-      "scanned_at": "2026-06-16T10:25:21Z",
+      "scanned_at": "2026-06-16T14:34:53Z",
       "total": 1981,
       "unknown": 13
     },
@@ -2797,7 +2797,7 @@
       "low": 653,
       "medium": 363,
       "reference": "golang:1.26.4-trixie",
-      "scanned_at": "2026-06-16T10:25:12Z",
+      "scanned_at": "2026-06-16T14:34:40Z",
       "total": 1117,
       "unknown": 12
     },
@@ -2807,7 +2807,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy-amd64",
-      "scanned_at": "2026-06-16T10:33:07Z",
+      "scanned_at": "2026-06-16T14:41:42Z",
       "total": 76,
       "unknown": 0
     },
@@ -2817,7 +2817,7 @@
       "low": 6,
       "medium": 58,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-arm32v7",
-      "scanned_at": "2026-06-16T10:27:35Z",
+      "scanned_at": "2026-06-16T14:36:43Z",
       "total": 65,
       "unknown": 0
     },
@@ -2827,7 +2827,7 @@
       "low": 0,
       "medium": 40,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-aot",
-      "scanned_at": "2026-06-16T10:26:07Z",
+      "scanned_at": "2026-06-16T14:35:23Z",
       "total": 163,
       "unknown": 0
     },
@@ -2837,7 +2837,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble",
-      "scanned_at": "2026-06-16T10:30:46Z",
+      "scanned_at": "2026-06-16T14:39:36Z",
       "total": 55,
       "unknown": 0
     },
@@ -2847,7 +2847,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20-arm32v7",
-      "scanned_at": "2026-06-16T10:44:35Z",
+      "scanned_at": "2026-06-16T14:51:41Z",
       "total": 117,
       "unknown": 0
     },
@@ -2857,7 +2857,7 @@
       "low": 30,
       "medium": 12,
       "reference": "eclipse-temurin:21-jdk-alpine-3.22",
-      "scanned_at": "2026-06-16T10:26:51Z",
+      "scanned_at": "2026-06-16T14:36:25Z",
       "total": 45,
       "unknown": 0
     },
@@ -2867,7 +2867,7 @@
       "low": 65,
       "medium": 57,
       "reference": "eclipse-temurin:17-jdk-jammy",
-      "scanned_at": "2026-06-16T10:27:40Z",
+      "scanned_at": "2026-06-16T14:37:22Z",
       "total": 124,
       "unknown": 0
     },
@@ -2877,7 +2877,7 @@
       "low": 757,
       "medium": 1532,
       "reference": "rust:1.92.0-slim-trixie",
-      "scanned_at": "2026-06-16T10:32:39Z",
+      "scanned_at": "2026-06-16T14:42:18Z",
       "total": 2593,
       "unknown": 7
     },
@@ -2887,7 +2887,7 @@
       "low": 20,
       "medium": 8,
       "reference": "golang:1.25.11-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:18Z",
+      "scanned_at": "2026-06-16T14:34:49Z",
       "total": 30,
       "unknown": 0
     },
@@ -2897,7 +2897,7 @@
       "low": 708,
       "medium": 1255,
       "reference": "rust:1.93.1-slim-trixie",
-      "scanned_at": "2026-06-16T10:31:05Z",
+      "scanned_at": "2026-06-16T14:40:40Z",
       "total": 2201,
       "unknown": 7
     },
@@ -2907,7 +2907,7 @@
       "low": 1322,
       "medium": 1661,
       "reference": "node:24.16.0-bullseye",
-      "scanned_at": "2026-06-16T10:27:41Z",
+      "scanned_at": "2026-06-16T14:37:08Z",
       "total": 3451,
       "unknown": 52
     },
@@ -2917,7 +2917,7 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-arm32v7",
-      "scanned_at": "2026-06-16T10:27:04Z",
+      "scanned_at": "2026-06-16T14:36:18Z",
       "total": 45,
       "unknown": 0
     },
@@ -2927,7 +2927,7 @@
       "low": 89,
       "medium": 49,
       "reference": "python:3.10.20-slim-bookworm",
-      "scanned_at": "2026-06-16T10:26:03Z",
+      "scanned_at": "2026-06-16T14:35:19Z",
       "total": 161,
       "unknown": 6
     },
@@ -2937,7 +2937,7 @@
       "low": 63,
       "medium": 32,
       "reference": "python:3.13.14-slim-trixie",
-      "scanned_at": "2026-06-16T10:25:38Z",
+      "scanned_at": "2026-06-16T14:34:54Z",
       "total": 113,
       "unknown": 6
     },
@@ -2947,7 +2947,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:11-jre",
-      "scanned_at": "2026-06-16T10:28:41Z",
+      "scanned_at": "2026-06-16T14:38:40Z",
       "total": 137,
       "unknown": 0
     },
@@ -2957,7 +2957,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-cbl-mariner2.0",
-      "scanned_at": "2026-06-16T10:41:14Z",
+      "scanned_at": "2026-06-16T14:48:33Z",
       "total": 467,
       "unknown": 0
     },
@@ -2967,7 +2967,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-arm32v7",
-      "scanned_at": "2026-06-16T10:25:31Z",
+      "scanned_at": "2026-06-16T14:34:47Z",
       "total": 30,
       "unknown": 0
     },
@@ -2977,7 +2977,7 @@
       "low": 35,
       "medium": 38,
       "reference": "eclipse-temurin:25-jre-jammy",
-      "scanned_at": "2026-06-16T10:26:23Z",
+      "scanned_at": "2026-06-16T14:35:54Z",
       "total": 75,
       "unknown": 0
     },
@@ -2987,7 +2987,7 @@
       "low": 153,
       "medium": 109,
       "reference": "eclipse-temurin:11-ubi9-minimal",
-      "scanned_at": "2026-06-16T10:28:59Z",
+      "scanned_at": "2026-06-16T14:38:58Z",
       "total": 263,
       "unknown": 0
     },
@@ -2997,7 +2997,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-nanoserver-1809",
-      "scanned_at": "2026-06-16T10:42:25Z",
+      "scanned_at": "2026-06-16T14:49:37Z",
       "total": 11,
       "unknown": 0
     },
@@ -3007,7 +3007,7 @@
       "low": 1437,
       "medium": 2698,
       "reference": "rust:1.92.0-bullseye",
-      "scanned_at": "2026-06-16T10:32:12Z",
+      "scanned_at": "2026-06-16T14:41:51Z",
       "total": 5233,
       "unknown": 56
     },
@@ -3017,7 +3017,7 @@
       "low": 30,
       "medium": 13,
       "reference": "eclipse-temurin:25-jre-alpine-3.23",
-      "scanned_at": "2026-06-16T10:26:22Z",
+      "scanned_at": "2026-06-16T14:35:52Z",
       "total": 46,
       "unknown": 0
     },
@@ -3027,7 +3027,7 @@
       "low": 20,
       "medium": 9,
       "reference": "node:26.3.0-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:20Z",
+      "scanned_at": "2026-06-16T14:34:45Z",
       "total": 31,
       "unknown": 0
     },
@@ -3037,7 +3037,7 @@
       "low": 662,
       "medium": 906,
       "reference": "rust:1.96.0-slim-bookworm",
-      "scanned_at": "2026-06-16T10:26:28Z",
+      "scanned_at": "2026-06-16T14:35:50Z",
       "total": 1733,
       "unknown": 7
     },
@@ -3047,7 +3047,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal-arm64v8",
-      "scanned_at": "2026-06-16T10:41:48Z",
+      "scanned_at": "2026-06-16T14:49:02Z",
       "total": 51,
       "unknown": 0
     },
@@ -3057,7 +3057,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy-arm64v8",
-      "scanned_at": "2026-06-16T10:33:20Z",
+      "scanned_at": "2026-06-16T14:41:53Z",
       "total": 76,
       "unknown": 0
     },
@@ -3067,7 +3067,7 @@
       "low": 994,
       "medium": 486,
       "reference": "python:3.13.14",
-      "scanned_at": "2026-06-16T10:25:31Z",
+      "scanned_at": "2026-06-16T14:34:48Z",
       "total": 1721,
       "unknown": 85
     },
@@ -3077,7 +3077,7 @@
       "low": 0,
       "medium": 0,
       "reference": "ubuntu:24.10",
-      "scanned_at": "2026-06-16T10:25:08Z",
+      "scanned_at": "2026-06-16T14:34:25Z",
       "total": 0,
       "unknown": 0
     },
@@ -3087,7 +3087,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim-amd64",
-      "scanned_at": "2026-06-16T10:29:47Z",
+      "scanned_at": "2026-06-16T14:38:46Z",
       "total": 274,
       "unknown": 12
     },
@@ -3097,7 +3097,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-16T10:39:08Z",
+      "scanned_at": "2026-06-16T14:46:55Z",
       "total": 16,
       "unknown": 0
     },
@@ -3107,7 +3107,7 @@
       "low": 700,
       "medium": 1236,
       "reference": "rust:1.94.1-slim-trixie",
-      "scanned_at": "2026-06-16T10:29:30Z",
+      "scanned_at": "2026-06-16T14:39:02Z",
       "total": 2164,
       "unknown": 7
     },
@@ -3117,7 +3117,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-cbl-mariner2.0-arm64v8",
-      "scanned_at": "2026-06-16T10:45:41Z",
+      "scanned_at": "2026-06-16T14:52:42Z",
       "total": 467,
       "unknown": 0
     },
@@ -3127,7 +3127,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jdk-alpine-3.21",
-      "scanned_at": "2026-06-16T10:26:05Z",
+      "scanned_at": "2026-06-16T14:35:33Z",
       "total": 0,
       "unknown": 0
     },
@@ -3137,7 +3137,7 @@
       "low": 714,
       "medium": 1409,
       "reference": "rust:1.94.1-slim-bookworm",
-      "scanned_at": "2026-06-16T10:29:21Z",
+      "scanned_at": "2026-06-16T14:38:53Z",
       "total": 2381,
       "unknown": 7
     },
@@ -3147,7 +3147,7 @@
       "low": 199,
       "medium": 185,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim",
-      "scanned_at": "2026-06-16T10:35:50Z",
+      "scanned_at": "2026-06-16T14:44:04Z",
       "total": 527,
       "unknown": 12
     },
@@ -3157,7 +3157,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-noble",
-      "scanned_at": "2026-06-16T10:34:08Z",
+      "scanned_at": "2026-06-16T14:42:35Z",
       "total": 65,
       "unknown": 0
     },
@@ -3167,7 +3167,7 @@
       "low": 96,
       "medium": 47,
       "reference": "node:26.3.0-bullseye-slim",
-      "scanned_at": "2026-06-16T10:25:52Z",
+      "scanned_at": "2026-06-16T14:35:17Z",
       "total": 164,
       "unknown": 6
     },
@@ -3177,7 +3177,7 @@
       "low": 838,
       "medium": 1822,
       "reference": "golang:1.24.13",
-      "scanned_at": "2026-06-16T10:25:28Z",
+      "scanned_at": "2026-06-16T14:35:05Z",
       "total": 3272,
       "unknown": 13
     },
@@ -3187,7 +3187,7 @@
       "low": 189,
       "medium": 177,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410",
-      "scanned_at": "2026-06-16T10:34:56Z",
+      "scanned_at": "2026-06-16T14:43:19Z",
       "total": 534,
       "unknown": 24
     },
@@ -3197,7 +3197,7 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18-amd64",
-      "scanned_at": "2026-06-16T10:35:04Z",
+      "scanned_at": "2026-06-16T14:43:26Z",
       "total": 83,
       "unknown": 0
     },
@@ -3207,7 +3207,7 @@
       "low": 675,
       "medium": 926,
       "reference": "rust:1.95.0-slim-bookworm",
-      "scanned_at": "2026-06-16T10:27:50Z",
+      "scanned_at": "2026-06-16T14:37:17Z",
       "total": 1776,
       "unknown": 7
     },
@@ -3217,7 +3217,7 @@
       "low": 64,
       "medium": 35,
       "reference": "python:3.12.13-slim-trixie",
-      "scanned_at": "2026-06-16T10:25:47Z",
+      "scanned_at": "2026-06-16T14:35:03Z",
       "total": 117,
       "unknown": 6
     },
@@ -3227,7 +3227,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-aot-arm64v8",
-      "scanned_at": "2026-06-16T10:25:24Z",
+      "scanned_at": "2026-06-16T14:34:42Z",
       "total": 30,
       "unknown": 0
     },
@@ -3237,7 +3237,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim",
-      "scanned_at": "2026-06-16T10:32:47Z",
+      "scanned_at": "2026-06-16T14:41:26Z",
       "total": 284,
       "unknown": 12
     },
@@ -3247,7 +3247,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-aot-amd64",
-      "scanned_at": "2026-06-16T10:25:17Z",
+      "scanned_at": "2026-06-16T14:34:37Z",
       "total": 30,
       "unknown": 0
     },
@@ -3257,7 +3257,7 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.20.10",
-      "scanned_at": "2026-06-16T10:25:08Z",
+      "scanned_at": "2026-06-16T14:34:23Z",
       "total": 0,
       "unknown": 0
     },
@@ -3267,7 +3267,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23",
-      "scanned_at": "2026-06-16T10:32:22Z",
+      "scanned_at": "2026-06-16T14:41:05Z",
       "total": 50,
       "unknown": 0
     },
@@ -3277,7 +3277,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-nanoserver-ltsc2025",
-      "scanned_at": "2026-06-16T10:34:03Z",
+      "scanned_at": "2026-06-16T14:42:30Z",
       "total": 20,
       "unknown": 0
     },
@@ -3287,7 +3287,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jre-ubi10-minimal",
-      "scanned_at": "2026-06-16T10:28:04Z",
+      "scanned_at": "2026-06-16T14:37:50Z",
       "total": 0,
       "unknown": 0
     },
@@ -3297,7 +3297,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19-amd64",
-      "scanned_at": "2026-06-16T10:44:04Z",
+      "scanned_at": "2026-06-16T14:51:15Z",
       "total": 69,
       "unknown": 0
     },
@@ -3307,7 +3307,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-16T10:29:53Z",
+      "scanned_at": "2026-06-16T14:38:51Z",
       "total": 274,
       "unknown": 12
     },
@@ -3317,7 +3317,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-windowsservercore-ltsc2025",
-      "scanned_at": "2026-06-16T10:34:50Z",
+      "scanned_at": "2026-06-16T14:43:13Z",
       "total": 20,
       "unknown": 0
     },
@@ -3327,7 +3327,7 @@
       "low": 1322,
       "medium": 1658,
       "reference": "rust:1.96.0-bullseye",
-      "scanned_at": "2026-06-16T10:26:10Z",
+      "scanned_at": "2026-06-16T14:35:31Z",
       "total": 3448,
       "unknown": 52
     },
@@ -3337,7 +3337,7 @@
       "low": 615,
       "medium": 323,
       "reference": "rust:1.95.0-slim-trixie",
-      "scanned_at": "2026-06-16T10:27:59Z",
+      "scanned_at": "2026-06-16T14:37:27Z",
       "total": 1006,
       "unknown": 6
     },
@@ -3347,7 +3347,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.96.0-alpine3.22",
-      "scanned_at": "2026-06-16T10:25:41Z",
+      "scanned_at": "2026-06-16T14:35:00Z",
       "total": 30,
       "unknown": 0
     },
@@ -3357,7 +3357,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19",
-      "scanned_at": "2026-06-16T10:39:30Z",
+      "scanned_at": "2026-06-16T14:47:12Z",
       "total": 67,
       "unknown": 0
     },
@@ -3367,7 +3367,7 @@
       "low": 89,
       "medium": 48,
       "reference": "python:3.11.15-slim-bookworm",
-      "scanned_at": "2026-06-16T10:25:55Z",
+      "scanned_at": "2026-06-16T14:35:11Z",
       "total": 160,
       "unknown": 6
     },
@@ -3377,7 +3377,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23-arm32v7",
-      "scanned_at": "2026-06-16T10:29:27Z",
+      "scanned_at": "2026-06-16T14:38:30Z",
       "total": 40,
       "unknown": 0
     },
@@ -3387,7 +3387,7 @@
       "low": 89,
       "medium": 1558,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-aot-amd64",
-      "scanned_at": "2026-06-16T10:26:52Z",
+      "scanned_at": "2026-06-16T14:36:06Z",
       "total": 1695,
       "unknown": 0
     },
@@ -3397,7 +3397,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23-arm32v7",
-      "scanned_at": "2026-06-16T10:32:28Z",
+      "scanned_at": "2026-06-16T14:41:11Z",
       "total": 50,
       "unknown": 0
     },
@@ -3407,7 +3407,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-nanoserver-1809",
-      "scanned_at": "2026-06-16T10:30:16Z",
+      "scanned_at": "2026-06-16T14:39:08Z",
       "total": 12,
       "unknown": 0
     },
@@ -3417,7 +3417,7 @@
       "low": 187,
       "medium": 167,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim-amd64",
-      "scanned_at": "2026-06-16T10:40:44Z",
+      "scanned_at": "2026-06-16T14:48:10Z",
       "total": 484,
       "unknown": 24
     },
@@ -3427,7 +3427,7 @@
       "low": 36,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20",
-      "scanned_at": "2026-06-16T10:44:23Z",
+      "scanned_at": "2026-06-16T14:51:34Z",
       "total": 119,
       "unknown": 0
     },
@@ -3437,7 +3437,7 @@
       "low": 32,
       "medium": 19,
       "reference": "eclipse-temurin:11-jdk-alpine-3.23",
-      "scanned_at": "2026-06-16T10:28:26Z",
+      "scanned_at": "2026-06-16T14:38:22Z",
       "total": 59,
       "unknown": 0
     },
@@ -3447,7 +3447,7 @@
       "low": 1383,
       "medium": 2087,
       "reference": "node:26.2.0-bullseye",
-      "scanned_at": "2026-06-16T10:26:40Z",
+      "scanned_at": "2026-06-16T14:36:07Z",
       "total": 4090,
       "unknown": 52
     },
@@ -3457,7 +3457,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-16T10:46:57Z",
+      "scanned_at": "2026-06-16T14:53:55Z",
       "total": 11,
       "unknown": 0
     },
@@ -3467,7 +3467,7 @@
       "low": 70,
       "medium": 49,
       "reference": "node:26.2.0-bookworm-slim",
-      "scanned_at": "2026-06-16T10:26:30Z",
+      "scanned_at": "2026-06-16T14:35:56Z",
       "total": 140,
       "unknown": 6
     },
@@ -3477,7 +3477,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23-amd64",
-      "scanned_at": "2026-06-16T10:29:21Z",
+      "scanned_at": "2026-06-16T14:38:24Z",
       "total": 40,
       "unknown": 0
     },
@@ -3487,7 +3487,7 @@
       "low": 1236,
       "medium": 2452,
       "reference": "rust:1.92.0-bookworm",
-      "scanned_at": "2026-06-16T10:32:02Z",
+      "scanned_at": "2026-06-16T14:41:40Z",
       "total": 4719,
       "unknown": 85
     },
@@ -3497,7 +3497,7 @@
       "low": 871,
       "medium": 1731,
       "reference": "rust:1.94.1-slim-bullseye",
-      "scanned_at": "2026-06-16T10:29:30Z",
+      "scanned_at": "2026-06-16T14:39:02Z",
       "total": 2969,
       "unknown": 7
     },
@@ -3507,7 +3507,7 @@
       "low": 89,
       "medium": 1558,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-aot-arm64v8",
-      "scanned_at": "2026-06-16T10:26:58Z",
+      "scanned_at": "2026-06-16T14:36:12Z",
       "total": 1695,
       "unknown": 0
     },
@@ -3517,7 +3517,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy-amd64",
-      "scanned_at": "2026-06-16T10:46:13Z",
+      "scanned_at": "2026-06-16T14:53:09Z",
       "total": 275,
       "unknown": 0
     },
@@ -3527,7 +3527,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy-amd64",
-      "scanned_at": "2026-06-16T10:41:56Z",
+      "scanned_at": "2026-06-16T14:49:10Z",
       "total": 275,
       "unknown": 0
     },
@@ -3537,7 +3537,7 @@
       "low": 35,
       "medium": 91,
       "reference": "eclipse-temurin:11-jre-resolute",
-      "scanned_at": "2026-06-16T10:28:51Z",
+      "scanned_at": "2026-06-16T14:38:51Z",
       "total": 137,
       "unknown": 0
     },
@@ -3547,7 +3547,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jre-alpine-3.21",
-      "scanned_at": "2026-06-16T10:26:19Z",
+      "scanned_at": "2026-06-16T14:35:49Z",
       "total": 0,
       "unknown": 0
     },
@@ -3557,7 +3557,7 @@
       "low": 188,
       "medium": 171,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim-amd64",
-      "scanned_at": "2026-06-16T10:44:51Z",
+      "scanned_at": "2026-06-16T14:51:56Z",
       "total": 483,
       "unknown": 12
     },
@@ -3567,7 +3567,7 @@
       "low": 1190,
       "medium": 2169,
       "reference": "rust:1.93.1-trixie",
-      "scanned_at": "2026-06-16T10:31:05Z",
+      "scanned_at": "2026-06-16T14:40:41Z",
       "total": 4372,
       "unknown": 86
     },
@@ -3577,7 +3577,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19-arm32v7",
-      "scanned_at": "2026-06-16T10:39:38Z",
+      "scanned_at": "2026-06-16T14:47:19Z",
       "total": 65,
       "unknown": 0
     },
@@ -3587,7 +3587,7 @@
       "low": 21,
       "medium": 252,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-cbl-mariner2.0",
-      "scanned_at": "2026-06-16T10:36:34Z",
+      "scanned_at": "2026-06-16T14:44:41Z",
       "total": 505,
       "unknown": 0
     },
@@ -3597,7 +3597,7 @@
       "low": 43,
       "medium": 76,
       "reference": "eclipse-temurin:25-jdk",
-      "scanned_at": "2026-06-16T10:26:04Z",
+      "scanned_at": "2026-06-16T14:35:32Z",
       "total": 130,
       "unknown": 0
     },
@@ -3607,7 +3607,7 @@
       "low": 153,
       "medium": 109,
       "reference": "eclipse-temurin:17-jre-ubi9-minimal",
-      "scanned_at": "2026-06-16T10:28:05Z",
+      "scanned_at": "2026-06-16T14:37:52Z",
       "total": 263,
       "unknown": 0
     },
@@ -3617,7 +3617,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-nanoserver-1809",
-      "scanned_at": "2026-06-16T10:37:19Z",
+      "scanned_at": "2026-06-16T14:45:22Z",
       "total": 16,
       "unknown": 0
     },
@@ -3627,7 +3627,7 @@
       "low": 30,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23-amd64",
-      "scanned_at": "2026-06-16T10:32:22Z",
+      "scanned_at": "2026-06-16T14:41:06Z",
       "total": 50,
       "unknown": 0
     },
@@ -3637,7 +3637,7 @@
       "low": 1121,
       "medium": 1139,
       "reference": "python:3.10.20-bookworm",
-      "scanned_at": "2026-06-16T10:26:01Z",
+      "scanned_at": "2026-06-16T14:35:17Z",
       "total": 2626,
       "unknown": 85
     },
@@ -3647,7 +3647,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jre-alpine-3.21",
-      "scanned_at": "2026-06-16T10:27:09Z",
+      "scanned_at": "2026-06-16T14:36:46Z",
       "total": 0,
       "unknown": 0
     },
@@ -3657,7 +3657,7 @@
       "low": 0,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-arm64v8",
-      "scanned_at": "2026-06-16T10:26:19Z",
+      "scanned_at": "2026-06-16T14:35:34Z",
       "total": 143,
       "unknown": 0
     },
@@ -3667,7 +3667,7 @@
       "low": 143,
       "medium": 80,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim-amd64",
-      "scanned_at": "2026-06-16T10:32:47Z",
+      "scanned_at": "2026-06-16T14:41:26Z",
       "total": 284,
       "unknown": 12
     },
@@ -3677,7 +3677,7 @@
       "low": 0,
       "medium": 0,
       "reference": "golang:1.26.4-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:07Z",
+      "scanned_at": "2026-06-16T14:34:32Z",
       "total": 0,
       "unknown": 0
     },
@@ -3687,7 +3687,7 @@
       "low": 749,
       "medium": 1668,
       "reference": "rust:1.92.0-slim-bookworm",
-      "scanned_at": "2026-06-16T10:32:30Z",
+      "scanned_at": "2026-06-16T14:42:09Z",
       "total": 2746,
       "unknown": 7
     },
@@ -3697,7 +3697,7 @@
       "low": 20,
       "medium": 8,
       "reference": "golang:1.26.4-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:06Z",
+      "scanned_at": "2026-06-16T14:34:31Z",
       "total": 30,
       "unknown": 0
     },
@@ -3707,7 +3707,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy-arm64v8",
-      "scanned_at": "2026-06-16T10:46:29Z",
+      "scanned_at": "2026-06-16T14:53:23Z",
       "total": 275,
       "unknown": 0
     },
@@ -3717,7 +3717,7 @@
       "low": 153,
       "medium": 109,
       "reference": "eclipse-temurin:21-ubi9-minimal",
-      "scanned_at": "2026-06-16T10:27:22Z",
+      "scanned_at": "2026-06-16T14:37:01Z",
       "total": 263,
       "unknown": 0
     },
@@ -3727,7 +3727,7 @@
       "low": 25,
       "medium": 66,
       "reference": "ubuntu:26.04",
-      "scanned_at": "2026-06-16T10:25:02Z",
+      "scanned_at": "2026-06-16T14:34:20Z",
       "total": 101,
       "unknown": 0
     },
@@ -3737,7 +3737,7 @@
       "low": 1052,
       "medium": 652,
       "reference": "rust:1.95.0-trixie",
-      "scanned_at": "2026-06-16T10:28:00Z",
+      "scanned_at": "2026-06-16T14:37:27Z",
       "total": 2041,
       "unknown": 85
     },
@@ -3747,7 +3747,7 @@
       "low": 1396,
       "medium": 2344,
       "reference": "rust:1.94.1-bullseye",
-      "scanned_at": "2026-06-16T10:29:03Z",
+      "scanned_at": "2026-06-16T14:38:35Z",
       "total": 4537,
       "unknown": 55
     },
@@ -3757,7 +3757,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-16T10:47:47Z",
+      "scanned_at": "2026-06-16T14:54:44Z",
       "total": 11,
       "unknown": 0
     },
@@ -3767,7 +3767,7 @@
       "low": 1247,
       "medium": 2467,
       "reference": "rust:1.92.0-trixie",
-      "scanned_at": "2026-06-16T10:32:39Z",
+      "scanned_at": "2026-06-16T14:42:19Z",
       "total": 4846,
       "unknown": 86
     },
@@ -3777,7 +3777,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-16T10:33:51Z",
+      "scanned_at": "2026-06-16T14:42:15Z",
       "total": 20,
       "unknown": 0
     },
@@ -3787,7 +3787,7 @@
       "low": 36,
       "medium": 20,
       "reference": "rust:1.92.0-alpine3.23",
-      "scanned_at": "2026-06-16T10:31:52Z",
+      "scanned_at": "2026-06-16T14:41:30Z",
       "total": 76,
       "unknown": 0
     },
@@ -3797,7 +3797,7 @@
       "low": 897,
       "medium": 1896,
       "reference": "rust:1.92.0-slim-bullseye",
-      "scanned_at": "2026-06-16T10:32:38Z",
+      "scanned_at": "2026-06-16T14:42:18Z",
       "total": 3202,
       "unknown": 8
     },
@@ -3807,7 +3807,7 @@
       "low": 1,
       "medium": 3,
       "reference": "python:3.12.13-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:42Z",
+      "scanned_at": "2026-06-16T14:34:59Z",
       "total": 4,
       "unknown": 0
     },
@@ -3817,7 +3817,7 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.94.1-alpine3.21",
-      "scanned_at": "2026-06-16T10:28:35Z",
+      "scanned_at": "2026-06-16T14:38:05Z",
       "total": 20,
       "unknown": 0
     },
@@ -3827,7 +3827,7 @@
       "low": 43,
       "medium": 76,
       "reference": "eclipse-temurin:26-resolute",
-      "scanned_at": "2026-06-16T10:25:48Z",
+      "scanned_at": "2026-06-16T14:35:15Z",
       "total": 130,
       "unknown": 0
     },
@@ -3837,7 +3837,7 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.96.0-alpine3.24",
-      "scanned_at": "2026-06-16T10:25:50Z",
+      "scanned_at": "2026-06-16T14:35:10Z",
       "total": 0,
       "unknown": 0
     },
@@ -3847,7 +3847,7 @@
       "low": 10,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-azurelinux3.0",
-      "scanned_at": "2026-06-16T10:32:40Z",
+      "scanned_at": "2026-06-16T14:41:20Z",
       "total": 163,
       "unknown": 0
     },
@@ -3857,7 +3857,7 @@
       "low": 971,
       "medium": 477,
       "reference": "node:26.3.0-trixie",
-      "scanned_at": "2026-06-16T10:25:56Z",
+      "scanned_at": "2026-06-16T14:35:21Z",
       "total": 1687,
       "unknown": 85
     },
@@ -3867,7 +3867,7 @@
       "low": 20,
       "medium": 44,
       "reference": "eclipse-temurin:25-jre-noble",
-      "scanned_at": "2026-06-16T10:26:26Z",
+      "scanned_at": "2026-06-16T14:35:57Z",
       "total": 66,
       "unknown": 0
     },
@@ -3877,7 +3877,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-16T10:31:54Z",
+      "scanned_at": "2026-06-16T14:40:44Z",
       "total": 12,
       "unknown": 0
     },
@@ -3887,7 +3887,7 @@
       "low": 64,
       "medium": 36,
       "reference": "python:3.10.20-slim-trixie",
-      "scanned_at": "2026-06-16T10:26:04Z",
+      "scanned_at": "2026-06-16T14:35:20Z",
       "total": 121,
       "unknown": 6
     },
@@ -3897,7 +3897,7 @@
       "low": 153,
       "medium": 109,
       "reference": "eclipse-temurin:11-jre-ubi9-minimal",
-      "scanned_at": "2026-06-16T10:28:55Z",
+      "scanned_at": "2026-06-16T14:38:54Z",
       "total": 263,
       "unknown": 0
     },
@@ -3907,7 +3907,7 @@
       "low": 20,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23",
-      "scanned_at": "2026-06-16T10:25:09Z",
+      "scanned_at": "2026-06-16T14:34:31Z",
       "total": 30,
       "unknown": 0
     },
@@ -3917,7 +3917,7 @@
       "low": 10,
       "medium": 35,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-azurelinux3.0-arm64v8",
-      "scanned_at": "2026-06-16T10:29:47Z",
+      "scanned_at": "2026-06-16T14:38:45Z",
       "total": 153,
       "unknown": 0
     },
@@ -3927,7 +3927,7 @@
       "low": 1398,
       "medium": 2493,
       "reference": "rust:1.93.1-bullseye",
-      "scanned_at": "2026-06-16T10:30:38Z",
+      "scanned_at": "2026-06-16T14:40:12Z",
       "total": 4907,
       "unknown": 55
     },
@@ -3937,7 +3937,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-windowsservercore-ltsc2025",
-      "scanned_at": "2026-06-16T10:32:11Z",
+      "scanned_at": "2026-06-16T14:40:56Z",
       "total": 12,
       "unknown": 0
     },
@@ -3947,7 +3947,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-16T10:38:31Z",
+      "scanned_at": "2026-06-16T14:46:17Z",
       "total": 16,
       "unknown": 0
     },
@@ -3957,7 +3957,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jre-alpine-3.21",
-      "scanned_at": "2026-06-16T10:27:55Z",
+      "scanned_at": "2026-06-16T14:37:40Z",
       "total": 0,
       "unknown": 0
     },
@@ -3967,7 +3967,7 @@
       "low": 187,
       "medium": 169,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim-arm64v8",
-      "scanned_at": "2026-06-16T10:45:24Z",
+      "scanned_at": "2026-06-16T14:52:25Z",
       "total": 490,
       "unknown": 24
     },
@@ -3977,7 +3977,7 @@
       "low": 62,
       "medium": 32,
       "reference": "debian:13",
-      "scanned_at": "2026-06-16T10:25:13Z",
+      "scanned_at": "2026-06-16T14:34:23Z",
       "total": 111,
       "unknown": 6
     },
@@ -3987,7 +3987,7 @@
       "low": 95,
       "medium": 46,
       "reference": "debian:11-slim",
-      "scanned_at": "2026-06-16T10:25:24Z",
+      "scanned_at": "2026-06-16T14:34:35Z",
       "total": 162,
       "unknown": 6
     },
@@ -3997,11 +3997,12 @@
       "low": 187,
       "medium": 169,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim",
-      "scanned_at": "2026-06-16T10:45:08Z",
+      "scanned_at": "2026-06-16T14:52:11Z",
       "total": 490,
       "unknown": 24
     }
   },
-  "schema_version": 1,
+  "schema_version": 2,
+  "trivy_db_updated_at": "2026-06-16T08:33:05.764373806Z",
   "trivy_version": "0.71.1"
 }
