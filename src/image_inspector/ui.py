@@ -111,13 +111,19 @@ def _two_tone_wordmark() -> tuple[Text, int]:
 def banner() -> None:
     """Print the branded launch banner inside a bordered panel."""
     wordmark, width = _two_tone_wordmark()
-    tagline, version = "Select • inspect • pin", f"v{__version__}"
-    gap = max(width - len(tagline) - len(version), 1)
+    tagline, version = "select • inspect • pin", f"v{__version__}"
+
+    # Center the tagline across the full block width while pinning the version
+    # to the right edge.
+    left_pad = max((width - len(tagline)) // 2, 0)
+    version_start = max(width - len(version), left_pad + len(tagline) + 1)
+    mid_gap = version_start - (left_pad + len(tagline))
 
     footer = Text()
-    footer.append(tagline, style="muted")
-    footer.append(" " * gap)
-    footer.append(version, style="accent")
+    footer.append(" " * left_pad)
+    footer.append(tagline, style="accent")
+    footer.append(" " * mid_gap)
+    footer.append(version, style="muted")
 
     # Fixed-width column keeps the footer's right edge aligned with the wordmark.
     block = Table.grid()
@@ -126,7 +132,7 @@ def banner() -> None:
     block.add_row(footer)
 
     console.print(
-        Panel(Align.center(block), border_style="accent", padding=(1, 2))
+        Panel(Align.center(block), border_style="accent", padding=(0,2,1,2))
     )
 
 
