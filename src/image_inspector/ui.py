@@ -83,12 +83,32 @@ _PROMPT_STYLE = Style(
 )
 
 
+def _two_tone_wordmark() -> Text:
+    """Render the figlet wordmark with ``image`` in white and ``inspector`` orange."""
+    words = (("image", "label"), ("inspector", "orange"))
+    rendered = []
+    for word, style in words:
+        lines = pyfiglet.figlet_format(word, font="small").rstrip("\n").split("\n")
+        width = max((len(line) for line in lines), default=0)
+        rendered.append(([line.ljust(width) for line in lines], style))
+    height = max(len(lines) for lines, _ in rendered)
+
+    art = Text(justify="center")
+    for row in range(height):
+        for index, (lines, style) in enumerate(rendered):
+            if index:
+                art.append(" ")
+            art.append(lines[row] if row < len(lines) else "", style=style)
+        if row < height - 1:
+            art.append("\n")
+    return art
+
+
 def banner() -> None:
     """Print the branded launch banner inside a bordered panel."""
-    art = pyfiglet.figlet_format("image inspector", font="small")
     inner = Group(
         Align.center(Text(f"🐳 image-inspector  v{__version__}", style="accent")),
-        Align.center(Text(art.rstrip("\n"), style="accent")),
+        Align.center(_two_tone_wordmark()),
         Align.center(Text("Select • inspect • pin", style="muted")),
     )
     console.print(Panel(inner, border_style="accent", padding=(1, 2)))
