@@ -106,10 +106,13 @@ def _two_tone_wordmark() -> Text:
 
 def banner() -> None:
     """Print the branded launch banner inside a bordered panel."""
+    tagline = Text(justify="center")
+    tagline.append("🐳  Select • inspect • pin", style="muted")
+    tagline.append("  ·  ", style="muted")
+    tagline.append(f"v{__version__}", style="accent")
     inner = Group(
-        Align.center(Text(f"🐳 image-inspector  v{__version__}", style="accent")),
         Align.center(_two_tone_wordmark()),
-        Align.center(Text("Select • inspect • pin", style="muted")),
+        Align.center(tagline),
     )
     console.print(Panel(inner, border_style="accent", padding=(1, 2)))
 
