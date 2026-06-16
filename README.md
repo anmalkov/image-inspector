@@ -36,6 +36,10 @@ FROM python:3.13.14-slim@sha256:205e60d0b78f024817...
   Container Registry (MCR), all behind one interface.
 - **Modern UI** — branded banner, themed menus, animated spinners, and a
   syntax-highlighted result panel (`rich` + `pyfiglet`).
+- **Automation-friendly** — `--plain` (uncolored) and `--json` (non-interactive)
+  output modes, plus `NO_COLOR` support.
+- **Quick actions** — after a result, copy the `FROM` line or digest to your
+  clipboard (OSC 52), start a new selection, or exit.
 
 ## Supported images
 
@@ -91,6 +95,33 @@ You can also run it as a module:
 ```bash
 uv run python -m image_inspector
 ```
+
+### Command-line options
+
+```bash
+uv run image-inspector --help
+```
+
+| Flag | Description |
+| --- | --- |
+| `--no-banner` | Skip the launch banner. |
+| `--plain` | Plain, uncolored output (selection stays interactive). Also honored via the `NO_COLOR` environment variable. |
+| `--json` | Non-interactive: print the resolved image as JSON. Requires `--language` and `--version`. |
+| `-l`, `--language` | Image key to resolve (`python`, `dotnet`, `java`, `go`, `node`, `rust`, `cpp`, `ubuntu`, `debian`, `alpine`). |
+| `--version VERSION` | Image version to resolve, e.g. `3.13.14` or `24.04`. |
+| `--variant VARIANT` | Image variant, e.g. `slim` or `alpine` (`'(none)'` for the plain tag). |
+| `--app-version` | Print the `image-inspector` version and exit. |
+
+`NO_COLOR` is respected automatically (see <https://no-color.org>).
+
+```bash
+# Non-interactive, machine-readable output for automation:
+uv run image-inspector --json -l ubuntu --version 24.04 --variant '(none)'
+```
+
+After a result, an interactive action menu lets you `[f]` copy the `FROM` line,
+`[d]` copy the digest (both via the OSC 52 clipboard escape), `[n]` start a new
+selection, or press `[enter]` to exit.
 
 ## Vulnerability scanning
 

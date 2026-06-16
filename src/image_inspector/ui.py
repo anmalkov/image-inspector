@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import base64
+import json
+import os
+import sys
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
+from datetime import datetime
 
 import pyfiglet
 import questionary
@@ -16,6 +21,7 @@ from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
 
+from . import __version__
 from .models import Category, Language, ResolvedImage
 from .report import ImageVulnerabilities
 
@@ -27,11 +33,38 @@ _THEME = Theme(
         "value": "bright_cyan",
         "ok": "bold green",
         "warn": "bold yellow",
+        "orange": "bold #ff8c00",
         "err": "bold red",
     }
 )
 
-console = Console(theme=_THEME)
+
+def _build_console(plain: bool) -> Console:
+    """Build a console; disable color for ``--plain`` or when ``NO_COLOR`` is set."""
+    no_color = plain or bool(os.environ.get("NO_COLOR"))
+    return Console(theme=_THEME, no_color=no_color)
+
+
+def _ensure_utf8_stream(stream: object) -> None:
+    """Switch a text stream to UTF-8 so emoji/unicode never crash legacy consoles."""
+    reconfigure = getattr(stream, "reconfigure", None)
+    if reconfigure is None:
+        return
+    with suppress(ValueError, OSError):
+        reconfigure(encoding="utf-8", errors="replace")
+
+
+console = _build_console(plain=False)
+_PLAIN = False
+
+
+def configure(*, plain: bool = False) -> None:
+    """Configure the shared console for plain/no-color output."""
+    global console, _PLAIN
+    _PLAIN = plain
+    _ensure_utf8_stream(sys.stdout)
+    _ensure_utf8_stream(sys.stderr)
+    console = _build_console(plain=plain)
 
 # questionary menu styling kept visually consistent with the rich theme.
 _PROMPT_STYLE = Style(
@@ -43,6 +76,7 @@ _PROMPT_STYLE = Style(
         ("selected", "fg:#22d3ee"),
         ("answer", "fg:#22d3ee bold"),
         ("instruction", "fg:#6b7280"),
+        ("separator", "fg:#f59e0b bold"),
         ("disabled", "fg:#6b7280 italic"),
     ]
 )
@@ -52,8 +86,9 @@ def banner() -> None:
     """Print the branded launch banner inside a bordered panel."""
     art = pyfiglet.figlet_format("image inspector", font="small")
     inner = Group(
+        Align.center(Text(f"🐳 image-inspector  v{__version__}", style="accent")),
         Align.center(Text(art.rstrip("\n"), style="accent")),
-        Align.center(Text("pin official base images by digest", style="muted")),
+        Align.center(Text("Select • inspect • pin", style="muted")),
     )
     console.print(Panel(inner, border_style="accent", padding=(1, 2)))
 
@@ -89,9 +124,9 @@ def select_language(languages: tuple[Language, ...]) -> Language | None:
         group = [lang for lang in languages if lang.category is category]
         if not group:
             continue
-        choices.append(Separator(f"── {heading} ──"))
+        choices.append(Separator(f"── {heading.upper()} ──"))
         choices.extend(Choice(title=lang.label, value=lang) for lang in group)
-    return _ask("Select a language or base image", choices)
+    return _ask("Select a language or OS", choices)
 
 
 def select_version(versions: list[str], lts_versions: frozenset[str] = frozenset()) -> str | None:
@@ -127,13 +162,22 @@ def format_size(num_bytes: int | None) -> str:
     return f"{size:.1f} GB"
 
 
+def format_datetime(dt: datetime | None) -> str:
+    """Render a timestamp as a human-readable string, e.g. ``Sep 10, 2024 · 13:50 UTC``."""
+    if dt is None:
+        return "unknown"
+    base = dt.strftime("%b ") + f"{dt.day}, " + dt.strftime("%Y · %H:%M")
+    tz = dt.strftime("%Z")
+    return f"{base} {tz}".strip() if tz else base
+
+
 def format_vulnerabilities(vulns: ImageVulnerabilities | None) -> Text:
     """Render vulnerability counts as a styled line for the result panel."""
     if vulns is None:
         return Text("no scan data", style="muted")
 
     critical_style = "err" if vulns.critical else "ok"
-    high_style = "warn" if vulns.high else "ok"
+    high_style = "orange" if vulns.high else "ok"
     total_style = "warn" if vulns.total else "ok"
 
     line = Text()
@@ -142,21 +186,78 @@ def format_vulnerabilities(vulns: ImageVulnerabilities | None) -> Text:
     line.append(f"High: {vulns.high}", style=high_style)
     line.append("  ·  ")
     line.append(f"Total: {vulns.total}", style=total_style)
+    if vulns.scanned_at is not None:
+        line.append("  ·  ")
+        line.append(f"Scanned: {format_datetime(vulns.scanned_at)}", style="muted")
     return line
+
+
+def _result_rows(image: ResolvedImage) -> list[tuple[str, object]]:
+    """The ordered (label, value) pairs shown for a resolved image."""
+    return [
+        ("Selected", image.source_label),
+        ("Image", image.reference),
+        ("Created", format_datetime(image.created)),
+        ("Download", f"{format_size(image.size)} (compressed, linux/amd64)"),
+        ("Vulnerabilities", format_vulnerabilities(image.vulnerabilities)),
+        ("Digest", image.digest),
+    ]
+
+
+def result_payload(image: ResolvedImage) -> dict:
+    """Build a machine-readable dict describing the resolved image."""
+    vulns = image.vulnerabilities
+    return {
+        "source": image.source_label,
+        "language": image.language.key,
+        "version": image.version,
+        "variant": image.variant,
+        "is_lts": image.is_lts,
+        "image": image.reference,
+        "pinned_reference": image.pinned_reference,
+        "digest": image.digest,
+        "created": image.created.isoformat() if image.created else None,
+        "size_bytes": image.size,
+        "from_line": f"FROM {image.pinned_reference}",
+        "vulnerabilities": None
+        if vulns is None
+        else {
+            "critical": vulns.critical,
+            "high": vulns.high,
+            "medium": vulns.medium,
+            "low": vulns.low,
+            "unknown": vulns.unknown,
+            "total": vulns.total,
+            "scanned_at": vulns.scanned_at.isoformat() if vulns.scanned_at else None,
+        },
+    }
+
+
+def show_result_json(image: ResolvedImage) -> None:
+    """Emit the resolved image as a single JSON object on stdout."""
+    print(json.dumps(result_payload(image), indent=2))
+
+
+def _show_result_plain(image: ResolvedImage) -> None:
+    """Render the result as simple uncolored ``key: value`` lines."""
+    width = max(len(label) for label, _ in _result_rows(image))
+    for label, value in _result_rows(image):
+        text = value.plain if isinstance(value, Text) else str(value)
+        console.print(f"{label.rjust(width)}: {text}")
+    console.print(f"\nFROM {image.pinned_reference}")
 
 
 def show_result(image: ResolvedImage) -> None:
     """Render the final selection as a panel with a copy-paste Dockerfile line."""
+    if _PLAIN:
+        _show_result_plain(image)
+        return
+
     table = Table.grid(padding=(0, 2))
     table.add_column(style="label", justify="right")
     table.add_column(style="value")
-    table.add_row("Language", image.language.label)
-    table.add_row("Image", image.reference)
-    created = image.created.strftime("%Y-%m-%d %H:%M:%S %Z").strip() if image.created else "unknown"
-    table.add_row("Created", created)
-    table.add_row("Download", f"{format_size(image.size)} (compressed, linux/amd64)")
-    table.add_row("Vulnerabilities", format_vulnerabilities(image.vulnerabilities))
-    table.add_row("Digest", image.digest)
+    for label, value in _result_rows(image):
+        table.add_row(label, value)
 
     dockerfile = Syntax(
         f"FROM {image.pinned_reference}",
@@ -170,18 +271,85 @@ def show_result(image: ResolvedImage) -> None:
         Text("\nDockerfile:", style="muted"),
         dockerfile,
     )
-    renderables = [body]
-    if image.vulnerabilities is not None and image.vulnerabilities.scanned_at is not None:
-        scanned = image.vulnerabilities.scanned_at.strftime("%Y-%m-%d").strip()
-        renderables.append(Text(f"\nVulnerability scan as of {scanned}", style="muted"))
     console.print(
         Panel(
-            Group(*renderables),
+            body,
             title="[ok]✓ resolved image",
             border_style="ok",
             padding=(1, 2),
         )
     )
+
+
+def copy_to_clipboard(text: str) -> None:
+    """Copy ``text`` to the system clipboard via the OSC 52 terminal escape."""
+    payload = base64.b64encode(text.encode("utf-8")).decode("ascii")
+    sys.stdout.write(f"\033]52;c;{payload}\a")
+    sys.stdout.flush()
+
+
+def _read_key() -> str:
+    """Read a single keypress without waiting for Enter.
+
+    Falls back to line-based input when stdin is not an interactive terminal.
+    """
+    if not sys.stdin.isatty():
+        line = sys.stdin.readline()
+        return line.strip()[:1]
+    try:
+        import msvcrt  # Windows
+    except ImportError:
+        import termios
+        import tty
+
+        fd = sys.stdin.fileno()
+        old = termios.tcgetattr(fd)
+        try:
+            tty.setraw(fd)
+            return sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    else:
+        return msvcrt.getwch()
+
+
+def result_actions(image: ResolvedImage) -> bool:
+    """Show the post-result action menu.
+
+    Reads a single keypress (no Enter required). Returns ``True`` if the user
+    asked for a new selection, ``False`` to exit.
+    """
+    while True:
+        console.print(
+            "\n[muted]Actions:[/muted]  "
+            "[accent]\\[f][/accent] Copy FROM line   "
+            "[accent]\\[d][/accent] Copy digest   "
+            "[accent]\\[n][/accent] New selection   "
+            "[accent]\\[enter][/accent] exit"
+        )
+        console.print("[accent]›[/accent] ", end="")
+        try:
+            key = _read_key()
+        except (EOFError, KeyboardInterrupt):
+            console.print()
+            return False
+        console.print(key)
+
+        choice = key.lower()
+        if choice in ("", "\r", "\n", "\x03", "\x04"):  # enter / ctrl-c / ctrl-d
+            return False
+        if choice == "f":
+            copy_to_clipboard(f"FROM {image.pinned_reference}")
+            console.print("[ok]✓ Copied FROM line to clipboard[/ok]")
+            return False
+        elif choice == "d":
+            copy_to_clipboard(image.digest)
+            console.print("[ok]✓ Copied digest to clipboard[/ok]")
+            return False
+        elif choice == "n":
+            return True
+        else:
+            console.print(f"[warn]Unknown option: {choice}[/warn]")
 
 
 def info(message: str) -> None:

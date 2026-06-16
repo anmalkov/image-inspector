@@ -123,6 +123,21 @@ class ResolvedImage:
     created: datetime | None
     size: int | None = None
     vulnerabilities: ImageVulnerabilities | None = None
+    version: str | None = None
+    variant: str | None = None
+    is_lts: bool = False
+
+    @property
+    def source_label(self) -> str:
+        """Human-readable selection, e.g. ``Python · 3.13.14 · alpine``."""
+        if self.version is None:
+            return self.language.label
+        parts = [self.language.label, self.version]
+        if self.variant:
+            parts.append(self.variant)
+        if self.is_lts:
+            parts.append("LTS")
+        return " · ".join(parts)
 
     @property
     def reference(self) -> str:
