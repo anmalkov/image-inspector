@@ -349,7 +349,13 @@ def show_result(image: ResolvedImage) -> None:
         grid.add_column(style="label", justify="left")
         grid.add_column(style="value")
         for label, value in rows:
-            grid.add_row(label, value)
+            if label:
+                grid.add_row(label, value)
+            else:
+                # Labelless rows (SELECTED) go in the first column so they line
+                # up with the labels of the other sections.
+                cell = value if isinstance(value, Text) else Text(str(value), style="value")
+                grid.add_row(cell)
         blocks.append(Text(title, style="muted"))
         blocks.append(Padding(grid, (0, 0, 1, 2)))
 
