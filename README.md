@@ -15,14 +15,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
-<!--
-  📸 Demo placeholder — add a terminal screenshot or GIF here.
-  Drop the file at docs/assets/demo.gif (or .png) and uncomment the block below.
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo" width="720">
 </p>
--->
 
 ---
 
