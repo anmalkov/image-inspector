@@ -2,11 +2,12 @@
 
 from datetime import UTC, datetime
 
-from image_inspector.models import LANGUAGES_BY_KEY, ResolvedImage
+from image_inspector.models import LANGUAGES_BY_KEY, ResolvedImage, ScanSource
 from image_inspector.report import ImageVulnerabilities
 from image_inspector.ui import (
     copy_to_clipboard,
     format_datetime,
+    format_scan_source,
     format_size,
     format_vulnerabilities,
     result_payload,
@@ -40,8 +41,22 @@ def test_format_vulnerabilities_counts():
         scanned_at=datetime(2026, 6, 15, tzinfo=UTC),
     )
     text = format_vulnerabilities(vulns)
-    expected = "Critical: 1  ·  High: 2  ·  Total: 10  ·  Scanned: Jun 15, 2026 · 00:00 UTC"
-    assert text.plain == expected
+    # Counts only; the scanned timestamp is now a separate SECURITY row.
+    assert text.plain == "Critical: 1  ·  High: 2  ·  Total: 10"
+
+
+def test_format_scan_source_full():
+    source = ScanSource(version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC))
+    assert format_scan_source(source) == "Trivy v0.71.1 · DB Jun 14, 2026"
+
+
+def test_format_scan_source_without_db_date():
+    assert format_scan_source(ScanSource(version="0.71.1")) == "Trivy v0.71.1"
+
+
+def test_format_scan_source_none():
+    assert format_scan_source(None) is None
+    assert format_scan_source(ScanSource(version=None)) is None
 
 
 def _resolved(**kwargs) -> ResolvedImage:
@@ -85,6 +100,9 @@ def test_result_payload_shape():
         version="3.13.14",
         variant="slim",
         vulnerabilities=ImageVulnerabilities(critical=1, high=2, total=7),
+        scan_source=ScanSource(
+            version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)
+        ),
     )
     payload = result_payload(image)
     assert payload["language"] == "python"
@@ -93,6 +111,51 @@ def test_result_payload_shape():
     assert payload["pinned_reference"] == "python:3.13.14-slim@sha256:deadbeef"
     assert payload["from_line"] == "FROM python:3.13.14-slim@sha256:deadbeef"
     assert payload["vulnerabilities"]["high"] == 2
+    assert payload["scanner"] == {
+        "name": "trivy",
+        "version": "0.71.1",
+        "db_updated_at": "2026-06-14T00:00:00+00:00",
+    }
+
+
+def test_result_payload_scanner_null_when_unscanned():
+    image = _resolved(language=LANGUAGES_BY_KEY["python"], tag="3.13.14", version="3.13.14")
+    payload = result_payload(image)
+    assert payload["scanner"] == {"name": "trivy", "version": None, "db_updated_at": None}
+
+
+def test_result_sections_structure():
+    from image_inspector.ui import _result_sections
+
+    image = _resolved(
+        language=LANGUAGES_BY_KEY["python"],
+        tag="3.13.14-alpine",
+        version="3.13.14",
+        variant="alpine",
+        vulnerabilities=ImageVulnerabilities(
+            critical=1, high=2, total=7, scanned_at=datetime(2026, 6, 15, tzinfo=UTC)
+        ),
+        scan_source=ScanSource(
+            version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)
+        ),
+    )
+    sections = _result_sections(image)
+    titles = [title for title, _ in sections]
+    assert titles == ["SELECTED", "IMAGE", "SECURITY"]
+
+    security = next(rows for title, rows in sections if title == "SECURITY")
+    labels = {label: value for label, value in security}
+    assert set(labels) == {"Vulnerabilities", "Scanned", "Source"}
+    assert labels["Source"] == "Trivy v0.71.1 · DB Jun 14, 2026"
+
+
+def test_result_sections_security_omits_unknown_rows():
+    from image_inspector.ui import _result_sections
+
+    image = _resolved(language=LANGUAGES_BY_KEY["python"], tag="3.13.14", version="3.13.14")
+    security = next(rows for title, rows in _result_sections(image) if title == "SECURITY")
+    # No scan data: only the Vulnerabilities row, no Scanned/Source.
+    assert [label for label, _ in security] == ["Vulnerabilities"]
 
 
 def test_copy_to_clipboard_emits_osc52(capsys):

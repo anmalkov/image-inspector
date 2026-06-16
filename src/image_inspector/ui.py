@@ -15,6 +15,7 @@ import questionary
 from questionary import Choice, Separator, Style
 from rich.align import Align
 from rich.console import Console, Group
+from rich.padding import Padding
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -22,7 +23,7 @@ from rich.text import Text
 from rich.theme import Theme
 
 from . import __version__
-from .models import Category, Language, ResolvedImage
+from .models import Category, Language, ResolvedImage, ScanSource
 from .report import ImageVulnerabilities
 
 _THEME = Theme(
@@ -171,6 +172,13 @@ def format_datetime(dt: datetime | None) -> str:
     return f"{base} {tz}".strip() if tz else base
 
 
+def format_date(dt: datetime | None) -> str:
+    """Render just the date portion of a timestamp, e.g. ``Sep 10, 2024``."""
+    if dt is None:
+        return "unknown"
+    return dt.strftime("%b ") + f"{dt.day}, " + dt.strftime("%Y")
+
+
 def format_vulnerabilities(vulns: ImageVulnerabilities | None) -> Text:
     """Render vulnerability counts as a styled line for the result panel."""
     if vulns is None:
@@ -186,27 +194,53 @@ def format_vulnerabilities(vulns: ImageVulnerabilities | None) -> Text:
     line.append(f"High: {vulns.high}", style=high_style)
     line.append("  ·  ")
     line.append(f"Total: {vulns.total}", style=total_style)
-    if vulns.scanned_at is not None:
-        line.append("  ·  ")
-        line.append(f"Scanned: {format_datetime(vulns.scanned_at)}", style="muted")
     return line
 
 
-def _result_rows(image: ResolvedImage) -> list[tuple[str, object]]:
-    """The ordered (label, value) pairs shown for a resolved image."""
+def format_scan_source(source: ScanSource | None) -> str | None:
+    """Render the scan provenance line, e.g. ``Trivy v0.71.1 · DB Jun 14, 2026``.
+
+    Returns ``None`` when no scanner version is known (the row is then omitted).
+    """
+    if source is None or source.version is None:
+        return None
+    label = f"Trivy v{source.version}"
+    if source.db_updated_at is not None:
+        label += f" · DB {format_date(source.db_updated_at)}"
+    return label
+
+
+def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, object]]]]:
+    """Group the resolved-image details into labelled (title, rows) sections."""
+    vulns = image.vulnerabilities
+    security: list[tuple[str, object]] = [
+        ("Vulnerabilities", format_vulnerabilities(vulns)),
+    ]
+    if vulns is not None and vulns.scanned_at is not None:
+        security.append(("Scanned", format_datetime(vulns.scanned_at)))
+    source = format_scan_source(image.scan_source)
+    if source is not None:
+        security.append(("Source", source))
+
     return [
-        ("Selected", image.source_label),
-        ("Image", image.reference),
-        ("Created", format_datetime(image.created)),
-        ("Download", f"{format_size(image.size)} (compressed, linux/amd64)"),
-        ("Vulnerabilities", format_vulnerabilities(image.vulnerabilities)),
-        ("Digest", image.digest),
+        ("SELECTED", [("", image.source_label)]),
+        (
+            "IMAGE",
+            [
+                ("Image", image.reference),
+                ("Created", format_datetime(image.created)),
+                ("Download", f"{format_size(image.size)} (compressed, linux/amd64)"),
+                ("Digest", image.digest),
+            ],
+        ),
+        ("SECURITY", security),
     ]
 
 
 def result_payload(image: ResolvedImage) -> dict:
     """Build a machine-readable dict describing the resolved image."""
     vulns = image.vulnerabilities
+    source = image.scan_source
     return {
         "source": image.source_label,
         "language": image.language.key,
@@ -230,6 +264,13 @@ def result_payload(image: ResolvedImage) -> dict:
             "total": vulns.total,
             "scanned_at": vulns.scanned_at.isoformat() if vulns.scanned_at else None,
         },
+        "scanner": {
+            "name": "trivy",
+            "version": source.version if source else None,
+            "db_updated_at": source.db_updated_at.isoformat()
+            if source and source.db_updated_at
+            else None,
+        },
     }
 
 
@@ -239,25 +280,36 @@ def show_result_json(image: ResolvedImage) -> None:
 
 
 def _show_result_plain(image: ResolvedImage) -> None:
-    """Render the result as simple uncolored ``key: value`` lines."""
-    width = max(len(label) for label, _ in _result_rows(image))
-    for label, value in _result_rows(image):
-        text = value.plain if isinstance(value, Text) else str(value)
-        console.print(f"{label.rjust(width)}: {text}")
-    console.print(f"\nFROM {image.pinned_reference}")
+    """Render the result as uncolored, sectioned ``key: value`` lines."""
+    for title, rows in _result_sections(image):
+        console.print(title)
+        width = max((len(label) for label, _ in rows if label), default=0)
+        for label, value in rows:
+            text = value.plain if isinstance(value, Text) else str(value)
+            if label:
+                console.print(f"  {label.ljust(width)}  {text}")
+            else:
+                console.print(f"  {text}")
+        console.print()
+    console.print("DOCKERFILE")
+    console.print(f"  FROM {image.pinned_reference}")
 
 
 def show_result(image: ResolvedImage) -> None:
-    """Render the final selection as a panel with a copy-paste Dockerfile line."""
+    """Render the final selection as a sectioned panel with a Dockerfile line."""
     if _PLAIN:
         _show_result_plain(image)
         return
 
-    table = Table.grid(padding=(0, 2))
-    table.add_column(style="label", justify="right")
-    table.add_column(style="value")
-    for label, value in _result_rows(image):
-        table.add_row(label, value)
+    blocks: list[object] = []
+    for title, rows in _result_sections(image):
+        grid = Table.grid(padding=(0, 2))
+        grid.add_column(style="label", justify="left")
+        grid.add_column(style="value")
+        for label, value in rows:
+            grid.add_row(label, value)
+        blocks.append(Text(title, style="accent"))
+        blocks.append(Padding(grid, (0, 0, 1, 2)))
 
     dockerfile = Syntax(
         f"FROM {image.pinned_reference}",
@@ -265,15 +317,12 @@ def show_result(image: ResolvedImage) -> None:
         theme="ansi_dark",
         background_color="default",
     )
+    blocks.append(Text("DOCKERFILE", style="accent"))
+    blocks.append(Padding(dockerfile, (0, 0, 0, 2)))
 
-    body = Group(
-        table,
-        Text("\nDockerfile:", style="muted"),
-        dockerfile,
-    )
     console.print(
         Panel(
-            body,
+            Group(*blocks),
             title="[ok]✓ resolved image",
             border_style="ok",
             padding=(1, 2),

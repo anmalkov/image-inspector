@@ -29,8 +29,12 @@ FROM python:3.13.14-slim@sha256:205e60d0b78f024817...
 - **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible
   builds.
 - **Size shown** — the compressed download size of the `linux/amd64` image.
-- **Vulnerability counts** — shows **critical / high / total** vulnerabilities for
-  the selected image, sourced from a nightly Trivy scan that ships with the tool.
+- **Sectioned result panel** — the resolved image is grouped into **SELECTED**,
+  **IMAGE**, **SECURITY** and **DOCKERFILE** sections so it's easy to scan.
+- **Vulnerability counts** — the SECURITY section shows **critical / high / total**
+  vulnerabilities for the selected image, when it was scanned, and the Trivy
+  version + DB date behind it — sourced from a nightly Trivy scan that ships with
+  the tool.
 - **Multi-registry** — Python, Java, Go, Node, Rust, C/C++ and the OS base images
   (Ubuntu, Debian, Alpine) come from Docker Hub; **.NET** comes from Microsoft
   Container Registry (MCR), all behind one interface.
@@ -125,16 +129,19 @@ selection, or press `[enter]` to exit.
 
 ## Vulnerability scanning
 
-When you resolve an image, `image-inspector` also shows how many
-vulnerabilities it has — **critical**, **high** and **total** — plus the date
-the scan was taken.
+When you resolve an image, the result panel's **SECURITY** section shows how many
+vulnerabilities it has — **critical**, **high** and **total** — the date the scan
+was taken, and the scan source (the Trivy version plus the vulnerability-DB
+update date, e.g. `Trivy v0.71.1 · DB Jun 14, 2026`).
 
 These counts come from a JSON report (`src/image_inspector/data/report.json`)
 that ships with the tool, so the interactive picker stays fast and needs no
 Docker or Trivy on your machine. The report is regenerated **nightly** by a
 GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against every
 selectable image (all versions and variants) and commits the refreshed report
-back to the repository.
+back to the repository. The report header records the Trivy version and DB date
+once; `--json` output surfaces them in a `scanner` block alongside the flat
+`vulnerabilities` counts.
 
 The report is keyed by the image's immutable **digest**, so the counts always
 match the exact `name:tag@sha256:…` reference the tool pins. If an image isn't in

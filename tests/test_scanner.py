@@ -74,6 +74,7 @@ def test_build_report_skips_failed_scans(monkeypatch):
     ]
     monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(targets))
     monkeypatch.setattr(scanner, "trivy_version", lambda: "0.58.0")
+    monkeypatch.setattr(scanner, "trivy_db_updated_at", lambda: "2026-06-14T12:00:00Z")
 
     def _fake_scan(image_ref):
         if image_ref.endswith("bad"):
@@ -84,6 +85,7 @@ def test_build_report_skips_failed_scans(monkeypatch):
 
     report = scanner.build_report()
     assert report["trivy_version"] == "0.58.0"
+    assert report["trivy_db_updated_at"] == "2026-06-14T12:00:00Z"
     assert set(report["images"]) == {"sha256:ok"}
     assert report["images"]["sha256:ok"]["high"] == 1
     assert report["images"]["sha256:ok"]["reference"] == "python:3.13.14"
@@ -132,19 +134,35 @@ def test_merge_reports_unions_images_by_digest():
     a = {
         "generated_at": "2026-06-15T02:00:00Z",
         "trivy_version": "0.71.1",
+        "trivy_db_updated_at": "2026-06-14T12:00:00Z",
         "images": {"sha256:py": {"reference": "python:3.13.14", "total": 1}},
     }
     b = {
         "generated_at": "2026-06-15T02:05:00Z",
         "trivy_version": None,
+        "trivy_db_updated_at": None,
         "images": {"sha256:al": {"reference": "alpine:3.21.0", "total": 0}},
     }
     merged = scanner.merge_reports([a, b])
     assert set(merged["images"]) == {"sha256:py", "sha256:al"}
     # trivy_version taken from the first input that has one.
     assert merged["trivy_version"] == "0.71.1"
+    # DB date likewise collapses to the first non-null value.
+    assert merged["trivy_db_updated_at"] == "2026-06-14T12:00:00Z"
     # generated_at is the latest of the inputs.
     assert merged["generated_at"] == "2026-06-15T02:05:00Z"
+
+
+def test_trivy_db_updated_at_reads_payload(monkeypatch):
+    payload = {"Version": "0.71.1", "VulnerabilityDB": {"UpdatedAt": "2026-06-14T12:00:00Z"}}
+    monkeypatch.setattr(scanner, "_trivy_version_payload", lambda: payload)
+    assert scanner.trivy_version() == "0.71.1"
+    assert scanner.trivy_db_updated_at() == "2026-06-14T12:00:00Z"
+
+
+def test_trivy_db_updated_at_missing_db(monkeypatch):
+    monkeypatch.setattr(scanner, "_trivy_version_payload", lambda: {"Version": "0.71.1"})
+    assert scanner.trivy_db_updated_at() is None
 
 
 def test_merge_main_writes_combined_report(tmp_path):

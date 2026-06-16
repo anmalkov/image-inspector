@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 
 from . import __version__, ui
-from .models import LANGUAGES, LANGUAGES_BY_KEY, Language, ResolvedImage
+from .models import LANGUAGES, LANGUAGES_BY_KEY, Language, ResolvedImage, ScanSource
 from .registry import RegistryError, RegistryProvider, get_provider, make_client
 from .report import VulnerabilityReport, load_report
 from .versions import (
@@ -73,6 +73,7 @@ def _resolve(
         version=version,
         variant=_display_variant(variant),
         is_lts=bool(_lts_versions(language, [version])),
+        scan_source=ScanSource.from_report(report),
     )
 
 
@@ -186,6 +187,7 @@ def _run_json(args: argparse.Namespace, report: VulnerabilityReport) -> int:
         version=version,
         variant=_display_variant(variant),
         is_lts=bool(_lts_versions(language, [version])),
+        scan_source=ScanSource.from_report(report),
     )
     ui.show_result_json(image)
     return 0

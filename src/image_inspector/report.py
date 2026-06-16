@@ -10,19 +10,25 @@ raising, so the picker always keeps working.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from importlib import resources
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 _REPORT_RESOURCE = "report.json"
+
+# Trivy emits nanosecond-precision timestamps (9 fractional digits) that
+# datetime.fromisoformat cannot parse; trim fractional seconds to 6 digits.
+_FRACTION_RE = re.compile(r"(\.\d{6})\d+")
 
 
 def _parse_dt(value: str | None) -> datetime | None:
     if not value:
         return None
+    text = _FRACTION_RE.sub(r"\1", value.replace("Z", "+00:00"))
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return datetime.fromisoformat(text)
     except ValueError:
         return None
 
@@ -58,6 +64,7 @@ class VulnerabilityReport:
 
     generated_at: datetime | None = None
     trivy_version: str | None = None
+    trivy_db_updated_at: datetime | None = None
     images: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
@@ -83,6 +90,7 @@ class VulnerabilityReport:
         return cls(
             generated_at=_parse_dt(data.get("generated_at")),
             trivy_version=data.get("trivy_version"),
+            trivy_db_updated_at=_parse_dt(data.get("trivy_db_updated_at")),
             images=images,
         )
 
