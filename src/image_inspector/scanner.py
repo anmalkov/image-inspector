@@ -44,8 +44,8 @@ def _utcnow_iso() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def trivy_version() -> str | None:
-    """Return the installed Trivy version, or ``None`` if it can't be read."""
+def _trivy_version_payload() -> dict:
+    """Return the parsed ``trivy version --format json`` payload (``{}`` on error)."""
     try:
         proc = subprocess.run(
             ["trivy", "version", "--format", "json"],
@@ -53,9 +53,25 @@ def trivy_version() -> str | None:
             text=True,
             check=True,
         )
-        return json.loads(proc.stdout).get("Version")
+        return json.loads(proc.stdout)
     except (OSError, subprocess.CalledProcessError, json.JSONDecodeError):
-        return None
+        return {}
+
+
+def trivy_version() -> str | None:
+    """Return the installed Trivy version, or ``None`` if it can't be read."""
+    return _trivy_version_payload().get("Version")
+
+
+def trivy_db_updated_at() -> str | None:
+    """Return the vulnerability DB's ``UpdatedAt`` timestamp, or ``None``.
+
+    Trivy also exposes ``VulnerabilityDB.Version``, but that is just an internal
+    schema/build integer with no user-meaningful meaning, so we ignore it and
+    surface only the DB's freshness date.
+    """
+    db = _trivy_version_payload().get("VulnerabilityDB") or {}
+    return db.get("UpdatedAt") or None
 
 
 def enumerate_targets(languages: tuple[Language, ...] = LANGUAGES) -> Iterator[ScanTarget]:
@@ -145,6 +161,7 @@ def build_report(languages: tuple[Language, ...] = LANGUAGES) -> dict:
         "schema_version": SCHEMA_VERSION,
         "generated_at": _utcnow_iso(),
         "trivy_version": trivy_version(),
+        "trivy_db_updated_at": trivy_db_updated_at(),
         "images": images,
     }
 
@@ -211,10 +228,12 @@ def merge_reports(payloads: list[dict]) -> dict:
     """Combine several per-language reports into one (union of images by digest)."""
     images: dict[str, dict] = {}
     trivy: str | None = None
+    db_updated: str | None = None
     generated: list[str] = []
     for payload in payloads:
         images.update(payload.get("images") or {})
         trivy = trivy or payload.get("trivy_version")
+        db_updated = db_updated or payload.get("trivy_db_updated_at")
         if payload.get("generated_at"):
             generated.append(payload["generated_at"])
     return {
@@ -222,6 +241,7 @@ def merge_reports(payloads: list[dict]) -> dict:
         # ISO-8601 UTC strings sort lexicographically, so max() is the latest.
         "generated_at": max(generated) if generated else _utcnow_iso(),
         "trivy_version": trivy,
+        "trivy_db_updated_at": db_updated,
         "images": images,
     }
 

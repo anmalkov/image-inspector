@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from .report import ImageVulnerabilities
+from .report import ImageVulnerabilities, VulnerabilityReport
 
 
 class RegistryKind(StrEnum):
@@ -114,6 +114,25 @@ class ImageTag:
 
 
 @dataclass(frozen=True)
+class ScanSource:
+    """Provenance of the vulnerability scan: the Trivy version and DB freshness.
+
+    Lives once in the report header (not per-image); attached to a resolved
+    image purely for rendering convenience.
+    """
+
+    version: str | None = None
+    db_updated_at: datetime | None = None
+
+    @classmethod
+    def from_report(cls, report: VulnerabilityReport | None) -> ScanSource | None:
+        """Build a scan source from a report header, or ``None`` if unscanned."""
+        if report is None or report.trivy_version is None:
+            return None
+        return cls(version=report.trivy_version, db_updated_at=report.trivy_db_updated_at)
+
+
+@dataclass(frozen=True)
 class ResolvedImage:
     """The final image the user selected, ready to show in a Dockerfile."""
 
@@ -123,6 +142,22 @@ class ResolvedImage:
     created: datetime | None
     size: int | None = None
     vulnerabilities: ImageVulnerabilities | None = None
+    version: str | None = None
+    variant: str | None = None
+    is_lts: bool = False
+    scan_source: ScanSource | None = None
+
+    @property
+    def source_label(self) -> str:
+        """Human-readable selection, e.g. ``Python · 3.13.14 · alpine``."""
+        if self.version is None:
+            return self.language.label
+        parts = [self.language.label, self.version]
+        if self.variant:
+            parts.append(self.variant)
+        if self.is_lts:
+            parts.append("LTS")
+        return " · ".join(parts)
 
     @property
     def reference(self) -> str:

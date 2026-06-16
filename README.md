@@ -29,13 +29,21 @@ FROM python:3.13.14-slim@sha256:205e60d0b78f024817...
 - **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible
   builds.
 - **Size shown** — the compressed download size of the `linux/amd64` image.
-- **Vulnerability counts** — shows **critical / high / total** vulnerabilities for
-  the selected image, sourced from a nightly Trivy scan that ships with the tool.
+- **Sectioned result panel** — the resolved image is grouped into **SELECTED**,
+  **IMAGE**, **SECURITY** and **DOCKERFILE** sections so it's easy to scan.
+- **Vulnerability counts** — the SECURITY section shows **critical / high / total**
+  vulnerabilities for the selected image, when it was scanned, and the Trivy
+  version + DB date behind it — sourced from a nightly Trivy scan that ships with
+  the tool.
 - **Multi-registry** — Python, Java, Go, Node, Rust, C/C++ and the OS base images
   (Ubuntu, Debian, Alpine) come from Docker Hub; **.NET** comes from Microsoft
   Container Registry (MCR), all behind one interface.
 - **Modern UI** — branded banner, themed menus, animated spinners, and a
   syntax-highlighted result panel (`rich` + `pyfiglet`).
+- **Automation-friendly** — `--plain` (uncolored) and `--json` (non-interactive)
+  output modes, plus `NO_COLOR` support.
+- **Quick actions** — after a result, copy the `FROM` line or digest to your
+  clipboard (OSC 52), start a new selection, or exit.
 
 ## Supported images
 
@@ -92,18 +100,48 @@ You can also run it as a module:
 uv run python -m image_inspector
 ```
 
+### Command-line options
+
+```bash
+uv run image-inspector --help
+```
+
+| Flag | Description |
+| --- | --- |
+| `--no-banner` | Skip the launch banner. |
+| `--plain` | Plain, uncolored output (selection stays interactive). Also honored via the `NO_COLOR` environment variable. |
+| `--json` | Non-interactive: print the resolved image as JSON. Requires `--language` and `--version`. |
+| `-l`, `--language` | Image key to resolve (`python`, `dotnet`, `java`, `go`, `node`, `rust`, `cpp`, `ubuntu`, `debian`, `alpine`). |
+| `--version VERSION` | Image version to resolve, e.g. `3.13.14` or `24.04`. |
+| `--variant VARIANT` | Image variant, e.g. `slim` or `alpine` (`'(none)'` for the plain tag). |
+| `--app-version` | Print the `image-inspector` version and exit. |
+
+`NO_COLOR` is respected automatically (see <https://no-color.org>).
+
+```bash
+# Non-interactive, machine-readable output for automation:
+uv run image-inspector --json -l ubuntu --version 24.04 --variant '(none)'
+```
+
+After a result, an interactive action menu lets you `[f]` copy the `FROM` line,
+`[d]` copy the digest (both via the OSC 52 clipboard escape), `[n]` start a new
+selection, or press `[enter]` to exit.
+
 ## Vulnerability scanning
 
-When you resolve an image, `image-inspector` also shows how many
-vulnerabilities it has — **critical**, **high** and **total** — plus the date
-the scan was taken.
+When you resolve an image, the result panel's **SECURITY** section shows how many
+vulnerabilities it has — **critical**, **high** and **total** — the date the scan
+was taken, and the scan source (the Trivy version plus the vulnerability-DB
+update date, e.g. `Trivy v0.71.1 · DB Jun 14, 2026`).
 
 These counts come from a JSON report (`src/image_inspector/data/report.json`)
 that ships with the tool, so the interactive picker stays fast and needs no
 Docker or Trivy on your machine. The report is regenerated **nightly** by a
 GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against every
 selectable image (all versions and variants) and commits the refreshed report
-back to the repository.
+back to the repository. The report header records the Trivy version and DB date
+once; `--json` output surfaces them in a `scanner` block alongside the flat
+`vulnerabilities` counts.
 
 The report is keyed by the image's immutable **digest**, so the counts always
 match the exact `name:tag@sha256:…` reference the tool pins. If an image isn't in
