@@ -1,4 +1,4 @@
-<h1 align="center">🐳 image-inspector</h1>
+# 🐳 image-inspector - select • inspect • pin
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="300">
