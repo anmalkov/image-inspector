@@ -172,15 +172,19 @@ def test_latest_calver_versions_count_exceeds_available():
 
 def test_calver_roundtrip_tag_for_selection_variants_for_version():
     """Verify tag_for_selection and variants_for_version agree for CalVer tags."""
-    ubuntu_tags = UBUNTU_TAGS
-    for version in latest_calver_versions(ubuntu_tags, count=5):
-        variants = variants_for_version(ubuntu_tags, version)
-        for variant in variants:
-            reconstructed = tag_for_selection(version, variant)
-            assert reconstructed in ubuntu_tags, (
-                f"Round-trip failed: version={version!r}, variant={variant!r}, "
-                f"reconstructed={reconstructed!r} not in tags"
-            )
+    # Use tags with variant suffixes to properly test round-trip behavior
+    calver_tags = [
+        "24.04",
+        "24.04-minimal",
+        "24.04-cloud",
+        "22.04",
+    ]
+    assert latest_calver_versions(calver_tags, count=5) == ["24.04", "22.04"]
+    assert variants_for_version(calver_tags, "24.04") == [PLAIN_VARIANT, "cloud", "minimal"]
+
+    for version in latest_calver_versions(calver_tags, count=5):
+        for variant in variants_for_version(calver_tags, version):
+            assert tag_for_selection(version, variant) in calver_tags
 
 
 def test_is_ubuntu_lts():
