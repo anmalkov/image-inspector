@@ -125,6 +125,11 @@ The full list of flags lives in the [Getting started guide](docs/getting-started
   type-check, and test.
 - 🚀 **[Releasing guide](docs/releasing.md)** — how releases are built and published.
 
+## 🤝 Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the branch/PR flow,
+local checks, and where to ask questions.
+
 ## License
 
 Released under the [MIT License](LICENSE).
