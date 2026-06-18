@@ -1,7 +1,7 @@
 <h1 align="center">🐳 image-inspector</h1>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="220">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="300">
 </p>
 
 <p align="center">
