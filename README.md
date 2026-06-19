@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Find an official container base image and lock it to an exact, reproducible version in seconds.</strong>
+  <strong>Find an official container base image, check its known vulnerabilities, and lock it to an exact, reproducible digest in seconds.</strong>
 </p>
 
 <p align="center">
