@@ -146,7 +146,7 @@ snapshot rather than a live, on-the-spot scan.
 
 - Bug reports and feature requests: [GitHub Issues](https://github.com/anmalkov/image-inspector/issues)
 - Questions and ideas: [GitHub Discussions](https://github.com/anmalkov/image-inspector/discussions)
-- Quick chat: [Discord](https://discord.gg/bQSu89SU2)
+- Quick chat: [Discord](https://discord.gg/vnAh9Cqyw)
 
 ## 🤝 Contributing
 
