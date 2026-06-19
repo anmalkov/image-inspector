@@ -65,3 +65,11 @@ jobs:
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
             dist/*
+
+      - name: Append community callout to release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="$(gh release view "${GITHUB_REF_NAME}" --json body --jq .body)"
+          footer=$'\n\n---\n\n## 💬 Join the community\n\nQuestions, feedback, or ideas? Come chat with us on [Discord](https://discord.gg/vnAh9Cqyw).'
+          gh release edit "${GITHUB_REF_NAME}" --notes "${body}${footer}"

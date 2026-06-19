@@ -1,4 +1,4 @@
-# 🐳 image-inspector - select • inspect • pin
+# 🐳 image-inspector — select • inspect • pin
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/logo.png" alt="image-inspector" width="300">
@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/anmalkov/image-inspector/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/anmalkov/image-inspector/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/anmalkov/image-inspector/releases"><img src="https://img.shields.io/github/v/release/anmalkov/image-inspector?include_prereleases&style=for-the-badge" alt="Latest release"></a>
+  <a href="https://github.com/anmalkov/image-inspector/releases"><img src="https://img.shields.io/github/v/release/anmalkov/image-inspector?style=for-the-badge" alt="Latest release"></a>
   <a href="https://pypi.org/project/base-image-inspector/"><img src="https://img.shields.io/pypi/v/base-image-inspector?style=for-the-badge" alt="PyPI version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
@@ -25,7 +25,7 @@ time. So a build that works today might pull a different image tomorrow, and "it
 quietly breaks.
 
 **image-inspector** fixes that. You pick a language or OS, a version, and a variant — all with the
-arrow keys — and it gives you a base image **pinned to an exact, unchangeable version** plus a
+arrow keys — and it gives you a base image **pinned to an immutable digest** plus a
 ready-to-paste `FROM` line:
 
 ```dockerfile
@@ -39,7 +39,7 @@ when it was built — so you can choose a good base image with confidence.
 > image contents. Pinning to a digest means everyone who builds your `Dockerfile` gets the *identical*
 > base image, every time. That's what makes a build reproducible.
 
-You don't need Docker or any scanner installed to use it.
+No Docker daemon or local scanner is required.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo">
@@ -57,6 +57,15 @@ pipx install base-image-inspector
 pip install base-image-inspector
 ```
 
+> **Package vs. command:** the PyPI package is `base-image-inspector`, but the installed CLI command
+> is `image-inspector`.
+
+Just want to try it without installing? Run it one-shot with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx --from base-image-inspector image-inspector
+```
+
 **2. Run it:**
 
 ```bash
@@ -66,13 +75,13 @@ image-inspector
 **3. Pick with the arrow keys** — language/OS → version → variant — and copy the `FROM` line it
 prints. That's it. 🎉
 
-New here and want the full walkthrough? See the **[Getting started guide](docs/getting-started.md)**.
+New here and want the full walkthrough? See the **[Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md)**.
 
 ## Features
 
 - 📌 **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible builds.
 - 🛡️ **Security at a glance** — critical / high / total vulnerability counts for the chosen image,
-  from a nightly Trivy scan that ships with the tool.
+  from precomputed nightly Trivy data bundled with the tool.
 - 🧱 **Many ecosystems, one interface** — Python, .NET, Java, Go, Node, Rust, C/C++, plus Ubuntu,
   Debian and Alpine base images.
 - 🤖 **Automation-friendly** — `--json` for non-interactive use and `--plain` / `NO_COLOR` support.
@@ -103,7 +112,7 @@ New here and want the full walkthrough? See the **[Getting started guide](docs/g
 | Alpine | Docker Hub | `library/alpine` | semver (latest 5 minors) |
 
 Per-image details (Java feature releases, the `gcc` compiler image, Ubuntu LTS, Debian variants) are
-covered in the [Getting started guide](docs/getting-started.md#supported-images-in-detail).
+covered in the [Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md#supported-images-in-detail).
 
 ## Examples
 
@@ -112,24 +121,38 @@ covered in the [Getting started guide](docs/getting-started.md#supported-images-
 image-inspector
 
 # Non-interactive, machine-readable output for scripts/CI:
-image-inspector --json -l ubuntu --version 24.04'
+image-inspector --json -l ubuntu --version 24.04
 ```
 
-The full list of flags lives in the [Getting started guide](docs/getting-started.md#command-line-options).
+The full list of flags lives in the [Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md#command-line-options).
+
+## Vulnerability data
+
+The critical / high / total counts come from **precomputed nightly [Trivy](https://github.com/aquasecurity/trivy)
+data bundled with the tool**. Nothing is scanned locally at runtime — image-inspector doesn't run Trivy
+on your machine, pull images, or talk to a scanner. That keeps it fast and means no Docker daemon or
+scanner is required. Because the data is precomputed nightly, counts reflect the most recent bundled
+snapshot rather than a live, on-the-spot scan.
 
 ## Documentation
 
-- 📖 **[Getting started guide](docs/getting-started.md)** — full usage, all flags, JSON output, and
-  vulnerability scanning.
-- 🛠️ **[Development guide](docs/development.md)** — set up locally, run the tool from source, lint,
+- 📖 **[Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md)** — full usage, all flags, JSON output, and
+  vulnerability data.
+- 🛠️ **[Development guide](https://github.com/anmalkov/image-inspector/blob/main/docs/development.md)** — set up locally, run the tool from source, lint,
   type-check, and test.
-- 🚀 **[Releasing guide](docs/releasing.md)** — how releases are built and published.
+- 🚀 **[Releasing guide](https://github.com/anmalkov/image-inspector/blob/main/docs/releasing.md)** — how releases are built and published.
+
+## Community & support
+
+- Bug reports and feature requests: [GitHub Issues](https://github.com/anmalkov/image-inspector/issues)
+- Questions and ideas: [GitHub Discussions](https://github.com/anmalkov/image-inspector/discussions)
+- Quick chat: [Discord](https://discord.gg/vnAh9Cqyw)
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for the branch/PR flow,
+Contributions are welcome! Please read [CONTRIBUTING.md](https://github.com/anmalkov/image-inspector/blob/main/CONTRIBUTING.md) for the branch/PR flow,
 local checks, and where to ask questions.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](https://github.com/anmalkov/image-inspector/blob/main/LICENSE).
