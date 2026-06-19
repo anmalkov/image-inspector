@@ -21,7 +21,7 @@ jobs:
       id-token: write   # PyPI Trusted Publishing (OIDC)
     environment:
       name: pypi
-      url: https://pypi.org/project/image-inspector/
+      url: https://pypi.org/project/base-image-inspector/
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -65,3 +65,11 @@ jobs:
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
             dist/*
+
+      - name: Append community callout to release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="$(gh release view "${GITHUB_REF_NAME}" --json body --jq .body)"
+          footer=$'\n\n---\n\n## 💬 Join the community\n\nQuestions, feedback, or ideas? Come chat with us on [Discord](https://discord.gg/vnAh9Cqyw).'
+          gh release edit "${GITHUB_REF_NAME}" --notes "${body}${footer}"

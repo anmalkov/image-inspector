@@ -3,3 +3,6 @@ contact_links:
   - name: Questions & Discussions
     url: https://github.com/anmalkov/image-inspector/discussions
     about: Have a question or an idea to discuss? Please start a discussion here instead of opening an issue.
+  - name: Discord community
+    url: https://discord.gg/vnAh9Cqyw
+    about: Chat with the community, get help, and share feedback on Discord.
