@@ -13,6 +13,7 @@
   <a href="https://github.com/anmalkov/image-inspector/releases"><img src="https://img.shields.io/github/v/release/anmalkov/image-inspector?include_prereleases&style=for-the-badge" alt="Latest release"></a>
   <a href="https://pypi.org/project/base-image-inspector/"><img src="https://img.shields.io/pypi/v/base-image-inspector?style=for-the-badge" alt="PyPI version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
+  <a href="https://discord.gg/bQSu89SU2"><img src="https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
 </p>
 
 ---
@@ -124,6 +125,12 @@ The full list of flags lives in the [Getting started guide](docs/getting-started
 - 🛠️ **[Development guide](docs/development.md)** — set up locally, run the tool from source, lint,
   type-check, and test.
 - 🚀 **[Releasing guide](docs/releasing.md)** — how releases are built and published.
+
+## 💬 Community
+
+Come hang out on **[Discord](https://discord.gg/bQSu89SU2)** — it's the best place to
+ask for help, share feedback, suggest features, or just say hi. We're a small,
+growing community and would love to have you.
 
 ## 🤝 Contributing
 
