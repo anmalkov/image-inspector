@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/anmalkov/image-inspector/actions/workflows/ci.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/anmalkov/image-inspector/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
   <a href="https://github.com/anmalkov/image-inspector/releases"><img src="https://img.shields.io/github/v/release/anmalkov/image-inspector?include_prereleases&style=for-the-badge" alt="Latest release"></a>
-  <a href="https://pypi.org/project/image-inspector/"><img src="https://img.shields.io/pypi/v/image-inspector?style=for-the-badge" alt="PyPI version"></a>
+  <a href="https://pypi.org/project/base-image-inspector/"><img src="https://img.shields.io/pypi/v/base-image-inspector?style=for-the-badge" alt="PyPI version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
 </p>
 
@@ -50,11 +50,11 @@ You don't need Docker or any scanner installed to use it.
 **1. Install it** (pick whichever you have):
 
 ```bash
-uv tool install image-inspector     # recommended
+uv tool install base-image-inspector     # recommended
 # or
-pipx install image-inspector
+pipx install base-image-inspector
 # or
-pip install image-inspector
+pip install base-image-inspector
 ```
 
 **2. Run it:**

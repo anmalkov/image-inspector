@@ -2,7 +2,7 @@
 
 Releases are fully automated by the **Release** workflow
 ([`.github/workflows/release.yml`](../.github/workflows/release.yml)). Pushing a version tag builds
-the package, publishes it to [PyPI](https://pypi.org/project/image-inspector/), and creates a GitHub
+the package, publishes it to [PyPI](https://pypi.org/project/base-image-inspector/), and creates a GitHub
 Release.
 
 ## One-time setup: PyPI Trusted Publishing
@@ -10,7 +10,7 @@ Release.
 The release workflow publishes to PyPI using **Trusted Publishing (OIDC)** — no API tokens or secrets
 are stored in the repository. This must be configured **once** before the first release:
 
-1. Sign in to [PyPI](https://pypi.org/) as a maintainer of the `image-inspector` project.
+1. Sign in to [PyPI](https://pypi.org/) as a maintainer of the `base-image-inspector` project.
 2. Go to the project's **Settings → Publishing** (or, for the very first release, add a
    *pending* publisher under your account's **Publishing** settings).
 3. Add a new **GitHub Actions** trusted publisher with:
@@ -62,8 +62,8 @@ The version is derived **from the git tag** at release time:
 
 5. Verify the result:
    - the [GitHub Releases page](https://github.com/anmalkov/image-inspector/releases) shows the new release,
-   - the new version appears on [PyPI](https://pypi.org/project/image-inspector/),
-   - `uv tool install image-inspector` (or `pip install image-inspector`) installs the new version.
+   - the new version appears on [PyPI](https://pypi.org/project/base-image-inspector/),
+   - `uv tool install base-image-inspector` (or `pip install base-image-inspector`) installs the new version.
 
 ## Package metadata
 
