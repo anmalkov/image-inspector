@@ -98,6 +98,26 @@ After a result, an action menu lets you:
 
 Clipboard copy uses the OSC 52 terminal escape, so it works over SSH in terminals that support it.
 
+### Worked example: pin a Node.js slim image
+
+Here is a complete interactive pass for a common Node.js base image:
+
+```text
+$ image-inspector
+Select a language or OS: Node.js
+Select a version: 22.21.1
+Select a variant: slim
+```
+
+The result panel prints a full digest-pinned image reference, then a ready-to-paste Dockerfile line:
+
+```dockerfile
+FROM node:22.21.1-slim@sha256:25b3eb23a00590b7499f2a2ce939322727fcce1b...
+```
+
+The digest is shortened here for readability. In the terminal, copy the full `FROM` line from the
+**DOCKERFILE** section, or press `[f]` at the action menu to copy it automatically.
+
 ## Command-line options
 
 ```bash
