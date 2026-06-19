@@ -34,9 +34,9 @@ New to the tool? The [README](../README.md) has a 60-second quick start. This pa
 Pick whichever installer you already have:
 
 ```bash
-uv tool install image-inspector     # via uv (recommended)
-pipx install image-inspector        # via pipx
-pip install image-inspector         # via pip
+uv tool install base-image-inspector     # via uv (recommended)
+pipx install base-image-inspector        # via pipx
+pip install base-image-inspector         # via pip
 ```
 
 `uv tool install` and `pipx install` put the `image-inspector` command on your `PATH` in an isolated

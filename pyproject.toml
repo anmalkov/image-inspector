@@ -1,5 +1,5 @@
 [project]
-name = "image-inspector"
+name = "base-image-inspector"
 version = "0.1.0"
 description = "Interactive CLI to pick and digest-pin official container base images (Python, .NET, Java, Go, Node, Rust, C/C++, Ubuntu, Debian, Alpine)."
 readme = "README.md"
@@ -48,6 +48,9 @@ image-inspector-merge = "image_inspector.scanner:merge_main"
 [build-system]
 requires = ["uv_build>=0.9.7,<0.10.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "image_inspector"
 
 [dependency-groups]
 dev = [
