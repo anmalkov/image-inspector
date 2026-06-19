@@ -13,6 +13,8 @@ New to the tool? The [README](../README.md) has a 60-second quick start. This pa
 - [Running the tool](#running-the-tool)
 - [The interactive flow](#the-interactive-flow)
 - [Command-line options](#command-line-options)
+- [Exit codes and environment](#exit-codes-and-environment)
+- [Troubleshooting](#troubleshooting)
 - [Automation and JSON output](#automation-and-json-output)
 - [Vulnerability scanning](#vulnerability-scanning)
 - [Running a scan yourself](#running-a-scan-yourself)
@@ -115,6 +117,39 @@ image-inspector --help
 | `--app-version` | Print the `image-inspector` version and exit. |
 
 `NO_COLOR` is respected automatically (see <https://no-color.org>).
+
+## Exit codes and environment
+
+`image-inspector` exits with explicit status codes for scripts and CI:
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | Normal completion (selection finished or operation succeeded). |
+| `1` | Runtime resolution failure (for example, no matching image variant was found or the registry query failed). |
+| `2` | Input/usage issue (for example, `--json` is missing `--language` or `--version`, or multiple variants require `--variant`). |
+| `130` | User cancelled the flow (keyboard interrupt, EOF, or menu cancel). |
+
+`--plain` disables Rich color output for easier scripting and log readability.
+`NO_COLOR` is also honored automatically (see <https://no-color.org>).
+
+## Troubleshooting
+
+- **Clipboard copy does nothing**
+  - Copy uses OSC 52 (`src/image_inspector/ui.py`).
+  - Some terminals and terminal multiplexers (for example tmux without `set-clipboard on`) do not support this path, so the tool may appear to copy without visible feedback.
+  - As a workaround, copy text directly from the printed `FROM` line or switch terminals with OSC 52 support.
+
+- **Output is still colored when I want plain text**
+  - Use `--plain` for an uncolored interactive output.
+  - Set `NO_COLOR` in your environment to disable color globally.
+
+- **Network / registry errors**
+  - Errors like `RegistryError` usually mean the registry could not be reached or data could not be resolved.
+  - Retry after checking network access and image/tags; this is often transient.
+
+- **Do I need Trivy or Docker locally?**
+  - No. Security counts shown in the interactive panel come from a bundled `report.json` file that is refreshed nightly in CI via Trivy runs.
+  - You do **not** need Docker or Trivy installed to run image resolution locally.
 
 ## Automation and JSON output
 
