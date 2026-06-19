@@ -98,6 +98,26 @@ After a result, an action menu lets you:
 
 Clipboard copy uses the OSC 52 terminal escape, so it works over SSH in terminals that support it.
 
+### Worked example
+
+1. Start the app:
+
+```bash
+image-inspector
+```
+
+2. Pick a language: `node`
+
+3. Pick a version: `26.3.0`
+
+4. Pick a variant: `bullseye`
+
+5. In the **DOCKERFILE** section, copy or type the pinned line:
+
+```dockerfile
+FROM node:26.3.0-bullseye@sha256:5975840a23caf87319a61034f813392211a9bc41cdc0536b68e2c59da0d4f924
+```
+
 ## Command-line options
 
 ```bash
