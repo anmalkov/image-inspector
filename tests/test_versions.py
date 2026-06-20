@@ -95,6 +95,26 @@ def test_select_versions_dispatches_on_scheme():
     assert select_versions(TAGS, VersionScheme.SEMVER, count=2) == ["3.14.6", "3.13.14"]
 
 
+def test_latest_minor_versions_empty_input():
+    assert latest_minor_versions([]) == []
+    assert latest_minor_versions(["latest", "3.13-slim"]) == []
+
+
+def test_latest_minor_versions_count_exceeds_available():
+    tags = ["3.14.6", "3.13.14"]
+    assert latest_minor_versions(tags, count=10) == ["3.14.6", "3.13.14"]
+
+
+def test_latest_major_versions_empty_input():
+    assert latest_major_versions([]) == []
+    assert latest_major_versions(["latest", "21-jdk"]) == []
+
+
+def test_latest_major_versions_count_exceeds_available():
+    tags = ["21", "17"]
+    assert latest_major_versions(tags, count=10) == ["21", "17"]
+
+
 def test_variants_reused_for_major_scheme():
     variants = variants_for_version(JAVA_TAGS, "21")
     assert variants[0] == PLAIN_VARIANT
@@ -138,6 +158,33 @@ def test_latest_calver_versions_newest_first_preserving_zero():
 
 def test_latest_calver_versions_ignores_non_calver_tags():
     assert latest_calver_versions(["latest", "noble", "24"], count=5) == []
+
+
+def test_latest_calver_versions_empty_input():
+    assert latest_calver_versions([]) == []
+    assert latest_calver_versions(["latest", "noble"]) == []
+
+
+def test_latest_calver_versions_count_exceeds_available():
+    tags = ["26.04", "24.04"]
+    assert latest_calver_versions(tags, count=10) == ["26.04", "24.04"]
+
+
+def test_calver_roundtrip_tag_for_selection_variants_for_version():
+    """Verify tag_for_selection and variants_for_version agree for CalVer tags."""
+    # Use tags with variant suffixes to properly test round-trip behavior
+    calver_tags = [
+        "24.04",
+        "24.04-minimal",
+        "24.04-cloud",
+        "22.04",
+    ]
+    assert latest_calver_versions(calver_tags, count=5) == ["24.04", "22.04"]
+    assert variants_for_version(calver_tags, "24.04") == [PLAIN_VARIANT, "cloud", "minimal"]
+
+    for version in latest_calver_versions(calver_tags, count=5):
+        for variant in variants_for_version(calver_tags, version):
+            assert tag_for_selection(version, variant) in calver_tags
 
 
 def test_is_ubuntu_lts():
