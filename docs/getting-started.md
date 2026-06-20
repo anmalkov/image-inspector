@@ -259,7 +259,7 @@ orientation guide:
 | --- | --- |
 | Python / Node.js | `(none)`, `slim`, `alpine`, `bookworm`, `bullseye`, `trixie` |
 | Go / Rust / C / C++ | `(none)`, `alpine`, `bookworm`, `bullseye`, `trixie` |
-| .NET SDK | `(none)`, `alpine`, `noble`, `jammy`, `bookworm-slim` |
+| .NET SDK | `(none)`, `alpine3.23`, `noble`, `jammy`, `bookworm-slim` |
 | Java (`eclipse-temurin`) | `jdk`, `jre`, `jdk-alpine`, `jre-alpine`, `jdk-noble`, `jre-noble` |
 | Debian | `(none)`, `slim` |
 | Ubuntu / Alpine | `(none)` |
