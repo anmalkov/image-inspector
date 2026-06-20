@@ -100,25 +100,6 @@ After a result, an action menu lets you:
 
 Clipboard copy uses the OSC 52 terminal escape, so it works over SSH in terminals that support it.
 
-### Exit codes and environment
-
-Scripted runs with `--json` return:
-
-- `0` on success
-- `1` for runtime failures (no matching tags, no variants for a version, or registry errors)
-- `2` for invalid argument combinations
-
-Interactive runs return:
-
-- `0` on successful selection
-- `1` if resolving a selected image fails at runtime (`RegistryError`)
-- `130` when the interactive selection flow is cancelled (`Ctrl-C`, `Ctrl-D`, EOF, or no selection at language/version/variant prompts)
-- `130` is not used for the clipboard prompt; pressing `Ctrl-C`/EOF while on the post-result actions menu exits with `0`.
-
-Clipboard actions are best-effort: OSC 52 may be blocked in some terminals and not update the system
-clipboard even though the `"[ok]✓ Copied ...[/ok]"` line is displayed. If copy support is unavailable,
-copy the value manually from the displayed output.
-
 ## Command-line options
 
 ```bash
@@ -139,17 +120,19 @@ image-inspector --help
 
 ## Exit codes and environment
 
-`image-inspector` exits with explicit status codes for scripts and CI:
+`image-inspector` exit codes are mode-dependent:
 
 | Exit code | Meaning |
 | --- | --- |
-| `0` | Normal completion (selection finished or `--json` resolution succeeded). |
-| `1` | Runtime-resolution failure (`--json` mode): registry failures, no matching tags for the requested language/version, or variant/version mismatches. |
-| `2` | Input/usage issue in `--json` mode (`--json` missing `--language` or `--version`, or ambiguous variant selection input). |
-| `130` | User cancellation paths in interactive mode (cancel menu selection, `Ctrl+C`, or `Ctrl+D`). |
+| `0` | Normal completion (`--json` resolution succeeds, or interactive selection flow finishes with a selected image). |
+| `1` | `--json` runtime-resolution failure: registry errors, no matching tags, or variant/version mismatches. |
+| `2` | `--json` input/usage issue: missing `--language` / `--version`, or invalid interactive/CLI argument combinations. |
+| `130` | Interactive selection flow cancellation (`--no`/cancel action, `Ctrl+C`, or `Ctrl+D` before a result is selected). |
 
 `--plain` disables Rich color output for easier scripting and log readability.
 `NO_COLOR` is also honored automatically (see <https://no-color.org>).
+
+After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `0`; it does not signal failure.
 
 ## Troubleshooting
 
