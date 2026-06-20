@@ -100,6 +100,24 @@ After a result, an action menu lets you:
 
 Clipboard copy uses the OSC 52 terminal escape, so it works over SSH in terminals that support it.
 
+### Exit codes and environment
+
+Scripted runs with `--json` return:
+
+- `0` on success
+- `1` for runtime failures (no matching tags, no variants for a version, or registry errors)
+- `2` for invalid argument combinations
+
+Interactive runs return:
+
+- `0` on successful selection
+- `1` if resolving a selected image fails at runtime (`RegistryError`)
+- `130` when the user cancels interaction (`Ctrl-C`, `Ctrl-D`, EOF, or no selection at prompts)
+
+Clipboard actions are best-effort: OSC 52 may be blocked in some terminals and not update the system
+clipboard even though the `"[ok]✓ Copied ...[/ok]"` line is displayed. If copy support is unavailable,
+copy the value manually from the displayed output.
+
 ## Command-line options
 
 ```bash
