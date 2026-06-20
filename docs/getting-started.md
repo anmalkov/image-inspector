@@ -13,6 +13,8 @@ New to the tool? The [README](../README.md) has a 60-second quick start. This pa
 - [Running the tool](#running-the-tool)
 - [The interactive flow](#the-interactive-flow)
 - [Command-line options](#command-line-options)
+- [Exit codes and environment](#exit-codes-and-environment)
+- [Troubleshooting](#troubleshooting)
 - [Automation and JSON output](#automation-and-json-output)
 - [Vulnerability scanning](#vulnerability-scanning)
 - [Running a scan yourself](#running-a-scan-yourself)
@@ -135,6 +137,43 @@ image-inspector --help
 | `--app-version` | Print the `image-inspector` version and exit. |
 
 `NO_COLOR` is respected automatically (see <https://no-color.org>).
+
+## Exit codes and environment
+
+`image-inspector` exit codes are mode-dependent:
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | Normal completion (`--json` resolution succeeds, or interactive selection flow finishes with a selected image). |
+| `1` | Runtime-resolution failure: registry errors in any mode, or no matching tags for a requested `--json` version. |
+| `2` | CLI usage/input issue: invalid arguments, missing `--language` / `--version` with `--json`, an unknown `--variant`, or a required `--variant` when multiple variants are available. |
+| `130` | Interactive selection flow cancellation before a result is selected; also used when the interactive flow cannot continue because no selectable tags or variants are found. |
+
+`--plain` disables Rich color output for easier scripting and log readability.
+`NO_COLOR` is also honored automatically (see <https://no-color.org>).
+
+After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `0`; it does not signal failure.
+
+## Troubleshooting
+
+- **Clipboard copy does nothing**
+  - Copy uses OSC 52 (`src/image_inspector/ui.py`).
+  - Some terminals and terminal multiplexers (for example tmux without `set-clipboard on`) do not support this path, so the tool may appear to copy without visible feedback.
+  - In this state, the action can still show a success message even when no text was placed on your clipboard.
+  - Clipboard support is terminal-dependent, and copy failures currently do not fail the interactive flow.
+  - As a workaround, copy text directly from the printed `FROM` line or switch terminals with OSC 52 support.
+
+- **Output is still colored when I want plain text**
+  - Use `--plain` for an uncolored interactive output.
+  - Set `NO_COLOR` in your environment to disable color globally.
+
+- **Network / registry errors**
+  - Errors like `RegistryError` usually mean the registry could not be reached or data could not be resolved.
+  - Retry after checking network access and image/tags; this is often transient.
+
+- **Do I need Trivy or Docker locally?**
+  - No. Security counts shown in the interactive panel come from a bundled `report.json` file that is refreshed nightly in CI via Trivy runs.
+  - You do **not** need Docker or Trivy installed to run image resolution locally.
 
 ## Automation and JSON output
 
