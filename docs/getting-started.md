@@ -125,9 +125,9 @@ image-inspector --help
 | Exit code | Meaning |
 | --- | --- |
 | `0` | Normal completion (selection finished or operation succeeded). |
-| `1` | Runtime resolution failure (for example, no matching image variant was found or the registry query failed). |
+| `1` | Runtime-resolution failure for image resolution (for example, no matching image variant was found or the registry query failed). |
 | `2` | Input/usage issue (for example, `--json` is missing `--language` or `--version`, or multiple variants require `--variant`). |
-| `130` | User cancelled the flow (keyboard interrupt, EOF, or menu cancel). |
+| `130` | User interrupted during language selection or resolution (keyboard interrupt, control-d, or menu cancel). |
 
 `--plain` disables Rich color output for easier scripting and log readability.
 `NO_COLOR` is also honored automatically (see <https://no-color.org>).
@@ -137,6 +137,7 @@ image-inspector --help
 - **Clipboard copy does nothing**
   - Copy uses OSC 52 (`src/image_inspector/ui.py`).
   - Some terminals and terminal multiplexers (for example tmux without `set-clipboard on`) do not support this path, so the tool may appear to copy without visible feedback.
+  - In this state, the action can still show a success message even when no text was placed on your clipboard.
   - As a workaround, copy text directly from the printed `FROM` line or switch terminals with OSC 52 support.
 
 - **Output is still colored when I want plain text**
