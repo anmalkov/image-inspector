@@ -112,7 +112,8 @@ Interactive runs return:
 
 - `0` on successful selection
 - `1` if resolving a selected image fails at runtime (`RegistryError`)
-- `130` when the user cancels interaction (`Ctrl-C`, `Ctrl-D`, EOF, or no selection at prompts)
+- `130` when the interactive selection flow is cancelled (`Ctrl-C`, `Ctrl-D`, EOF, or no selection at language/version/variant prompts)
+- `130` is not used for the clipboard prompt; pressing `Ctrl-C`/EOF while on the post-result actions menu exits with `0`.
 
 Clipboard actions are best-effort: OSC 52 may be blocked in some terminals and not update the system
 clipboard even though the `"[ok]✓ Copied ...[/ok]"` line is displayed. If copy support is unavailable,
