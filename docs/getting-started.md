@@ -145,9 +145,9 @@ image-inspector --help
 | Exit code | Meaning |
 | --- | --- |
 | `0` | Normal completion (`--json` resolution succeeds, or interactive selection flow finishes with a selected image). |
-| `1` | `--json` runtime-resolution failure: registry errors, no matching tags, or variant/version mismatches. |
-| `2` | `--json` input/usage issue: missing `--language` / `--version`, or invalid interactive/CLI argument combinations. |
-| `130` | Interactive selection flow cancellation (menu cancel action, `Ctrl+C`, or `Ctrl+D` before a result is selected). |
+| `1` | Runtime-resolution failure: registry errors in any mode, or no matching tags for a requested `--json` version. |
+| `2` | CLI usage/input issue: invalid arguments, missing `--language` / `--version` with `--json`, an unknown `--variant`, or a required `--variant` when multiple variants are available. |
+| `130` | Interactive selection flow cancellation before a result is selected; also used when the interactive flow cannot continue because no selectable tags or variants are found. |
 
 `--plain` disables Rich color output for easier scripting and log readability.
 `NO_COLOR` is also honored automatically (see <https://no-color.org>).
