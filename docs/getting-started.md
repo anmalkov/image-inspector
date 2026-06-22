@@ -19,6 +19,7 @@ New to the tool? The [README](../README.md) has a 60-second quick start. This pa
 - [Vulnerability scanning](#vulnerability-scanning)
 - [Running a scan yourself](#running-a-scan-yourself)
 - [Supported images in detail](#supported-images-in-detail)
+- [Common variants](#common-variants)
 - [How it works](#how-it-works)
 - [Project layout](#project-layout)
 
@@ -246,6 +247,25 @@ parallel matrix jobs still produce one combined report.
   you can tell them apart from interim releases (e.g. `25.10`).
 - **Debian** images are tagged by major release (`11`, `12`, `13`); pick `(none)` for the full image
   or `slim` for the smaller variant.
+
+## Common variants
+
+Variants are the suffix after a version in a registry tag. For example, `3.13.14-slim` is the
+`slim` variant of Python `3.13.14`. The picker resolves variants live from the registry for the
+version you choose, so the menu is always the authoritative list. Use this table as a quick
+orientation guide:
+
+| Image family | Common variants you may see |
+| --- | --- |
+| Python / Node.js | `(none)`, `slim`, `alpine`, `bookworm`, `bullseye`, `trixie` |
+| Go / Rust / C / C++ | `(none)`, `alpine`, `bookworm`, `bullseye`, `trixie` |
+| .NET SDK | `(none)`, `alpine3.23`, `noble`, `jammy`, `bookworm-slim` |
+| Java (`eclipse-temurin`) | `jdk`, `jre`, `jdk-alpine`, `jre-alpine`, `jdk-noble`, `jre-noble` |
+| Debian | `(none)`, `slim` |
+| Ubuntu / Alpine | `(none)` |
+
+`(none)` means the plain, suffix-less tag for that version, such as `ubuntu:24.04` or
+`python:3.13.14`.
 
 ## How it works
 
