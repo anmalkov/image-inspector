@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Find an official container base image, check its known vulnerabilities, and pin it to an exact digest in seconds.</strong>
+  <strong>A CLI for finding official container base images, checking their known vulnerabilities, and generating digest-pinned <code>FROM</code> lines.</strong>
 </p>
 
 <p align="center">
@@ -39,7 +39,9 @@ when it was built — so you can choose a good base image with confidence.
 > image contents. Pinning to a digest means everyone who builds your `Dockerfile` gets the *identical*
 > base image, every time. That's what makes a build reproducible.
 
-No Docker daemon or local scanner is required.
+Vulnerability counts come from nightly precomputed Trivy data bundled with the package.
+Images are not pulled or scanned locally at runtime. No Docker daemon or local scanner is
+required.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo">
@@ -124,6 +126,36 @@ image-inspector
 image-inspector --json -l ubuntu --version 24.04
 ```
 
+A `--json` run prints a single object describing the resolved image. For example:
+
+```bash
+image-inspector --json -l python --version 3.13 --variant slim
+```
+
+```json
+{
+  "source": "Docker Hub",
+  "language": "python",
+  "version": "3.13",
+  "variant": "slim",
+  "image": "python:3.13.14-slim",
+  "pinned_reference": "python:3.13.14-slim@sha256:205e60d0b78f024817...",
+  "digest": "sha256:205e60d0b78f024817...",
+  "size_bytes": 44912345,
+  "from_line": "FROM python:3.13.14-slim@sha256:205e60d0b78f024817...",
+  "vulnerabilities": {
+    "critical": 0,
+    "high": 1,
+    "total": 23,
+    "scanned_at": "2026-06-22T02:14:07+00:00"
+  },
+  "scanner": { "name": "trivy", "version": "0.71.1", "db_updated_at": "2026-06-22T00:00:00+00:00" }
+}
+```
+
+(Some fields are omitted above for brevity.) When no scan data exists for the image,
+`vulnerabilities` is `null`.
+
 The full list of flags lives in the [Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md#command-line-options).
 
 ## Vulnerability data
@@ -133,6 +165,25 @@ data bundled with the tool**. Nothing is scanned locally at runtime — image-in
 on your machine, pull images, or talk to a scanner. That keeps it fast and means no Docker daemon or
 scanner is required. Because the data is precomputed nightly, counts reflect the most recent bundled
 snapshot rather than a live, on-the-spot scan.
+
+## Limitations
+
+- Vulnerability counts are from the latest bundled nightly dataset, not a live scan.
+- Counts are for the selected base image only, not your final application image.
+- Digest pinning improves reproducibility, but you still need a process for updating pinned
+  images.
+- Only selected official images are supported.
+
+## Why not just use Trivy, Docker Scout, or Renovate?
+
+image-inspector is not a replacement for full image scanning, Docker Scout, Trivy, or
+dependency automation tools like Renovate.
+
+It is meant for the moment before you write a `FROM` line: choosing among official base
+images, seeing approximate vulnerability counts, and pinning the exact digest without
+pulling images locally or running a scanner.
+
+You should still scan your final built image in CI.
 
 ## Documentation
 
