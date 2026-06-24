@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-23T06:28:17Z",
+  "generated_at": "2026-06-24T06:29:38Z",
   "images": {
     "sha256:004eb71d32ba3d025f6483aaff73dbdbd8e5b663c76ec7a372c4d118f99e3212": {
       "critical": 2,
@@ -7,7 +7,7 @@
       "low": 3,
       "medium": 6,
       "reference": "eclipse-temurin:11-jre-alpine-3.21",
-      "scanned_at": "2026-06-23T06:13:31Z",
+      "scanned_at": "2026-06-24T06:12:41Z",
       "total": 15,
       "unknown": 0
     },
@@ -17,19 +17,19 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:12:48Z",
+      "scanned_at": "2026-06-24T06:12:07Z",
       "total": 0,
       "unknown": 0
     },
-    "sha256:00feed335fe561979f2cdcc30a5191231977c5631fe79c40f7d3ab63b4fa222f": {
-      "critical": 9,
-      "high": 76,
-      "low": 659,
-      "medium": 376,
-      "reference": "golang:1.25.11",
-      "scanned_at": "2026-06-23T06:09:27Z",
-      "total": 1175,
-      "unknown": 55
+    "sha256:012c19aac6487454009e9aa9a58763d40bbb2ea0563470deaa21d8b076f362ef": {
+      "critical": 28,
+      "high": 302,
+      "low": 1073,
+      "medium": 1183,
+      "reference": "node:24.17.0-bookworm",
+      "scanned_at": "2026-06-24T06:09:51Z",
+      "total": 2710,
+      "unknown": 124
     },
     "sha256:0203d9169fec7d6ceb9e5229c3ba4f60e6120cf56b1d906d7a88b2d403d7540e": {
       "critical": 0,
@@ -37,7 +37,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-jre-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:13:40Z",
+      "scanned_at": "2026-06-24T06:12:49Z",
       "total": 0,
       "unknown": 0
     },
@@ -47,7 +47,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jre-alpine-3.23",
-      "scanned_at": "2026-06-23T06:12:35Z",
+      "scanned_at": "2026-06-24T06:11:55Z",
       "total": 0,
       "unknown": 0
     },
@@ -57,19 +57,9 @@
       "low": 36,
       "medium": 100,
       "reference": "eclipse-temurin:25-noble",
-      "scanned_at": "2026-06-23T06:10:50Z",
+      "scanned_at": "2026-06-24T06:10:30Z",
       "total": 138,
       "unknown": 0
-    },
-    "sha256:032e78d7e54e352129831743737e3a83171d9cc5b5896f411649c597ce0b11ea": {
-      "critical": 28,
-      "high": 305,
-      "low": 1073,
-      "medium": 1150,
-      "reference": "node:24.17.0-bookworm",
-      "scanned_at": "2026-06-23T06:09:53Z",
-      "total": 2656,
-      "unknown": 100
     },
     "sha256:033ae8f8b8927884369798f58bc4c5bd8f5198580677891796b0e92b01451e4f": {
       "critical": 3,
@@ -77,7 +67,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-23T06:27:54Z",
+      "scanned_at": "2026-06-24T06:29:14Z",
       "total": 11,
       "unknown": 0
     },
@@ -85,31 +75,21 @@
       "critical": 29,
       "high": 98,
       "low": 203,
-      "medium": 197,
+      "medium": 204,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:19:09Z",
-      "total": 558,
-      "unknown": 31
-    },
-    "sha256:05b95397cac02b060ff1251afaa78087d92d7034369afbc8eb765631cada8257": {
-      "critical": 4,
-      "high": 9,
-      "low": 76,
-      "medium": 48,
-      "reference": "python:3.13.14-slim-bookworm",
-      "scanned_at": "2026-06-23T06:09:37Z",
-      "total": 153,
-      "unknown": 16
+      "scanned_at": "2026-06-24T06:20:00Z",
+      "total": 559,
+      "unknown": 25
     },
     "sha256:0631c3651ecb4a7f0bb30f3c40d508b0f88043e37dededc9c8ff77d9150989cf": {
       "critical": 25,
-      "high": 190,
+      "high": 188,
       "low": 994,
-      "medium": 493,
+      "medium": 526,
       "reference": "gcc:15.3.0-trixie",
-      "scanned_at": "2026-06-23T06:09:25Z",
-      "total": 1835,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:15Z",
+      "total": 1885,
+      "unknown": 152
     },
     "sha256:064dfc925d68d1a63f4fd2871bd7dc6e6ea56692989a487185855d62885d90aa": {
       "critical": 0,
@@ -117,7 +97,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.95.0-alpine3.22",
-      "scanned_at": "2026-06-23T06:11:13Z",
+      "scanned_at": "2026-06-24T06:11:13Z",
       "total": 30,
       "unknown": 0
     },
@@ -127,7 +107,7 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:11-jre",
-      "scanned_at": "2026-06-23T06:13:27Z",
+      "scanned_at": "2026-06-24T06:12:38Z",
       "total": 77,
       "unknown": 1
     },
@@ -137,7 +117,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy-arm32v7",
-      "scanned_at": "2026-06-23T06:23:45Z",
+      "scanned_at": "2026-06-24T06:24:45Z",
       "total": 275,
       "unknown": 0
     },
@@ -147,7 +127,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jre-alpine-3.22",
-      "scanned_at": "2026-06-23T06:10:38Z",
+      "scanned_at": "2026-06-24T06:10:21Z",
       "total": 0,
       "unknown": 0
     },
@@ -157,7 +137,7 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-aot",
-      "scanned_at": "2026-06-23T06:09:17Z",
+      "scanned_at": "2026-06-24T06:09:18Z",
       "total": 32,
       "unknown": 0
     },
@@ -167,9 +147,19 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:26-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:10:00Z",
+      "scanned_at": "2026-06-24T06:09:49Z",
       "total": 0,
       "unknown": 0
+    },
+    "sha256:0d56652735ec8df9f5915914613d858b91aa1ba8f233214c4e8f5d341909d01c": {
+      "critical": 2,
+      "high": 9,
+      "low": 64,
+      "medium": 43,
+      "reference": "node:24.17.0-trixie-slim",
+      "scanned_at": "2026-06-24T06:10:08Z",
+      "total": 154,
+      "unknown": 36
     },
     "sha256:0d814bce779fd7705b897701c917413a11e6b212718c529d542e9c5e60334a0b": {
       "critical": 0,
@@ -177,7 +167,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jre-alpine-3.22",
-      "scanned_at": "2026-06-23T06:12:35Z",
+      "scanned_at": "2026-06-24T06:11:55Z",
       "total": 0,
       "unknown": 0
     },
@@ -187,19 +177,29 @@
       "low": 13,
       "medium": 61,
       "reference": "eclipse-temurin:26-jdk",
-      "scanned_at": "2026-06-23T06:09:30Z",
+      "scanned_at": "2026-06-24T06:09:25Z",
       "total": 84,
       "unknown": 1
+    },
+    "sha256:0ea744650ad3b51b0ed2a48e4cb87cad02d2d3cd7f6304c615776ded3aa5737d": {
+      "critical": 28,
+      "high": 302,
+      "low": 1073,
+      "medium": 1181,
+      "reference": "node:26.3.1-bookworm",
+      "scanned_at": "2026-06-24T06:09:22Z",
+      "total": 2708,
+      "unknown": 124
     },
     "sha256:0f4a6bb812e25765b708cd368b5b4f760471bd4aecda0316679f857820983ee6": {
       "critical": 21,
       "high": 85,
       "low": 191,
-      "medium": 181,
+      "medium": 188,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:26:22Z",
-      "total": 519,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:27:33Z",
+      "total": 520,
+      "unknown": 35
     },
     "sha256:0fe89ba9d67dc20a4ff50206d25c88606919cb611b41dd0285dfe3cbb02d69de": {
       "critical": 2,
@@ -207,7 +207,7 @@
       "low": 39,
       "medium": 23,
       "reference": "rust:1.92.0-alpine3.22",
-      "scanned_at": "2026-06-23T06:15:58Z",
+      "scanned_at": "2026-06-24T06:16:05Z",
       "total": 82,
       "unknown": 0
     },
@@ -217,7 +217,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-23T06:25:34Z",
+      "scanned_at": "2026-06-24T06:26:34Z",
       "total": 11,
       "unknown": 0
     },
@@ -227,7 +227,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-nanoserver-1809",
-      "scanned_at": "2026-06-23T06:27:24Z",
+      "scanned_at": "2026-06-24T06:28:39Z",
       "total": 11,
       "unknown": 0
     },
@@ -237,7 +237,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy",
-      "scanned_at": "2026-06-23T06:23:40Z",
+      "scanned_at": "2026-06-24T06:24:38Z",
       "total": 275,
       "unknown": 0
     },
@@ -247,7 +247,7 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.22.5",
-      "scanned_at": "2026-06-23T06:09:07Z",
+      "scanned_at": "2026-06-24T06:08:58Z",
       "total": 0,
       "unknown": 0
     },
@@ -257,7 +257,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19",
-      "scanned_at": "2026-06-23T06:18:47Z",
+      "scanned_at": "2026-06-24T06:19:28Z",
       "total": 109,
       "unknown": 0
     },
@@ -267,7 +267,7 @@
       "low": 2,
       "medium": 4,
       "reference": "node:24.17.0-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:52Z",
+      "scanned_at": "2026-06-24T06:09:50Z",
       "total": 7,
       "unknown": 0
     },
@@ -277,29 +277,39 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23-arm64v8",
-      "scanned_at": "2026-06-23T06:13:29Z",
+      "scanned_at": "2026-06-24T06:13:29Z",
       "total": 42,
+      "unknown": 0
+    },
+    "sha256:161b226c359b4440e6f4b63a5c4523b794ac09f5ff33e80a7af976a9f5caabd1": {
+      "critical": 4,
+      "high": 10,
+      "low": 97,
+      "medium": 53,
+      "reference": "node:24.17.0-bullseye-slim",
+      "scanned_at": "2026-06-24T06:10:01Z",
+      "total": 179,
+      "unknown": 15
+    },
+    "sha256:16e22a550f3863206a3f701448c45f7912c6896a62de43add43bb9c86130c3e2": {
+      "critical": 0,
+      "high": 1,
+      "low": 0,
+      "medium": 4,
+      "reference": "node:22.23.1-alpine3.24",
+      "scanned_at": "2026-06-24T06:10:37Z",
+      "total": 5,
       "unknown": 0
     },
     "sha256:17835baebf0df4ba899287aad442bb4481ef2f824de116a6bb0fe0d32dfd70b8": {
       "critical": 31,
       "high": 109,
       "low": 193,
-      "medium": 189,
+      "medium": 196,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:19:26Z",
-      "total": 563,
-      "unknown": 41
-    },
-    "sha256:17895f86b5d1bed5ea97bde2ef4b2e8da46d6024d2eae32a5245bf0d0fb9ecd6": {
-      "critical": 28,
-      "high": 305,
-      "low": 1073,
-      "medium": 1148,
-      "reference": "node:26.3.1-bookworm",
-      "scanned_at": "2026-06-23T06:09:24Z",
-      "total": 2654,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:20:21Z",
+      "total": 564,
+      "unknown": 35
     },
     "sha256:184efa4544d87892ceed6cc203f1c27285a27007af362ff865d12667c52380a7": {
       "critical": 0,
@@ -307,19 +317,29 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-23T06:12:20Z",
+      "scanned_at": "2026-06-24T06:12:18Z",
       "total": 0,
       "unknown": 0
     },
-    "sha256:191ef878ecb351d68b78219593de18bd8942afd59af59f29960dc4b24805a3f1": {
-      "critical": 2,
-      "high": 9,
-      "low": 64,
-      "medium": 41,
-      "reference": "node:26.3.1-trixie-slim",
-      "scanned_at": "2026-06-23T06:09:42Z",
-      "total": 152,
-      "unknown": 36
+    "sha256:18a785e8587c27aeb71cbfc9b02f0a59c0b855f9cda2bdbceeec9c52c9d93412": {
+      "critical": 9,
+      "high": 67,
+      "low": 657,
+      "medium": 345,
+      "reference": "golang:1.25.11-trixie",
+      "scanned_at": "2026-06-24T06:09:36Z",
+      "total": 1133,
+      "unknown": 55
+    },
+    "sha256:18b460dd17542c2ba43299a633cf6ebfc1115101509531471d7cfce1019af083": {
+      "critical": 0,
+      "high": 0,
+      "low": 0,
+      "medium": 0,
+      "reference": "golang:1.26.4-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:11Z",
+      "total": 0,
+      "unknown": 0
     },
     "sha256:195648d9ebc78d8527781dbd4ced9aac683363b01d52092f2166349652b9004a": {
       "critical": 0,
@@ -327,7 +347,7 @@
       "low": 6,
       "medium": 59,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-arm64v8",
-      "scanned_at": "2026-06-23T06:11:29Z",
+      "scanned_at": "2026-06-24T06:11:33Z",
       "total": 75,
       "unknown": 1
     },
@@ -337,19 +357,19 @@
       "low": 6,
       "medium": 59,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute",
-      "scanned_at": "2026-06-23T06:11:10Z",
+      "scanned_at": "2026-06-24T06:11:14Z",
       "total": 75,
       "unknown": 1
     },
     "sha256:19817ead3289c8c631c73df281e18b59b172f6a31f4f563290f69cddd06c30e9": {
       "critical": 28,
-      "high": 304,
+      "high": 301,
       "low": 1071,
-      "medium": 1146,
+      "medium": 1179,
       "reference": "rust:1.96.0-bookworm",
-      "scanned_at": "2026-06-23T06:09:58Z",
-      "total": 2649,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:09:56Z",
+      "total": 2703,
+      "unknown": 124
     },
     "sha256:199aebeb3adcde4910695cdebfe782ada38dadb6cc8013159b58d3724451befd": {
       "critical": 0,
@@ -357,7 +377,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:21-jre-jammy",
-      "scanned_at": "2026-06-23T06:11:40Z",
+      "scanned_at": "2026-06-24T06:11:09Z",
       "total": 76,
       "unknown": 0
     },
@@ -367,19 +387,19 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-23T06:10:32Z",
+      "scanned_at": "2026-06-24T06:10:32Z",
       "total": 0,
       "unknown": 0
     },
     "sha256:1a6d4452c65dea36aac2e2d606b01b4a029ec90cc1ae53890540ce6173ea77ac": {
       "critical": 18,
-      "high": 625,
+      "high": 626,
       "low": 844,
-      "medium": 1954,
+      "medium": 1963,
       "reference": "golang:1.24.13-bookworm",
-      "scanned_at": "2026-06-23T06:09:54Z",
-      "total": 3477,
-      "unknown": 36
+      "scanned_at": "2026-06-24T06:09:55Z",
+      "total": 3492,
+      "unknown": 41
     },
     "sha256:1ad12cfd8aaa4df71d870e3a157e15139ebc59e166f2f72b033275c204f50950": {
       "critical": 0,
@@ -387,7 +407,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble-arm32v7",
-      "scanned_at": "2026-06-23T06:14:39Z",
+      "scanned_at": "2026-06-24T06:14:52Z",
       "total": 55,
       "unknown": 0
     },
@@ -397,9 +417,19 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19-arm64v8",
-      "scanned_at": "2026-06-23T06:18:56Z",
+      "scanned_at": "2026-06-24T06:19:41Z",
       "total": 107,
       "unknown": 0
+    },
+    "sha256:1c5ce4cd5b21c39ae5c36f08f55f2ba8f09604f846884b053be1b67e59719621": {
+      "critical": 4,
+      "high": 12,
+      "low": 93,
+      "medium": 52,
+      "reference": "python:3.10.20-slim-bookworm",
+      "scanned_at": "2026-06-24T06:10:03Z",
+      "total": 178,
+      "unknown": 17
     },
     "sha256:1d0f3f847109abf20b50ef72c53366c1b7bf5d52ffd71c562c17f06a39b32863": {
       "critical": 0,
@@ -407,7 +437,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:17-jre-noble",
-      "scanned_at": "2026-06-23T06:12:40Z",
+      "scanned_at": "2026-06-24T06:12:00Z",
       "total": 67,
       "unknown": 0
     },
@@ -415,11 +445,11 @@
       "critical": 9,
       "high": 26,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim",
-      "scanned_at": "2026-06-23T06:13:40Z",
-      "total": 305,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:13:40Z",
+      "total": 306,
+      "unknown": 25
     },
     "sha256:1ff763083f2993d57d0bf374ab10bb3e2cb873af6c13a04458ebbd3e0337dc76": {
       "critical": 0,
@@ -427,7 +457,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jdk-alpine-3.23",
-      "scanned_at": "2026-06-23T06:11:14Z",
+      "scanned_at": "2026-06-24T06:10:50Z",
       "total": 0,
       "unknown": 0
     },
@@ -437,19 +467,29 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble-arm64v8",
-      "scanned_at": "2026-06-23T06:14:45Z",
+      "scanned_at": "2026-06-24T06:14:57Z",
       "total": 55,
       "unknown": 0
     },
+    "sha256:213a4027af5ca7f872e8ed60663ad7494c85676545b34acf8621e2d66fe9e36f": {
+      "critical": 3,
+      "high": 7,
+      "low": 71,
+      "medium": 48,
+      "reference": "node:26.3.1-bookworm-slim",
+      "scanned_at": "2026-06-24T06:09:25Z",
+      "total": 146,
+      "unknown": 17
+    },
     "sha256:218a88a57964084b18fe70190b9d5cc6543b24126c3206c3d3e707db8e0c3c25": {
       "critical": 28,
-      "high": 306,
+      "high": 303,
       "low": 1095,
-      "medium": 1159,
+      "medium": 1192,
       "reference": "python:3.12.13-bookworm",
-      "scanned_at": "2026-06-23T06:09:46Z",
-      "total": 2688,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:09:42Z",
+      "total": 2742,
+      "unknown": 124
     },
     "sha256:21f403ab171f2dc89bad4dd69d7721bfd15f084ccb46cdd225f31f2bc59b5c9a": {
       "critical": 0,
@@ -457,7 +497,7 @@
       "low": 2,
       "medium": 4,
       "reference": "node:24.16.0-alpine3.24",
-      "scanned_at": "2026-06-23T06:10:17Z",
+      "scanned_at": "2026-06-24T06:10:16Z",
       "total": 7,
       "unknown": 0
     },
@@ -467,19 +507,9 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy-arm64v8",
-      "scanned_at": "2026-06-23T06:23:51Z",
+      "scanned_at": "2026-06-24T06:24:52Z",
       "total": 275,
       "unknown": 0
-    },
-    "sha256:2365d74da5ccc15cf0d50480029ccd597ad15b2fc1fc8daef558dc69f7895b9e": {
-      "critical": 23,
-      "high": 425,
-      "low": 1298,
-      "medium": 1679,
-      "reference": "node:22.22.3-bullseye",
-      "scanned_at": "2026-06-23T06:11:12Z",
-      "total": 3521,
-      "unknown": 96
     },
     "sha256:2412b9f7db4aa7ceac5a8c9d41385616cbd7bb8d18c298334cafad22f7647e04": {
       "critical": 0,
@@ -487,7 +517,7 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23",
-      "scanned_at": "2026-06-23T06:13:19Z",
+      "scanned_at": "2026-06-24T06:13:19Z",
       "total": 42,
       "unknown": 0
     },
@@ -495,21 +525,11 @@
       "critical": 17,
       "high": 76,
       "low": 188,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:22:53Z",
-      "total": 495,
-      "unknown": 31
-    },
-    "sha256:24e283e7fb9b3c17bb2efcb1938cab90674f89211de28faaf62b5ffbc1ccbeb4": {
-      "critical": 0,
-      "high": 3,
-      "low": 1,
-      "medium": 3,
-      "reference": "python:3.11.15-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:55Z",
-      "total": 7,
-      "unknown": 0
+      "scanned_at": "2026-06-24T06:23:48Z",
+      "total": 496,
+      "unknown": 25
     },
     "sha256:257fdd836a12641bc5dfcd341bc32bc72582619167d032a24df468e245f5aa26": {
       "critical": 5,
@@ -517,7 +537,7 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20-arm64v8",
-      "scanned_at": "2026-06-23T06:26:00Z",
+      "scanned_at": "2026-06-24T06:27:07Z",
       "total": 119,
       "unknown": 0
     },
@@ -527,7 +547,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-23T06:15:37Z",
+      "scanned_at": "2026-06-24T06:15:45Z",
       "total": 12,
       "unknown": 0
     },
@@ -537,7 +557,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19-amd64",
-      "scanned_at": "2026-06-23T06:18:47Z",
+      "scanned_at": "2026-06-24T06:19:28Z",
       "total": 109,
       "unknown": 0
     },
@@ -547,7 +567,7 @@
       "low": 65,
       "medium": 56,
       "reference": "eclipse-temurin:26-jdk-jammy",
-      "scanned_at": "2026-06-23T06:09:32Z",
+      "scanned_at": "2026-06-24T06:09:26Z",
       "total": 123,
       "unknown": 0
     },
@@ -557,7 +577,7 @@
       "low": 0,
       "medium": 0,
       "reference": "python:3.14.6-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:12Z",
+      "scanned_at": "2026-06-24T06:09:10Z",
       "total": 0,
       "unknown": 0
     },
@@ -567,7 +587,7 @@
       "low": 0,
       "medium": 0,
       "reference": "ubuntu:25.04",
-      "scanned_at": "2026-06-23T06:09:12Z",
+      "scanned_at": "2026-06-24T06:09:01Z",
       "total": 1,
       "unknown": 0
     },
@@ -577,29 +597,19 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-23T06:24:53Z",
+      "scanned_at": "2026-06-24T06:25:58Z",
       "total": 11,
       "unknown": 0
     },
-    "sha256:287c662bed62f3c7b68ea68544814eaff9d7ed2254d2fc9627f2df5957bb7401": {
-      "critical": 2,
-      "high": 9,
-      "low": 64,
-      "medium": 43,
-      "reference": "node:24.17.0-trixie-slim",
-      "scanned_at": "2026-06-23T06:10:10Z",
-      "total": 154,
-      "unknown": 36
-    },
     "sha256:28afaeb8445f2a2e7d878bd34ed39ba02bb517efb29986188cbd59b7cf4f2fdf": {
       "critical": 28,
-      "high": 571,
+      "high": 572,
       "low": 1359,
-      "medium": 2100,
+      "medium": 2128,
       "reference": "rust:1.95.0-bullseye",
-      "scanned_at": "2026-06-23T06:11:34Z",
-      "total": 4154,
-      "unknown": 96
+      "scanned_at": "2026-06-24T06:11:35Z",
+      "total": 4208,
+      "unknown": 121
     },
     "sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b": {
       "critical": 0,
@@ -607,7 +617,7 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.24.1",
-      "scanned_at": "2026-06-23T06:09:05Z",
+      "scanned_at": "2026-06-24T06:08:57Z",
       "total": 0,
       "unknown": 0
     },
@@ -617,9 +627,29 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jre-alpine-3.23",
-      "scanned_at": "2026-06-23T06:10:38Z",
+      "scanned_at": "2026-06-24T06:10:21Z",
       "total": 0,
       "unknown": 0
+    },
+    "sha256:28de0877c2189802884ccd20f15ee41c203573bd87bb6b883f5f46362d24c5c2": {
+      "critical": 2,
+      "high": 8,
+      "low": 62,
+      "medium": 39,
+      "reference": "debian:13-slim",
+      "scanned_at": "2026-06-24T06:09:07Z",
+      "total": 147,
+      "unknown": 36
+    },
+    "sha256:290a6e49a53e54df34abc66be10c77af6e446b88f23dd62ea5b1793ab04e040c": {
+      "critical": 4,
+      "high": 298,
+      "low": 828,
+      "medium": 1427,
+      "reference": "rust:1.96.0-slim-bullseye",
+      "scanned_at": "2026-06-24T06:10:35Z",
+      "total": 2572,
+      "unknown": 15
     },
     "sha256:2ac75fc664ace99d56652fc29cfae85190d31f09365e60a597e4df76a972ea58": {
       "critical": 0,
@@ -627,19 +657,29 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-23T06:17:59Z",
+      "scanned_at": "2026-06-24T06:18:38Z",
       "total": 20,
       "unknown": 0
+    },
+    "sha256:2b0423135d267b57110327b162982faf70339c559af9625ce505210f0fe2474d": {
+      "critical": 24,
+      "high": 188,
+      "low": 983,
+      "medium": 528,
+      "reference": "node:22.23.1-trixie",
+      "scanned_at": "2026-06-24T06:10:53Z",
+      "total": 1875,
+      "unknown": 152
     },
     "sha256:2be9d15a973c9b325fbf215fcc79bbb8b51de02a174b94b56f7d34c3c198ae96": {
       "critical": 21,
       "high": 85,
       "low": 191,
-      "medium": 181,
+      "medium": 188,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim-amd64",
-      "scanned_at": "2026-06-23T06:26:17Z",
-      "total": 519,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:27:27Z",
+      "total": 520,
+      "unknown": 35
     },
     "sha256:2c3cb791d584d150f4b8276dd78237ce20e9b5c59461a4a0db49592dd79ab97f": {
       "critical": 3,
@@ -647,7 +687,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy",
-      "scanned_at": "2026-06-23T06:27:02Z",
+      "scanned_at": "2026-06-24T06:28:14Z",
       "total": 275,
       "unknown": 0
     },
@@ -657,9 +697,9 @@
       "low": 70,
       "medium": 50,
       "reference": "node:24.16.0-slim",
-      "scanned_at": "2026-06-23T06:10:22Z",
-      "total": 146,
-      "unknown": 16
+      "scanned_at": "2026-06-24T06:10:19Z",
+      "total": 147,
+      "unknown": 17
     },
     "sha256:2ca8c0fc7a6cd15c275c5675380706491b686d8a51e9ba368270b690ca9b082a": {
       "critical": 0,
@@ -667,19 +707,19 @@
       "low": 5,
       "medium": 61,
       "reference": "eclipse-temurin:26-jre-resolute",
-      "scanned_at": "2026-06-23T06:09:53Z",
+      "scanned_at": "2026-06-24T06:09:43Z",
       "total": 76,
       "unknown": 1
     },
     "sha256:2d178f2785b96dfbf62a416ca2e40f50e30150b4ff3320d706f0d96e90600eb3": {
       "critical": 28,
-      "high": 305,
+      "high": 302,
       "low": 1071,
-      "medium": 1150,
+      "medium": 1183,
       "reference": "node:22.22.3-bookworm",
-      "scanned_at": "2026-06-23T06:11:05Z",
-      "total": 2654,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:11:03Z",
+      "total": 2708,
+      "unknown": 124
     },
     "sha256:2d2fa432294150fca97c64d6c2154e0f05ffc18bce487e7f54c480ee26685558": {
       "critical": 0,
@@ -687,7 +727,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-windowsservercore-ltsc2025",
-      "scanned_at": "2026-06-23T06:13:08Z",
+      "scanned_at": "2026-06-24T06:13:09Z",
       "total": 0,
       "unknown": 0
     },
@@ -695,11 +735,21 @@
       "critical": 17,
       "high": 76,
       "low": 188,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim",
-      "scanned_at": "2026-06-23T06:22:43Z",
-      "total": 495,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:23:34Z",
+      "total": 496,
+      "unknown": 25
+    },
+    "sha256:30482e873082e906a4908c10529180aefb6f77620aea7404b909829fadc5d168": {
+      "critical": 3,
+      "high": 6,
+      "low": 68,
+      "medium": 46,
+      "reference": "debian:12",
+      "scanned_at": "2026-06-24T06:09:09Z",
+      "total": 140,
+      "unknown": 17
     },
     "sha256:3058873a740d38577c54ed7a366b47b5051656bff79de63f7c2f61ab954ec29f": {
       "critical": 3,
@@ -707,7 +757,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19",
-      "scanned_at": "2026-06-23T06:25:38Z",
+      "scanned_at": "2026-06-24T06:26:39Z",
       "total": 69,
       "unknown": 0
     },
@@ -717,7 +767,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:11-jdk-jammy",
-      "scanned_at": "2026-06-23T06:13:11Z",
+      "scanned_at": "2026-06-24T06:12:25Z",
       "total": 76,
       "unknown": 0
     },
@@ -727,7 +777,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:26-jre-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:09:56Z",
+      "scanned_at": "2026-06-24T06:09:45Z",
       "total": 0,
       "unknown": 0
     },
@@ -737,7 +787,7 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal-arm64v8",
-      "scanned_at": "2026-06-23T06:26:57Z",
+      "scanned_at": "2026-06-24T06:28:07Z",
       "total": 57,
       "unknown": 0
     },
@@ -747,18 +797,8 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-23T06:24:13Z",
+      "scanned_at": "2026-06-24T06:25:18Z",
       "total": 11,
-      "unknown": 0
-    },
-    "sha256:35e2f96595091599e7c1fb0b61049e17d8478997b2aa13db51ad7995299fe55a": {
-      "critical": 0,
-      "high": 1,
-      "low": 0,
-      "medium": 4,
-      "reference": "node:22.23.0-alpine3.23",
-      "scanned_at": "2026-06-23T06:10:39Z",
-      "total": 5,
       "unknown": 0
     },
     "sha256:361bd4bdc7028acc35dabe70b482765758bb6e3ece6a5c7b979b22fa58e14cbb": {
@@ -767,7 +807,7 @@
       "low": 17,
       "medium": 11,
       "reference": "rust:1.92.0-alpine3.20",
-      "scanned_at": "2026-06-23T06:15:40Z",
+      "scanned_at": "2026-06-24T06:15:47Z",
       "total": 46,
       "unknown": 0
     },
@@ -777,7 +817,7 @@
       "low": 40,
       "medium": 135,
       "reference": "golang:1.24.13-alpine3.22",
-      "scanned_at": "2026-06-23T06:09:48Z",
+      "scanned_at": "2026-06-24T06:09:48Z",
       "total": 450,
       "unknown": 0
     },
@@ -787,7 +827,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:11-noble",
-      "scanned_at": "2026-06-23T06:13:45Z",
+      "scanned_at": "2026-06-24T06:12:53Z",
       "total": 67,
       "unknown": 0
     },
@@ -797,9 +837,19 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal-arm32v7",
-      "scanned_at": "2026-06-23T06:26:52Z",
+      "scanned_at": "2026-06-24T06:28:02Z",
       "total": 57,
       "unknown": 0
+    },
+    "sha256:3901499594d85f713aee76c80dea03e349123899d5fe685b5c148be3eec9df84": {
+      "critical": 4,
+      "high": 9,
+      "low": 93,
+      "medium": 51,
+      "reference": "python:3.12.13-slim-bookworm",
+      "scanned_at": "2026-06-24T06:09:44Z",
+      "total": 174,
+      "unknown": 17
     },
     "sha256:399babc8b49529dabfd9c922f2b5eea81d611e4512e3ed250d75bd2e7683f4b0": {
       "critical": 0,
@@ -807,7 +857,7 @@
       "low": 0,
       "medium": 0,
       "reference": "python:3.13.14-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:32Z",
+      "scanned_at": "2026-06-24T06:09:29Z",
       "total": 0,
       "unknown": 0
     },
@@ -817,7 +867,7 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20-amd64",
-      "scanned_at": "2026-06-23T06:25:51Z",
+      "scanned_at": "2026-06-24T06:26:56Z",
       "total": 121,
       "unknown": 0
     },
@@ -825,11 +875,11 @@
       "critical": 9,
       "high": 36,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:16:39Z",
-      "total": 315,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:17:08Z",
+      "total": 316,
+      "unknown": 25
     },
     "sha256:3ad57304ad93bbec8548a0437ad9e06a455660655d9af011d58b993f6f615648": {
       "critical": 0,
@@ -837,39 +887,19 @@
       "low": 0,
       "medium": 0,
       "reference": "golang:1.26.4-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:14Z",
+      "scanned_at": "2026-06-24T06:09:12Z",
       "total": 0,
       "unknown": 0
     },
     "sha256:3ae15afe768b06d0c0fe088d822ba5f8045c26630bdacc8d8e7713cf5d8e7289": {
       "critical": 25,
-      "high": 190,
+      "high": 188,
       "low": 994,
-      "medium": 493,
+      "medium": 526,
       "reference": "gcc:15.2.0-trixie",
-      "scanned_at": "2026-06-23T06:09:45Z",
-      "total": 1835,
-      "unknown": 133
-    },
-    "sha256:3b05f7c617a200c41c3506097f0d15fc193a1c93bfd8f141007b47cac8f95d3c": {
-      "critical": 3,
-      "high": 45,
-      "low": 581,
-      "medium": 289,
-      "reference": "rust:1.96.0-slim-trixie",
-      "scanned_at": "2026-06-23T06:10:36Z",
-      "total": 958,
-      "unknown": 40
-    },
-    "sha256:3c05c2cf0f6a5795dfb7abefb2a4e31a78d6271a99962531c48315ced17d618a": {
-      "critical": 24,
-      "high": 190,
-      "low": 985,
-      "medium": 493,
-      "reference": "node:26.3.1-trixie",
-      "scanned_at": "2026-06-23T06:09:42Z",
-      "total": 1825,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:33Z",
+      "total": 1885,
+      "unknown": 152
     },
     "sha256:3c06253e433c1b2ac2c279a98226d385d25c5f324138ab2861a5414bfa6855f9": {
       "critical": 2,
@@ -877,7 +907,7 @@
       "low": 20,
       "medium": 16,
       "reference": "rust:1.93.1-alpine3.22",
-      "scanned_at": "2026-06-23T06:14:21Z",
+      "scanned_at": "2026-06-24T06:14:27Z",
       "total": 52,
       "unknown": 0
     },
@@ -887,8 +917,18 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-nanoserver-1809",
-      "scanned_at": "2026-06-23T06:17:13Z",
+      "scanned_at": "2026-06-24T06:17:49Z",
       "total": 20,
+      "unknown": 0
+    },
+    "sha256:3d803b94be6901e79c9f2bcb27c801f4678683350ceed745fb79f88b2e3c15a4": {
+      "critical": 0,
+      "high": 3,
+      "low": 1,
+      "medium": 4,
+      "reference": "python:3.10.20-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:58Z",
+      "total": 8,
       "unknown": 0
     },
     "sha256:3f08b13888f595cc49edabea7250ba69499ba25602b267da591720769400e08c": {
@@ -897,19 +937,19 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jre-alpine-3.23",
-      "scanned_at": "2026-06-23T06:11:38Z",
+      "scanned_at": "2026-06-24T06:11:08Z",
       "total": 0,
       "unknown": 0
     },
     "sha256:40ad9f3064e67d6860b4bc3fe1880b2953934fd6320ada990e45fe0efa6badd7": {
       "critical": 28,
-      "high": 305,
+      "high": 302,
       "low": 1073,
-      "medium": 1150,
+      "medium": 1183,
       "reference": "node:24.16.0-bookworm",
-      "scanned_at": "2026-06-23T06:10:18Z",
-      "total": 2656,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:10:16Z",
+      "total": 2710,
+      "unknown": 124
     },
     "sha256:40f4f041471e1288071281c7723b4706f1bb8f60a04acbf34b6bb84ac064de50": {
       "critical": 0,
@@ -917,7 +957,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:11-jre-jammy",
-      "scanned_at": "2026-06-23T06:13:35Z",
+      "scanned_at": "2026-06-24T06:12:44Z",
       "total": 76,
       "unknown": 0
     },
@@ -927,19 +967,19 @@
       "low": 13,
       "medium": 62,
       "reference": "eclipse-temurin:17-resolute",
-      "scanned_at": "2026-06-23T06:12:48Z",
+      "scanned_at": "2026-06-24T06:12:06Z",
       "total": 85,
       "unknown": 1
     },
     "sha256:41e183430cb891114093422e05a10f249c6bbfcf51c7a57d620cada287bf0bd2": {
       "critical": 24,
-      "high": 190,
+      "high": 188,
       "low": 985,
-      "medium": 495,
+      "medium": 528,
       "reference": "node:24.16.0-trixie",
-      "scanned_at": "2026-06-23T06:10:27Z",
-      "total": 1827,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:10:25Z",
+      "total": 1877,
+      "unknown": 152
     },
     "sha256:4256c75d8eebd4271e0b16cc5734be1914174457eaed1cb5f065bbdb162eca88": {
       "critical": 0,
@@ -947,7 +987,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-nanoserver-ltsc2025",
-      "scanned_at": "2026-06-23T06:10:48Z",
+      "scanned_at": "2026-06-24T06:10:49Z",
       "total": 0,
       "unknown": 0
     },
@@ -955,10 +995,10 @@
       "critical": 11,
       "high": 38,
       "low": 90,
-      "medium": 1544,
+      "medium": 1548,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-aot",
-      "scanned_at": "2026-06-23T06:10:49Z",
-      "total": 1683,
+      "scanned_at": "2026-06-24T06:10:50Z",
+      "total": 1687,
       "unknown": 0
     },
     "sha256:444daaf678b8459bdf4b2fd7aec4fbb30ab78bf513d4c5d304a71a8bc586a7f7": {
@@ -967,29 +1007,9 @@
       "low": 3,
       "medium": 6,
       "reference": "eclipse-temurin:11-jdk-alpine-3.21",
-      "scanned_at": "2026-06-23T06:13:10Z",
+      "scanned_at": "2026-06-24T06:12:24Z",
       "total": 15,
       "unknown": 0
-    },
-    "sha256:44dd04494ee8f3b538294360e7c4b3acb87c8268e4d0a4828a6500b1eff50061": {
-      "critical": 2,
-      "high": 9,
-      "low": 63,
-      "medium": 39,
-      "reference": "python:3.14.6-slim-trixie",
-      "scanned_at": "2026-06-23T06:09:25Z",
-      "total": 149,
-      "unknown": 36
-    },
-    "sha256:45da69d4ea0231f68ffde2056f47044538a3658235118cecad8cdfcc6dc126a0": {
-      "critical": 24,
-      "high": 190,
-      "low": 985,
-      "medium": 495,
-      "reference": "node:24.17.0-trixie",
-      "scanned_at": "2026-06-23T06:10:07Z",
-      "total": 1827,
-      "unknown": 133
     },
     "sha256:45fbb3ca3b6c7e6646cd2889d0ac7bf314bb180036da792221fc2f48fe4d43fb": {
       "critical": 2,
@@ -997,19 +1017,9 @@
       "low": 64,
       "medium": 43,
       "reference": "node:24.16.0-trixie-slim",
-      "scanned_at": "2026-06-23T06:10:30Z",
+      "scanned_at": "2026-06-24T06:10:27Z",
       "total": 154,
       "unknown": 36
-    },
-    "sha256:464f550525a03c903173a5d41c57a002420d8b4c26d7678ecbb57d747f7c13ac": {
-      "critical": 23,
-      "high": 425,
-      "low": 1300,
-      "medium": 1679,
-      "reference": "node:24.17.0-bullseye",
-      "scanned_at": "2026-06-23T06:10:00Z",
-      "total": 3523,
-      "unknown": 96
     },
     "sha256:46a703da08438d0b2cf11a1898ed81b9fc28c83787b25e5220dc47c43bb90aa3": {
       "critical": 0,
@@ -1017,29 +1027,29 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-amd64",
-      "scanned_at": "2026-06-23T06:10:49Z",
+      "scanned_at": "2026-06-24T06:10:49Z",
       "total": 45,
       "unknown": 0
     },
     "sha256:476d602721ab76a00efbc132c944a353ceb404bdb012cc402f749f1e04d57ae9": {
       "critical": 199,
-      "high": 1189,
+      "high": 1186,
       "low": 1285,
-      "medium": 3093,
+      "medium": 3126,
       "reference": "gcc:15.1.0-bookworm",
-      "scanned_at": "2026-06-23T06:09:54Z",
-      "total": 5871,
-      "unknown": 105
+      "scanned_at": "2026-06-24T06:09:41Z",
+      "total": 5925,
+      "unknown": 129
     },
     "sha256:47c649664b62db94d186b16936e203bb07ab1d10a0ef860cee198e594f636757": {
       "critical": 25,
-      "high": 190,
+      "high": 188,
       "low": 994,
-      "medium": 493,
+      "medium": 526,
       "reference": "gcc:16.1.0-trixie",
-      "scanned_at": "2026-06-23T06:09:17Z",
-      "total": 1835,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:08Z",
+      "total": 1885,
+      "unknown": 152
     },
     "sha256:47c73dc23524b031bed0a5030410c722af6a8b49d4b25898ea8f4615895065f0": {
       "critical": 0,
@@ -1047,7 +1057,7 @@
       "low": 35,
       "medium": 39,
       "reference": "eclipse-temurin:17-jre-jammy",
-      "scanned_at": "2026-06-23T06:12:37Z",
+      "scanned_at": "2026-06-24T06:11:57Z",
       "total": 76,
       "unknown": 0
     },
@@ -1057,39 +1067,29 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.21.7",
-      "scanned_at": "2026-06-23T06:09:08Z",
+      "scanned_at": "2026-06-24T06:08:59Z",
       "total": 0,
       "unknown": 0
     },
-    "sha256:49ba348354a28e39c70beffd6cf43bdb8d55d81ce4b746b0428717d054b8bbc4": {
-      "critical": 3,
-      "high": 6,
-      "low": 68,
-      "medium": 46,
-      "reference": "debian:12",
-      "scanned_at": "2026-06-23T06:09:03Z",
-      "total": 139,
-      "unknown": 16
-    },
     "sha256:4a3e284d0df5e2ae11931036039a87eb202c4a215bbcdcfa787ae9f77dfaeef9": {
       "critical": 28,
-      "high": 306,
+      "high": 303,
       "low": 1094,
-      "medium": 1156,
+      "medium": 1189,
       "reference": "python:3.13.14-bookworm",
-      "scanned_at": "2026-06-23T06:09:34Z",
-      "total": 2684,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:09:31Z",
+      "total": 2738,
+      "unknown": 124
     },
     "sha256:4b58bbf35de5d05476cd032f648b7182942b5d1911b9b88899301c24e7db0204": {
       "critical": 17,
       "high": 76,
       "low": 188,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:22:48Z",
-      "total": 495,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:23:41Z",
+      "total": 496,
+      "unknown": 25
     },
     "sha256:4b818b5a0f6392ba8f2a0f93f805e4466c07a640839ba59a464e6015975464c5": {
       "critical": 10,
@@ -1097,7 +1097,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-cbl-mariner2.0",
-      "scanned_at": "2026-06-23T06:26:34Z",
+      "scanned_at": "2026-06-24T06:27:44Z",
       "total": 467,
       "unknown": 0
     },
@@ -1105,21 +1105,41 @@
       "critical": 5,
       "high": 28,
       "low": 68,
-      "medium": 478,
+      "medium": 482,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-aot-arm64v8",
-      "scanned_at": "2026-06-23T06:11:22Z",
-      "total": 580,
+      "scanned_at": "2026-06-24T06:11:26Z",
+      "total": 584,
       "unknown": 1
+    },
+    "sha256:4cd0841b3c1b7c5898354ed4f5173633dfd78b7ed07ba3d7125275f1612ce510": {
+      "critical": 4,
+      "high": 12,
+      "low": 93,
+      "medium": 51,
+      "reference": "python:3.11.15-slim-bookworm",
+      "scanned_at": "2026-06-24T06:09:54Z",
+      "total": 177,
+      "unknown": 17
     },
     "sha256:4d7dd74c5b2d3151fe58eb8ecc9c56be13471a240ce5423ba765b04f8f95ebe8": {
       "critical": 24,
-      "high": 191,
+      "high": 189,
       "low": 1006,
-      "medium": 501,
+      "medium": 534,
       "reference": "python:3.14.6",
-      "scanned_at": "2026-06-23T06:09:09Z",
-      "total": 1855,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:07Z",
+      "total": 1905,
+      "unknown": 152
+    },
+    "sha256:4ddd2ebb0043566905e1e5e82ba7c66c03444b32ef16caa6bf5a20155d6ffb15": {
+      "critical": 3,
+      "high": 36,
+      "low": 579,
+      "medium": 251,
+      "reference": "rust:1.96.0-slim-trixie",
+      "scanned_at": "2026-06-24T06:10:36Z",
+      "total": 905,
+      "unknown": 36
     },
     "sha256:4de0c29699be53107142ec813f6a91bcc4fd59c501b50b227468925481dc4896": {
       "critical": 5,
@@ -1127,39 +1147,9 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20-arm64v8",
-      "scanned_at": "2026-06-23T06:22:37Z",
+      "scanned_at": "2026-06-24T06:23:29Z",
       "total": 119,
       "unknown": 0
-    },
-    "sha256:4e08c34e7237fc92b66cfc057026004635332f650f6c83d91567f3e44dc30091": {
-      "critical": 0,
-      "high": 3,
-      "low": 1,
-      "medium": 4,
-      "reference": "python:3.10.20-alpine3.23",
-      "scanned_at": "2026-06-23T06:10:05Z",
-      "total": 8,
-      "unknown": 0
-    },
-    "sha256:4e2e85a824f938e41a61e9e819f0c7c11432f7d60f470b96214d3ead2f0dd63e": {
-      "critical": 3,
-      "high": 7,
-      "low": 71,
-      "medium": 48,
-      "reference": "node:26.3.1-bookworm-slim",
-      "scanned_at": "2026-06-23T06:09:27Z",
-      "total": 145,
-      "unknown": 16
-    },
-    "sha256:4e401d95de7083948053197a9c3913343cd06b706bf15eb6a0c3ccd26f436a0e": {
-      "critical": 2,
-      "high": 8,
-      "low": 62,
-      "medium": 39,
-      "reference": "debian:13-slim",
-      "scanned_at": "2026-06-23T06:09:02Z",
-      "total": 147,
-      "unknown": 36
     },
     "sha256:4f6be65d497df44749bec6ea66d5927e5afc21b20a72ec59e32adfb7006d574f": {
       "critical": 0,
@@ -1167,7 +1157,7 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-arm64v8",
-      "scanned_at": "2026-06-23T06:09:30Z",
+      "scanned_at": "2026-06-24T06:09:30Z",
       "total": 32,
       "unknown": 0
     },
@@ -1177,7 +1167,7 @@
       "low": 20,
       "medium": 16,
       "reference": "rust:1.93.1-alpine3.23",
-      "scanned_at": "2026-06-23T06:14:22Z",
+      "scanned_at": "2026-06-24T06:14:27Z",
       "total": 52,
       "unknown": 0
     },
@@ -1187,18 +1177,8 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19-arm64v8",
-      "scanned_at": "2026-06-23T06:25:47Z",
+      "scanned_at": "2026-06-24T06:26:49Z",
       "total": 67,
-      "unknown": 0
-    },
-    "sha256:520c1f57eb13b73d8402bc7dbbffee2812e3fd6918fa95fe55ad6333c00c0c2a": {
-      "critical": 0,
-      "high": 0,
-      "low": 1,
-      "medium": 3,
-      "reference": "python:3.12.13-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:44Z",
-      "total": 4,
       "unknown": 0
     },
     "sha256:523c3effe300580ed375e43f43b1c9b091b68e935a7c3a92bfcc4e7ed55b18c2": {
@@ -1207,7 +1187,7 @@
       "low": 0,
       "medium": 0,
       "reference": "golang:1.25.11-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:31Z",
+      "scanned_at": "2026-06-24T06:09:30Z",
       "total": 0,
       "unknown": 0
     },
@@ -1215,11 +1195,11 @@
       "critical": 31,
       "high": 109,
       "low": 193,
-      "medium": 189,
+      "medium": 196,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:19:22Z",
-      "total": 563,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:20:14Z",
+      "total": 564,
+      "unknown": 35
     },
     "sha256:533fd9e3bf33aa43c0aa0b2ec2803b3191a82eee6d369acdf5671cfbb30ef647": {
       "critical": 0,
@@ -1227,7 +1207,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-23T06:18:09Z",
+      "scanned_at": "2026-06-24T06:18:49Z",
       "total": 20,
       "unknown": 0
     },
@@ -1237,7 +1217,7 @@
       "low": 5,
       "medium": 55,
       "reference": "ubuntu:26.04",
-      "scanned_at": "2026-06-23T06:09:08Z",
+      "scanned_at": "2026-06-24T06:08:58Z",
       "total": 70,
       "unknown": 1
     },
@@ -1247,49 +1227,59 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble",
-      "scanned_at": "2026-06-23T06:10:49Z",
+      "scanned_at": "2026-06-24T06:10:49Z",
       "total": 45,
       "unknown": 0
     },
-    "sha256:54d4310f06b22ce510cf058653729b257e161e0e13e01bf934553bee6550b9a7": {
-      "critical": 0,
-      "high": 0,
-      "low": 0,
-      "medium": 0,
-      "reference": "python:3.14.6-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:11Z",
-      "total": 0,
-      "unknown": 0
+    "sha256:563c216740fec2091c99b62bea4ba35cd550c31e644510120504d0be3d0eee80": {
+      "critical": 2,
+      "high": 12,
+      "low": 64,
+      "medium": 42,
+      "reference": "python:3.11.15-slim-trixie",
+      "scanned_at": "2026-06-24T06:09:54Z",
+      "total": 156,
+      "unknown": 36
     },
-    "sha256:55e1d290257108ca0bbd3b206d5ac2e8754b70e4ecbad2d9306fde8821cc30a3": {
-      "critical": 23,
-      "high": 425,
-      "low": 1298,
-      "medium": 1679,
-      "reference": "node:22.23.0-bullseye",
-      "scanned_at": "2026-06-23T06:10:47Z",
-      "total": 3521,
-      "unknown": 96
+    "sha256:56dfa044561f7d34e47be2a9c0691676d8cfc14098b7af4e11fb4b064c82dcf8": {
+      "critical": 9,
+      "high": 67,
+      "low": 657,
+      "medium": 345,
+      "reference": "golang:1.25.11",
+      "scanned_at": "2026-06-24T06:09:26Z",
+      "total": 1133,
+      "unknown": 55
     },
     "sha256:572c335a97c7b9c7178d84f62f4e9a03e809ae2998139d46e924d20d2cdd4a53": {
       "critical": 2,
       "high": 108,
       "low": 12,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-azurelinux3.0-amd64",
-      "scanned_at": "2026-06-23T06:13:34Z",
-      "total": 164,
+      "scanned_at": "2026-06-24T06:13:34Z",
+      "total": 199,
       "unknown": 0
     },
     "sha256:5835f052b784aa39f2fe9070def3568605c8bc3fcd810f10402066348b61e716": {
       "critical": 17,
-      "high": 607,
+      "high": 609,
       "low": 830,
-      "medium": 1820,
+      "medium": 1829,
       "reference": "golang:1.24.13-trixie",
-      "scanned_at": "2026-06-23T06:09:57Z",
-      "total": 3331,
+      "scanned_at": "2026-06-24T06:09:58Z",
+      "total": 3342,
       "unknown": 57
+    },
+    "sha256:586819c25e4fd73bed92203edc1276b07924fc2305f01341c29a3d8fd4d3f2ce": {
+      "critical": 2,
+      "high": 9,
+      "low": 64,
+      "medium": 41,
+      "reference": "node:26.3.1-trixie-slim",
+      "scanned_at": "2026-06-24T06:09:41Z",
+      "total": 152,
+      "unknown": 36
     },
     "sha256:58bedea4d19534e0b848cf365ab64a384a3b4987554afd1e7908f802c6c5718c": {
       "critical": 3,
@@ -1297,7 +1287,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal-arm32v7",
-      "scanned_at": "2026-06-23T06:23:29Z",
+      "scanned_at": "2026-06-24T06:24:25Z",
       "total": 51,
       "unknown": 0
     },
@@ -1307,19 +1297,19 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.93.1-alpine3.20",
-      "scanned_at": "2026-06-23T06:14:04Z",
+      "scanned_at": "2026-06-24T06:14:09Z",
       "total": 20,
       "unknown": 0
     },
     "sha256:5b9332190bb3b9ece73b810cd1f1e9f06343b294ce184bcb067f0747d7d333ea": {
       "critical": 11,
-      "high": 266,
+      "high": 267,
       "low": 705,
-      "medium": 1469,
+      "medium": 1471,
       "reference": "rust:1.93.1-slim-bookworm",
-      "scanned_at": "2026-06-23T06:15:01Z",
-      "total": 2472,
-      "unknown": 21
+      "scanned_at": "2026-06-24T06:15:07Z",
+      "total": 2473,
+      "unknown": 19
     },
     "sha256:5c01b2f2f64748b989357f0883842c6c48dae8577a8f8a724caca339ee35ca7f": {
       "critical": 3,
@@ -1327,7 +1317,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19-amd64",
-      "scanned_at": "2026-06-23T06:22:14Z",
+      "scanned_at": "2026-06-24T06:23:02Z",
       "total": 67,
       "unknown": 0
     },
@@ -1337,7 +1327,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy-arm32v7",
-      "scanned_at": "2026-06-23T06:19:52Z",
+      "scanned_at": "2026-06-24T06:20:47Z",
       "total": 304,
       "unknown": 0
     },
@@ -1347,7 +1337,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal",
-      "scanned_at": "2026-06-23T06:23:23Z",
+      "scanned_at": "2026-06-24T06:24:19Z",
       "total": 51,
       "unknown": 0
     },
@@ -1357,7 +1347,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy-arm64v8",
-      "scanned_at": "2026-06-23T06:19:57Z",
+      "scanned_at": "2026-06-24T06:20:54Z",
       "total": 304,
       "unknown": 0
     },
@@ -1367,9 +1357,19 @@
       "low": 21,
       "medium": 252,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-cbl-mariner2.0-amd64",
-      "scanned_at": "2026-06-23T06:19:34Z",
+      "scanned_at": "2026-06-24T06:20:28Z",
       "total": 505,
       "unknown": 0
+    },
+    "sha256:5d7730838f61b227480a7536103a3223d9f2f87c015ff0b11d9318647b2a7a3a": {
+      "critical": 3,
+      "high": 7,
+      "low": 68,
+      "medium": 50,
+      "reference": "node:22.23.1-slim",
+      "scanned_at": "2026-06-24T06:10:48Z",
+      "total": 145,
+      "unknown": 17
     },
     "sha256:5dc2af9dd547c33f64d5fc1d299ab93b51f39eaa16c426c476b990ce6caf5b3e": {
       "critical": 0,
@@ -1377,19 +1377,19 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.96.0-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:47Z",
+      "scanned_at": "2026-06-24T06:09:44Z",
       "total": 0,
       "unknown": 0
     },
     "sha256:5e927c284bf55a7dc796262e311a0703344f62f41f5621eb56843111b1d37e15": {
       "critical": 199,
-      "high": 1189,
+      "high": 1186,
       "low": 1285,
-      "medium": 3093,
+      "medium": 3126,
       "reference": "gcc:14.3.0-bookworm",
-      "scanned_at": "2026-06-23T06:10:08Z",
-      "total": 5871,
-      "unknown": 105
+      "scanned_at": "2026-06-24T06:09:54Z",
+      "total": 5925,
+      "unknown": 129
     },
     "sha256:5ea5933c99960896fe9362c7ea344c9d5ec8bafbbf9406fc8479afc024592aa4": {
       "critical": 0,
@@ -1397,7 +1397,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jdk-alpine-3.22",
-      "scanned_at": "2026-06-23T06:12:14Z",
+      "scanned_at": "2026-06-24T06:11:37Z",
       "total": 0,
       "unknown": 0
     },
@@ -1407,7 +1407,7 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:21-jre-noble",
-      "scanned_at": "2026-06-23T06:11:43Z",
+      "scanned_at": "2026-06-24T06:11:12Z",
       "total": 67,
       "unknown": 0
     },
@@ -1417,7 +1417,7 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20-amd64",
-      "scanned_at": "2026-06-23T06:22:28Z",
+      "scanned_at": "2026-06-24T06:23:18Z",
       "total": 121,
       "unknown": 0
     },
@@ -1427,19 +1427,19 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jdk-alpine-3.23",
-      "scanned_at": "2026-06-23T06:10:19Z",
+      "scanned_at": "2026-06-24T06:10:06Z",
       "total": 0,
       "unknown": 0
     },
-    "sha256:5f68ec6805843bd3981a951ffada82a26a0bd2631045c8f7dba483fa868f5ec5": {
-      "critical": 11,
-      "high": 202,
-      "low": 746,
-      "medium": 1025,
-      "reference": "golang:1.26.4-bookworm",
-      "scanned_at": "2026-06-23T06:09:19Z",
-      "total": 2019,
-      "unknown": 35
+    "sha256:5f2c7aad5aa1aa37c8e023c8bdd40aab8d2caa9589a0d428662eadace011b9e0": {
+      "critical": 0,
+      "high": 3,
+      "low": 1,
+      "medium": 3,
+      "reference": "python:3.11.15-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:49Z",
+      "total": 7,
+      "unknown": 0
     },
     "sha256:5f7e90643beb83a6027c10d66c1b0be24785d4d3188667a4d502504ad1a9fff8": {
       "critical": 0,
@@ -1447,19 +1447,19 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-amd64",
-      "scanned_at": "2026-06-23T06:09:12Z",
+      "scanned_at": "2026-06-24T06:09:12Z",
       "total": 32,
       "unknown": 0
     },
     "sha256:601bab1661920dfc3bcd35f4af1ca5df6b0b1385be45adc65baa6c02ab15f110": {
       "critical": 28,
-      "high": 306,
+      "high": 303,
       "low": 1094,
-      "medium": 1156,
+      "medium": 1189,
       "reference": "python:3.14.6-bookworm",
-      "scanned_at": "2026-06-23T06:09:20Z",
-      "total": 2684,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:09:18Z",
+      "total": 2738,
+      "unknown": 124
     },
     "sha256:601bee717525b478c15e53c9b75d8efcb215cd7e13ccb2835839345451267dba": {
       "critical": 0,
@@ -1467,8 +1467,18 @@
       "low": 1,
       "medium": 0,
       "reference": "eclipse-temurin:17-jdk-alpine-3.21",
-      "scanned_at": "2026-06-23T06:12:14Z",
+      "scanned_at": "2026-06-24T06:11:36Z",
       "total": 2,
+      "unknown": 0
+    },
+    "sha256:601d3d3797e90e2534782e69c85fafb7971b43f24c7b1b079b7e48dd435e458d": {
+      "critical": 0,
+      "high": 0,
+      "low": 1,
+      "medium": 3,
+      "reference": "python:3.12.13-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:40Z",
+      "total": 4,
       "unknown": 0
     },
     "sha256:606fd313a0f49743ee2a7bd49a0914bab7deedb12791f3a846a34a4711db7ed2": {
@@ -1477,9 +1487,29 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.95.0-alpine3.23",
-      "scanned_at": "2026-06-23T06:11:13Z",
+      "scanned_at": "2026-06-24T06:11:14Z",
       "total": 30,
       "unknown": 0
+    },
+    "sha256:60e626bbde32def8694687d03536ea4341b19e5f068e9a630225a1dfbd0505c9": {
+      "critical": 0,
+      "high": 0,
+      "low": 0,
+      "medium": 0,
+      "reference": "golang:1.25.11-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:29Z",
+      "total": 0,
+      "unknown": 0
+    },
+    "sha256:60eac759739651111db372c07be67863818726f754804b8707c90979bda511df": {
+      "critical": 3,
+      "high": 6,
+      "low": 68,
+      "medium": 46,
+      "reference": "debian:12-slim",
+      "scanned_at": "2026-06-24T06:09:11Z",
+      "total": 140,
+      "unknown": 17
     },
     "sha256:6135b2dcc36fc4df1e534fc39113722e412799ffdb9ec0ed914ffce366f235c5": {
       "critical": 0,
@@ -1487,19 +1517,19 @@
       "low": 36,
       "medium": 101,
       "reference": "eclipse-temurin:17-noble",
-      "scanned_at": "2026-06-23T06:12:47Z",
+      "scanned_at": "2026-06-24T06:12:06Z",
       "total": 139,
       "unknown": 0
     },
     "sha256:6137a7b1d4ff24ef2fe63e6ae40ed9b3d17b48f70fd2516a9c52c9fa54ea2391": {
       "critical": 9,
-      "high": 368,
+      "high": 369,
       "low": 870,
-      "medium": 1769,
+      "medium": 1770,
       "reference": "rust:1.93.1-slim-bullseye",
-      "scanned_at": "2026-06-23T06:15:10Z",
-      "total": 3033,
-      "unknown": 17
+      "scanned_at": "2026-06-24T06:15:16Z",
+      "total": 3034,
+      "unknown": 16
     },
     "sha256:61e59dfccc9e2c01f39f6a6d2a65042291969365bd43010f3c0173d32d5762a2": {
       "critical": 0,
@@ -1507,7 +1537,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:10:51Z",
+      "scanned_at": "2026-06-24T06:10:31Z",
       "total": 0,
       "unknown": 0
     },
@@ -1515,30 +1545,30 @@
       "critical": 2,
       "high": 123,
       "low": 2,
-      "medium": 47,
+      "medium": 87,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-aot-arm64v8",
-      "scanned_at": "2026-06-23T06:10:16Z",
-      "total": 174,
+      "scanned_at": "2026-06-24T06:10:15Z",
+      "total": 214,
       "unknown": 0
     },
     "sha256:6258907abe69656e41cd992e0b705cdcfabcbbe3db374f92ed2d47121282d4a1": {
       "critical": 30,
-      "high": 391,
+      "high": 388,
       "low": 1116,
-      "medium": 1284,
+      "medium": 1317,
       "reference": "rust:1.95.0-bookworm",
-      "scanned_at": "2026-06-23T06:11:24Z",
-      "total": 2921,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:11:25Z",
+      "total": 2975,
+      "unknown": 124
     },
     "sha256:631143cb45058e590e36048d8b4718bf9d80d621ee36bd9778219137c6fad616": {
       "critical": 0,
       "high": 1,
       "low": 153,
-      "medium": 114,
+      "medium": 116,
       "reference": "eclipse-temurin:21-jre-ubi9-minimal",
-      "scanned_at": "2026-06-23T06:11:48Z",
-      "total": 268,
+      "scanned_at": "2026-06-24T06:11:16Z",
+      "total": 270,
       "unknown": 0
     },
     "sha256:638937c54b6d63f0973a20501973e7c433a36b1f22262bd2b25afa7be5ff8c4a": {
@@ -1547,19 +1577,19 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jdk-alpine-3.23",
-      "scanned_at": "2026-06-23T06:12:15Z",
+      "scanned_at": "2026-06-24T06:11:37Z",
       "total": 0,
       "unknown": 0
     },
     "sha256:652612f07bfbbdfa3af34761c1e435094c00dde4a98036132fca28c7bb2b165c": {
       "critical": 40,
-      "high": 576,
+      "high": 574,
       "low": 1181,
-      "medium": 1843,
+      "medium": 1876,
       "reference": "rust:1.94.1-trixie",
-      "scanned_at": "2026-06-23T06:13:37Z",
-      "total": 3775,
-      "unknown": 135
+      "scanned_at": "2026-06-24T06:13:41Z",
+      "total": 3825,
+      "unknown": 154
     },
     "sha256:65b4400aee0927412e9ed791a11893273a49d55df24841f7599660fb80dae464": {
       "critical": 0,
@@ -1567,7 +1597,7 @@
       "low": 20,
       "medium": 8,
       "reference": "golang:1.25.11-alpine3.22",
-      "scanned_at": "2026-06-23T06:09:29Z",
+      "scanned_at": "2026-06-24T06:09:28Z",
       "total": 30,
       "unknown": 0
     },
@@ -1577,29 +1607,19 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble-amd64",
-      "scanned_at": "2026-06-23T06:14:34Z",
+      "scanned_at": "2026-06-24T06:14:44Z",
       "total": 55,
       "unknown": 0
     },
-    "sha256:68cf0d859b046494f3c4288171bc477580e424f981d08f2a77742b982c32a38f": {
-      "critical": 4,
-      "high": 10,
-      "low": 99,
-      "medium": 49,
-      "reference": "debian:11",
-      "scanned_at": "2026-06-23T06:09:07Z",
-      "total": 176,
-      "unknown": 14
-    },
     "sha256:6ae102bdbf528294bc79ad6e1fae682f6f7c2a6e6621506ba959f9685b308a55": {
       "critical": 61,
-      "high": 635,
+      "high": 632,
       "low": 1170,
-      "medium": 2076,
+      "medium": 2109,
       "reference": "rust:1.94.1-bookworm",
-      "scanned_at": "2026-06-23T06:12:58Z",
-      "total": 4043,
-      "unknown": 101
+      "scanned_at": "2026-06-24T06:13:01Z",
+      "total": 4097,
+      "unknown": 125
     },
     "sha256:6b1a8a05a7d4863f87c383ceb645bf038c5dba41e5a43fb7c7cc4a252b313a35": {
       "critical": 2,
@@ -1607,9 +1627,19 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.94.1-alpine3.20",
-      "scanned_at": "2026-06-23T06:12:30Z",
+      "scanned_at": "2026-06-24T06:12:32Z",
       "total": 20,
       "unknown": 0
+    },
+    "sha256:6bdbd8ebe5e1c0c52912eebaa44835359c7378ceaaa9bfff4a014f64039399d9": {
+      "critical": 23,
+      "high": 426,
+      "low": 1300,
+      "medium": 1707,
+      "reference": "node:24.17.0-bullseye",
+      "scanned_at": "2026-06-24T06:09:58Z",
+      "total": 3577,
+      "unknown": 121
     },
     "sha256:6bf560cec1e53e1258e67a15666b4764e80c44be53f6f19bda961cb5405e71b6": {
       "critical": 0,
@@ -1617,7 +1647,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:13:46Z",
+      "scanned_at": "2026-06-24T06:12:54Z",
       "total": 0,
       "unknown": 0
     },
@@ -1627,7 +1657,7 @@
       "low": 1,
       "medium": 3,
       "reference": "python:3.12.13-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:44Z",
+      "scanned_at": "2026-06-24T06:09:40Z",
       "total": 4,
       "unknown": 0
     },
@@ -1637,7 +1667,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-cbl-mariner2.0-arm64v8",
-      "scanned_at": "2026-06-23T06:23:18Z",
+      "scanned_at": "2026-06-24T06:24:13Z",
       "total": 467,
       "unknown": 0
     },
@@ -1647,7 +1677,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19-arm32v7",
-      "scanned_at": "2026-06-23T06:25:43Z",
+      "scanned_at": "2026-06-24T06:26:45Z",
       "total": 67,
       "unknown": 0
     },
@@ -1657,7 +1687,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:26-jdk-alpine-3.23",
-      "scanned_at": "2026-06-23T06:09:31Z",
+      "scanned_at": "2026-06-24T06:09:25Z",
       "total": 0,
       "unknown": 0
     },
@@ -1667,29 +1697,29 @@
       "low": 20,
       "medium": 45,
       "reference": "eclipse-temurin:11-jre-noble",
-      "scanned_at": "2026-06-23T06:13:38Z",
+      "scanned_at": "2026-06-24T06:12:47Z",
       "total": 67,
       "unknown": 0
     },
     "sha256:6fe9bb8b5e309a4fc598acb9d3ad18718f7519911eb6af9a1d9121d960f0ed75": {
       "critical": 28,
-      "high": 309,
+      "high": 306,
       "low": 1095,
-      "medium": 1159,
+      "medium": 1192,
       "reference": "python:3.11.15-bookworm",
-      "scanned_at": "2026-06-23T06:09:57Z",
-      "total": 2691,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:09:51Z",
+      "total": 2745,
+      "unknown": 124
     },
     "sha256:7069ffd00d492203d69492fe9a0fe36f7c5375856403b4eed34272a5439421bb": {
       "critical": 21,
       "high": 87,
       "low": 192,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim",
-      "scanned_at": "2026-06-23T06:26:05Z",
-      "total": 514,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:27:14Z",
+      "total": 515,
+      "unknown": 25
     },
     "sha256:7089f727fa58578b8b5c63585a06458ba5dba5eac70bbf277b44845f187717fe": {
       "critical": 0,
@@ -1697,7 +1727,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:11:52Z",
+      "scanned_at": "2026-06-24T06:11:19Z",
       "total": 0,
       "unknown": 0
     },
@@ -1707,7 +1737,7 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23-arm64v8",
-      "scanned_at": "2026-06-23T06:16:20Z",
+      "scanned_at": "2026-06-24T06:16:40Z",
       "total": 52,
       "unknown": 0
     },
@@ -1717,7 +1747,7 @@
       "low": 20,
       "medium": 8,
       "reference": "golang:1.26.4-alpine3.22",
-      "scanned_at": "2026-06-23T06:09:13Z",
+      "scanned_at": "2026-06-24T06:09:10Z",
       "total": 30,
       "unknown": 0
     },
@@ -1725,10 +1755,10 @@
       "critical": 2,
       "high": 118,
       "low": 12,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-azurelinux3.0-arm64v8",
-      "scanned_at": "2026-06-23T06:16:32Z",
-      "total": 174,
+      "scanned_at": "2026-06-24T06:16:58Z",
+      "total": 209,
       "unknown": 0
     },
     "sha256:762d16be48b976c97801d198e5085b1f6facb13718a1e8fb67cb25d0b25337e1": {
@@ -1737,7 +1767,7 @@
       "low": 13,
       "medium": 62,
       "reference": "eclipse-temurin:21-jdk",
-      "scanned_at": "2026-06-23T06:11:12Z",
+      "scanned_at": "2026-06-24T06:10:48Z",
       "total": 85,
       "unknown": 1
     },
@@ -1747,7 +1777,7 @@
       "low": 20,
       "medium": 44,
       "reference": "eclipse-temurin:26-jre-noble",
-      "scanned_at": "2026-06-23T06:09:53Z",
+      "scanned_at": "2026-06-24T06:09:43Z",
       "total": 66,
       "unknown": 0
     },
@@ -1757,19 +1787,9 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal-amd64",
-      "scanned_at": "2026-06-23T06:26:46Z",
+      "scanned_at": "2026-06-24T06:27:55Z",
       "total": 57,
       "unknown": 0
-    },
-    "sha256:76d4b7b6305788c6b4c6a19d6a22a3921bf802e9af4d5e1e5bd771208dba74bf": {
-      "critical": 4,
-      "high": 9,
-      "low": 93,
-      "medium": 51,
-      "reference": "python:3.12.13-slim-bookworm",
-      "scanned_at": "2026-06-23T06:09:49Z",
-      "total": 173,
-      "unknown": 16
     },
     "sha256:7706f66121ea03730772099da03407b1a1b57f310278761148d6e50e5694fe73": {
       "critical": 0,
@@ -1777,7 +1797,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-jdk-alpine-3.22",
-      "scanned_at": "2026-06-23T06:13:10Z",
+      "scanned_at": "2026-06-24T06:12:24Z",
       "total": 0,
       "unknown": 0
     },
@@ -1787,7 +1807,7 @@
       "low": 20,
       "medium": 8,
       "reference": "rust:1.94.1-alpine3.23",
-      "scanned_at": "2026-06-23T06:12:48Z",
+      "scanned_at": "2026-06-24T06:12:50Z",
       "total": 30,
       "unknown": 0
     },
@@ -1797,19 +1817,9 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.95.0-alpine3.21",
-      "scanned_at": "2026-06-23T06:11:04Z",
+      "scanned_at": "2026-06-24T06:11:05Z",
       "total": 0,
       "unknown": 0
-    },
-    "sha256:783f473e0f8b55b9a8b7c121c9b670f8c8f9928f5cdfaf2638d7c22a55e796ac": {
-      "critical": 25,
-      "high": 190,
-      "low": 994,
-      "medium": 493,
-      "reference": "gcc:14.3.0-trixie",
-      "scanned_at": "2026-06-23T06:10:09Z",
-      "total": 1835,
-      "unknown": 133
     },
     "sha256:7847640dc642ec697b09cec6871398a2fc06b391c8c2ddbbfdfb4be64a2de7a4": {
       "critical": 0,
@@ -1817,7 +1827,7 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:21-jre-resolute",
-      "scanned_at": "2026-06-23T06:11:44Z",
+      "scanned_at": "2026-06-24T06:11:12Z",
       "total": 77,
       "unknown": 1
     },
@@ -1827,19 +1837,9 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:11-resolute",
-      "scanned_at": "2026-06-23T06:13:45Z",
+      "scanned_at": "2026-06-24T06:12:54Z",
       "total": 77,
       "unknown": 1
-    },
-    "sha256:792443b89f65105abba56b9bd5e97f680a80074ac62fc844a584212f8c8102c3": {
-      "critical": 9,
-      "high": 76,
-      "low": 659,
-      "medium": 376,
-      "reference": "golang:1.26.4",
-      "scanned_at": "2026-06-23T06:09:10Z",
-      "total": 1175,
-      "unknown": 55
     },
     "sha256:797631f9efd6957d0013f200e410478c380907eee3b469c6f80d89022df28bc7": {
       "critical": 2,
@@ -1847,7 +1847,7 @@
       "low": 20,
       "medium": 16,
       "reference": "rust:1.94.1-alpine3.22",
-      "scanned_at": "2026-06-23T06:12:47Z",
+      "scanned_at": "2026-06-24T06:12:50Z",
       "total": 52,
       "unknown": 0
     },
@@ -1855,11 +1855,11 @@
       "critical": 19,
       "high": 83,
       "low": 191,
-      "medium": 179,
+      "medium": 186,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim",
-      "scanned_at": "2026-06-23T06:22:54Z",
-      "total": 513,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:23:48Z",
+      "total": 514,
+      "unknown": 35
     },
     "sha256:7ab5b720f367e4bb4da17cd9cd71e761572d14138d4b846d110af49f3ea116a0": {
       "critical": 0,
@@ -1867,7 +1867,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-jdk-alpine-3.23",
-      "scanned_at": "2026-06-23T06:13:11Z",
+      "scanned_at": "2026-06-24T06:12:25Z",
       "total": 0,
       "unknown": 0
     },
@@ -1877,7 +1877,7 @@
       "low": 65,
       "medium": 56,
       "reference": "eclipse-temurin:25-jdk-jammy",
-      "scanned_at": "2026-06-23T06:10:20Z",
+      "scanned_at": "2026-06-24T06:10:06Z",
       "total": 123,
       "unknown": 0
     },
@@ -1885,21 +1885,21 @@
       "critical": 9,
       "high": 36,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:16:44Z",
-      "total": 315,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:17:16Z",
+      "total": 316,
+      "unknown": 25
     },
     "sha256:7c4ae649a84014c467d79319bbf17ce2632ae8b8be123ac2fb2ea5be46823f31": {
       "critical": 140,
-      "high": 772,
+      "high": 769,
       "low": 1171,
-      "medium": 2247,
+      "medium": 2280,
       "reference": "rust:1.93.1-bookworm",
-      "scanned_at": "2026-06-23T06:14:33Z",
-      "total": 4431,
-      "unknown": 101
+      "scanned_at": "2026-06-24T06:14:38Z",
+      "total": 4485,
+      "unknown": 125
     },
     "sha256:7c70d1235c0b4c2bc9eeed5393d19f1bbdde6885ba0d58ba62bb385d7b0f3ff1": {
       "critical": 0,
@@ -1907,7 +1907,7 @@
       "low": 2,
       "medium": 4,
       "reference": "node:24.17.0-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:52Z",
+      "scanned_at": "2026-06-24T06:09:50Z",
       "total": 7,
       "unknown": 0
     },
@@ -1915,11 +1915,11 @@
       "critical": 21,
       "high": 87,
       "low": 192,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:26:16Z",
-      "total": 514,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:27:27Z",
+      "total": 515,
+      "unknown": 25
     },
     "sha256:7cc5e35f6567ee8c66d2abb4aab0fd866669e6207c237c3a8f0947a5c7f17092": {
       "critical": 0,
@@ -1927,7 +1927,7 @@
       "low": 5,
       "medium": 73,
       "reference": "ubuntu:25.10",
-      "scanned_at": "2026-06-23T06:09:10Z",
+      "scanned_at": "2026-06-24T06:09:00Z",
       "total": 78,
       "unknown": 0
     },
@@ -1937,7 +1937,7 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.96.0-alpine3.21",
-      "scanned_at": "2026-06-23T06:09:29Z",
+      "scanned_at": "2026-06-24T06:09:27Z",
       "total": 0,
       "unknown": 0
     },
@@ -1947,7 +1947,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19-arm64v8",
-      "scanned_at": "2026-06-23T06:22:23Z",
+      "scanned_at": "2026-06-24T06:23:12Z",
       "total": 65,
       "unknown": 0
     },
@@ -1957,7 +1957,7 @@
       "low": 5,
       "medium": 61,
       "reference": "eclipse-temurin:25-jre",
-      "scanned_at": "2026-06-23T06:10:31Z",
+      "scanned_at": "2026-06-24T06:10:15Z",
       "total": 76,
       "unknown": 1
     },
@@ -1967,7 +1967,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-noble-arm64v8",
-      "scanned_at": "2026-06-23T06:17:47Z",
+      "scanned_at": "2026-06-24T06:18:26Z",
       "total": 65,
       "unknown": 0
     },
@@ -1977,7 +1977,7 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal-amd64",
-      "scanned_at": "2026-06-23T06:23:24Z",
+      "scanned_at": "2026-06-24T06:24:19Z",
       "total": 51,
       "unknown": 0
     },
@@ -1987,7 +1987,7 @@
       "low": 65,
       "medium": 57,
       "reference": "eclipse-temurin:21-jdk-jammy",
-      "scanned_at": "2026-06-23T06:11:15Z",
+      "scanned_at": "2026-06-24T06:10:50Z",
       "total": 124,
       "unknown": 0
     },
@@ -1997,19 +1997,9 @@
       "low": 35,
       "medium": 38,
       "reference": "eclipse-temurin:26-jre-jammy",
-      "scanned_at": "2026-06-23T06:09:49Z",
+      "scanned_at": "2026-06-24T06:09:40Z",
       "total": 75,
       "unknown": 0
-    },
-    "sha256:81345306bb6a7cd60d113d44194dd85cb0f5183a22eb76245a7fc11bc33d4f7f": {
-      "critical": 24,
-      "high": 190,
-      "low": 983,
-      "medium": 495,
-      "reference": "node:22.23.0-trixie",
-      "scanned_at": "2026-06-23T06:10:55Z",
-      "total": 1825,
-      "unknown": 133
     },
     "sha256:81cecb98bcca2d5d5c3d496e71779073865db0d0bd776ecf434e017f20dac638": {
       "critical": 0,
@@ -2017,7 +2007,7 @@
       "low": 36,
       "medium": 101,
       "reference": "eclipse-temurin:21-noble",
-      "scanned_at": "2026-06-23T06:11:50Z",
+      "scanned_at": "2026-06-24T06:11:18Z",
       "total": 139,
       "unknown": 0
     },
@@ -2027,7 +2017,7 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.93.1-alpine3.21",
-      "scanned_at": "2026-06-23T06:14:13Z",
+      "scanned_at": "2026-06-24T06:14:18Z",
       "total": 20,
       "unknown": 0
     },
@@ -2037,7 +2027,7 @@
       "low": 17,
       "medium": 11,
       "reference": "rust:1.92.0-alpine3.21",
-      "scanned_at": "2026-06-23T06:15:50Z",
+      "scanned_at": "2026-06-24T06:15:56Z",
       "total": 46,
       "unknown": 0
     },
@@ -2047,7 +2037,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-23T06:14:16Z",
+      "scanned_at": "2026-06-24T06:14:19Z",
       "total": 12,
       "unknown": 0
     },
@@ -2057,7 +2047,7 @@
       "low": 28,
       "medium": 49,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.19-arm32v7",
-      "scanned_at": "2026-06-23T06:18:51Z",
+      "scanned_at": "2026-06-24T06:19:35Z",
       "total": 107,
       "unknown": 0
     },
@@ -2065,11 +2055,11 @@
       "critical": 21,
       "high": 85,
       "low": 191,
-      "medium": 181,
+      "medium": 188,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425",
-      "scanned_at": "2026-06-23T06:22:00Z",
-      "total": 519,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:22:50Z",
+      "total": 520,
+      "unknown": 35
     },
     "sha256:848c3f6a0d7f68b4222bb22ae25f56028986a8570075178121116a5ef085c6af": {
       "critical": 11,
@@ -2077,8 +2067,18 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18-arm64v8",
-      "scanned_at": "2026-06-23T06:18:42Z",
+      "scanned_at": "2026-06-24T06:19:24Z",
       "total": 81,
+      "unknown": 0
+    },
+    "sha256:8516dce0483394d5708d4b2ee6cacb79fb1d617ea4e2787c2120bcca92ce372e": {
+      "critical": 0,
+      "high": 1,
+      "low": 0,
+      "medium": 4,
+      "reference": "node:22.23.1-alpine3.23",
+      "scanned_at": "2026-06-24T06:10:36Z",
+      "total": 5,
       "unknown": 0
     },
     "sha256:851f8db1b1e4bbf92b269ad9bcbd0aa43fe4fc90b4343296ed223f1c117be979": {
@@ -2087,7 +2087,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-23T06:20:20Z",
+      "scanned_at": "2026-06-24T06:21:20Z",
       "total": 16,
       "unknown": 0
     },
@@ -2097,7 +2097,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy-arm32v7",
-      "scanned_at": "2026-06-23T06:16:57Z",
+      "scanned_at": "2026-06-24T06:17:29Z",
       "total": 76,
       "unknown": 0
     },
@@ -2107,7 +2107,7 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18",
-      "scanned_at": "2026-06-23T06:18:31Z",
+      "scanned_at": "2026-06-24T06:19:12Z",
       "total": 83,
       "unknown": 0
     },
@@ -2117,7 +2117,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-jre-alpine-3.22",
-      "scanned_at": "2026-06-23T06:13:33Z",
+      "scanned_at": "2026-06-24T06:12:42Z",
       "total": 0,
       "unknown": 0
     },
@@ -2127,7 +2127,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy",
-      "scanned_at": "2026-06-23T06:16:50Z",
+      "scanned_at": "2026-06-24T06:17:22Z",
       "total": 76,
       "unknown": 0
     },
@@ -2137,7 +2137,7 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18-arm32v7",
-      "scanned_at": "2026-06-23T06:18:37Z",
+      "scanned_at": "2026-06-24T06:19:17Z",
       "total": 81,
       "unknown": 0
     },
@@ -2147,7 +2147,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy-arm32v7",
-      "scanned_at": "2026-06-23T06:27:07Z",
+      "scanned_at": "2026-06-24T06:28:22Z",
       "total": 275,
       "unknown": 0
     },
@@ -2157,7 +2157,7 @@
       "low": 40,
       "medium": 135,
       "reference": "golang:1.24.13-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:49Z",
+      "scanned_at": "2026-06-24T06:09:49Z",
       "total": 450,
       "unknown": 0
     },
@@ -2165,11 +2165,11 @@
       "critical": 19,
       "high": 83,
       "low": 191,
-      "medium": 179,
+      "medium": 186,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:23:04Z",
-      "total": 513,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:24:00Z",
+      "total": 514,
+      "unknown": 35
     },
     "sha256:8c55589901ef9e5db02d24b5dd25ad69083d5dc964fd24a06d13f34999024791": {
       "critical": 0,
@@ -2177,9 +2177,19 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jre-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:11:46Z",
+      "scanned_at": "2026-06-24T06:11:14Z",
       "total": 0,
       "unknown": 0
+    },
+    "sha256:8c5d338aa0da7e8b034efab738460793dc48d2aac8d497c8f8617d4ef964e0a7": {
+      "critical": 9,
+      "high": 67,
+      "low": 657,
+      "medium": 345,
+      "reference": "golang:1.26.4",
+      "scanned_at": "2026-06-24T06:09:07Z",
+      "total": 1133,
+      "unknown": 55
     },
     "sha256:8c6ab6493f2e93ee7c21781bc599a7e07278aceb15fefb968144d7e4cf8c9a04": {
       "critical": 0,
@@ -2187,19 +2197,9 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.96.0-alpine3.22",
-      "scanned_at": "2026-06-23T06:09:38Z",
+      "scanned_at": "2026-06-24T06:09:35Z",
       "total": 0,
       "unknown": 0
-    },
-    "sha256:8cd0ffd483b64585c6d135364bea5f937ff40cd3da431789af011f9ee8d55af0": {
-      "critical": 2,
-      "high": 9,
-      "low": 62,
-      "medium": 43,
-      "reference": "node:22.22.3-trixie-slim",
-      "scanned_at": "2026-06-23T06:11:20Z",
-      "total": 152,
-      "unknown": 36
     },
     "sha256:8d6a1db77f3e263489749e690715079b7f161f5641ac13b22909e53ff68e8d04": {
       "critical": 0,
@@ -2207,9 +2207,19 @@
       "low": 5,
       "medium": 61,
       "reference": "eclipse-temurin:26-jre",
-      "scanned_at": "2026-06-23T06:09:44Z",
+      "scanned_at": "2026-06-24T06:09:36Z",
       "total": 76,
       "unknown": 1
+    },
+    "sha256:8dbfa1da250fd0b6baa2dbac9f87ae8b24494dceb8dfa74de2d956da1efd717d": {
+      "critical": 2,
+      "high": 12,
+      "low": 64,
+      "medium": 43,
+      "reference": "python:3.10.20-slim-trixie",
+      "scanned_at": "2026-06-24T06:10:03Z",
+      "total": 157,
+      "unknown": 36
     },
     "sha256:8e5a01e3df49bdafedbfff7a81a1bec14d10991a002e8fa65e7aa669921a9f2a": {
       "critical": 0,
@@ -2217,7 +2227,7 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:11-jre-resolute",
-      "scanned_at": "2026-06-23T06:13:38Z",
+      "scanned_at": "2026-06-24T06:12:47Z",
       "total": 77,
       "unknown": 1
     },
@@ -2227,7 +2237,7 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:21-jre",
-      "scanned_at": "2026-06-23T06:11:32Z",
+      "scanned_at": "2026-06-24T06:11:03Z",
       "total": 77,
       "unknown": 1
     },
@@ -2237,7 +2247,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jre-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:10:47Z",
+      "scanned_at": "2026-06-24T06:10:28Z",
       "total": 0,
       "unknown": 0
     },
@@ -2247,7 +2257,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-nanoserver-ltsc2025",
-      "scanned_at": "2026-06-23T06:14:28Z",
+      "scanned_at": "2026-06-24T06:14:33Z",
       "total": 12,
       "unknown": 0
     },
@@ -2257,7 +2267,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:25-jdk-alpine-3.22",
-      "scanned_at": "2026-06-23T06:10:19Z",
+      "scanned_at": "2026-06-24T06:10:05Z",
       "total": 0,
       "unknown": 0
     },
@@ -2267,7 +2277,7 @@
       "low": 13,
       "medium": 62,
       "reference": "eclipse-temurin:17-jdk",
-      "scanned_at": "2026-06-23T06:12:13Z",
+      "scanned_at": "2026-06-24T06:11:36Z",
       "total": 85,
       "unknown": 1
     },
@@ -2275,10 +2285,10 @@
       "critical": 2,
       "high": 108,
       "low": 12,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-azurelinux3.0",
-      "scanned_at": "2026-06-23T06:13:34Z",
-      "total": 164,
+      "scanned_at": "2026-06-24T06:13:34Z",
+      "total": 199,
       "unknown": 0
     },
     "sha256:9389588ef8c45dfd1feaefe2fc2a1243d57e5151429880f748eeb3e711b5b188": {
@@ -2287,7 +2297,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-noble-amd64",
-      "scanned_at": "2026-06-23T06:17:42Z",
+      "scanned_at": "2026-06-24T06:18:18Z",
       "total": 65,
       "unknown": 0
     },
@@ -2295,21 +2305,31 @@
       "critical": 0,
       "high": 1,
       "low": 153,
-      "medium": 114,
+      "medium": 116,
       "reference": "eclipse-temurin:17-ubi9-minimal",
-      "scanned_at": "2026-06-23T06:12:49Z",
-      "total": 268,
+      "scanned_at": "2026-06-24T06:12:07Z",
+      "total": 270,
       "unknown": 0
+    },
+    "sha256:964191e9c047c5ababb0ba8a6e613cc70714a1de1fbca57e717c516f689c8053": {
+      "critical": 3,
+      "high": 7,
+      "low": 70,
+      "medium": 50,
+      "reference": "node:24.17.0-slim",
+      "scanned_at": "2026-06-24T06:10:01Z",
+      "total": 147,
+      "unknown": 17
     },
     "sha256:964a81320f969fba817877c85d524c9a899dc5873e519ab9bd42d282498509fe": {
       "critical": 31,
       "high": 109,
       "low": 193,
-      "medium": 189,
+      "medium": 196,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim",
-      "scanned_at": "2026-06-23T06:19:15Z",
-      "total": 563,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:20:08Z",
+      "total": 564,
+      "unknown": 35
     },
     "sha256:968d71f9555628c1ffc2034ab9b375d3d405a6d6edd73c889ea79d0ac1abe1e1": {
       "critical": 7,
@@ -2317,69 +2337,49 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy-amd64",
-      "scanned_at": "2026-06-23T06:19:46Z",
+      "scanned_at": "2026-06-24T06:20:41Z",
       "total": 304,
       "unknown": 0
-    },
-    "sha256:96e378d7e6531ac9a15ad505478fcc2e69f371b10f5cdf87857c4b8188404716": {
-      "critical": 3,
-      "high": 6,
-      "low": 68,
-      "medium": 46,
-      "reference": "debian:12-slim",
-      "scanned_at": "2026-06-23T06:09:05Z",
-      "total": 139,
-      "unknown": 16
-    },
-    "sha256:97df26d790e55489265c4c79ebffcb4242b6807d38d645e186516e518a6098b0": {
-      "critical": 9,
-      "high": 76,
-      "low": 659,
-      "medium": 376,
-      "reference": "golang:1.25.11-trixie",
-      "scanned_at": "2026-06-23T06:09:38Z",
-      "total": 1175,
-      "unknown": 55
-    },
-    "sha256:97f4db7fcde59ccb550cf2815238b846744d447456995f61a800e7e961925e3e": {
-      "critical": 4,
-      "high": 11,
-      "low": 101,
-      "medium": 53,
-      "reference": "node:24.16.0-bullseye-slim",
-      "scanned_at": "2026-06-23T06:10:22Z",
-      "total": 183,
-      "unknown": 14
     },
     "sha256:98b809cdd6a8d3be3db75a2271d13e867f37ed481a408474285798b778904660": {
       "critical": 2,
       "high": 123,
       "low": 2,
-      "medium": 47,
+      "medium": 87,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-aot-amd64",
-      "scanned_at": "2026-06-23T06:10:06Z",
-      "total": 174,
+      "scanned_at": "2026-06-24T06:10:07Z",
+      "total": 214,
       "unknown": 0
+    },
+    "sha256:99551812c3b357836d4aa46d3bc53c317a30b7ef9e10248e730d8f6503bb4f3c": {
+      "critical": 4,
+      "high": 10,
+      "low": 98,
+      "medium": 51,
+      "reference": "node:26.3.1-bullseye-slim",
+      "scanned_at": "2026-06-24T06:09:37Z",
+      "total": 178,
+      "unknown": 15
     },
     "sha256:9c653d88728e23abaa73c9aa7f8b00a63a3ad2888a0c89eaeb9b75daa6b8315b": {
       "critical": 19,
       "high": 83,
       "low": 191,
-      "medium": 179,
+      "medium": 186,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:22:59Z",
-      "total": 513,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:23:54Z",
+      "total": 514,
+      "unknown": 35
     },
     "sha256:9ca91b05c7b07d2979f16413e8b2cd6ec8a7c80ffca4121ccab0aeba33f90460": {
       "critical": 199,
-      "high": 1189,
+      "high": 1186,
       "low": 1285,
-      "medium": 3093,
+      "medium": 3126,
       "reference": "gcc:15.2.0-bookworm",
-      "scanned_at": "2026-06-23T06:09:44Z",
-      "total": 5871,
-      "unknown": 105
+      "scanned_at": "2026-06-24T06:09:32Z",
+      "total": 5925,
+      "unknown": 129
     },
     "sha256:9d17e55e4194d8c22add8609e37ff077c8203fcdff42a29a8de5a34e8453de8f": {
       "critical": 10,
@@ -2387,7 +2387,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-cbl-mariner2.0-amd64",
-      "scanned_at": "2026-06-23T06:26:34Z",
+      "scanned_at": "2026-06-24T06:27:44Z",
       "total": 467,
       "unknown": 0
     },
@@ -2397,7 +2397,7 @@
       "low": 120,
       "medium": 163,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-jammy",
-      "scanned_at": "2026-06-23T06:19:46Z",
+      "scanned_at": "2026-06-24T06:20:41Z",
       "total": 304,
       "unknown": 0
     },
@@ -2407,19 +2407,29 @@
       "low": 21,
       "medium": 252,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-cbl-mariner2.0-arm64v8",
-      "scanned_at": "2026-06-23T06:19:39Z",
+      "scanned_at": "2026-06-24T06:20:34Z",
       "total": 505,
+      "unknown": 0
+    },
+    "sha256:9fdbf2e3e82628351513560b121e2ee6ce31cac212be9e070c5a5e2769fb5e76": {
+      "critical": 0,
+      "high": 0,
+      "low": 0,
+      "medium": 0,
+      "reference": "python:3.13.14-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:29Z",
+      "total": 0,
       "unknown": 0
     },
     "sha256:a291948a5e5ceb50e3eaa75cb1e6377660146b385e475938d6855e220afaaeed": {
       "critical": 31,
       "high": 109,
       "low": 193,
-      "medium": 189,
+      "medium": 196,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bullseye-slim-amd64",
-      "scanned_at": "2026-06-23T06:19:16Z",
-      "total": 563,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:20:08Z",
+      "total": 564,
+      "unknown": 35
     },
     "sha256:a2db0abd47a6f6fa8f8e84e477d213ccf824b0c3873d35c516f5b78cc3df0666": {
       "critical": 0,
@@ -2427,7 +2437,7 @@
       "low": 6,
       "medium": 59,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-amd64",
-      "scanned_at": "2026-06-23T06:11:11Z",
+      "scanned_at": "2026-06-24T06:11:14Z",
       "total": 75,
       "unknown": 1
     },
@@ -2437,29 +2447,19 @@
       "low": 2,
       "medium": 2,
       "reference": "node:26.3.1-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:14Z",
+      "scanned_at": "2026-06-24T06:09:12Z",
       "total": 5,
       "unknown": 0
     },
     "sha256:a30c4ff1a6a474019f9b1f0d921e81a254cf420d408c09e8a8b79fd803b62ebf": {
       "critical": 24,
-      "high": 194,
+      "high": 192,
       "low": 1007,
-      "medium": 504,
+      "medium": 537,
       "reference": "python:3.11.15-trixie",
-      "scanned_at": "2026-06-23T06:10:01Z",
-      "total": 1862,
-      "unknown": 133
-    },
-    "sha256:a37ad3b3e8b3e8800789340442fdb99a5a63b85355cac52cc8e6daad7ff1f5fa": {
-      "critical": 0,
-      "high": 0,
-      "low": 0,
-      "medium": 0,
-      "reference": "python:3.13.14-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:32Z",
-      "total": 0,
-      "unknown": 0
+      "scanned_at": "2026-06-24T06:09:55Z",
+      "total": 1912,
+      "unknown": 152
     },
     "sha256:a48ce7dd4412a58494b56c604440dfdb268b319c2a2a2abf973907c4b3e61d6c": {
       "critical": 0,
@@ -2467,7 +2467,7 @@
       "low": 36,
       "medium": 100,
       "reference": "eclipse-temurin:26-noble",
-      "scanned_at": "2026-06-23T06:09:58Z",
+      "scanned_at": "2026-06-24T06:09:48Z",
       "total": 138,
       "unknown": 0
     },
@@ -2475,21 +2475,31 @@
       "critical": 2,
       "high": 118,
       "low": 12,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-azurelinux3.0-amd64",
-      "scanned_at": "2026-06-23T06:16:26Z",
-      "total": 174,
+      "scanned_at": "2026-06-24T06:16:46Z",
+      "total": 209,
       "unknown": 0
     },
     "sha256:a596e30591ac26f5d5299ceffe41ca5c654768ddb8349f6dc05c51f7e985472f": {
       "critical": 19,
       "high": 83,
       "low": 191,
-      "medium": 179,
+      "medium": 186,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1",
-      "scanned_at": "2026-06-23T06:22:06Z",
-      "total": 513,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:22:57Z",
+      "total": 514,
+      "unknown": 35
+    },
+    "sha256:a5e80efc194cfc8e7453cb27b022f07e6ed212f49fdd4055caf85f8be806538c": {
+      "critical": 4,
+      "high": 160,
+      "low": 652,
+      "medium": 919,
+      "reference": "rust:1.96.0-slim-bookworm",
+      "scanned_at": "2026-06-24T06:10:26Z",
+      "total": 1753,
+      "unknown": 18
     },
     "sha256:a6405659b1f21703d707232f5037eb642a3246ed7985bd6c831ce50d2e206cc9": {
       "critical": 0,
@@ -2497,7 +2507,7 @@
       "low": 13,
       "medium": 62,
       "reference": "eclipse-temurin:21-resolute",
-      "scanned_at": "2026-06-23T06:11:51Z",
+      "scanned_at": "2026-06-24T06:11:19Z",
       "total": 85,
       "unknown": 1
     },
@@ -2505,21 +2515,11 @@
       "critical": 17,
       "high": 76,
       "low": 188,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bookworm-slim-amd64",
-      "scanned_at": "2026-06-23T06:22:43Z",
-      "total": 495,
-      "unknown": 31
-    },
-    "sha256:a70519002c49552ea0a853de47599cf40479b001bd7a624f1112eaf44dcaccc7": {
-      "critical": 4,
-      "high": 9,
-      "low": 76,
-      "medium": 48,
-      "reference": "python:3.14.6-slim-bookworm",
-      "scanned_at": "2026-06-23T06:09:25Z",
-      "total": 153,
-      "unknown": 16
+      "scanned_at": "2026-06-24T06:23:34Z",
+      "total": 496,
+      "unknown": 25
     },
     "sha256:a93b81c311a8b6ce9992726a756abd1480acb3158a67b389f687b7316707c29b": {
       "critical": 5,
@@ -2527,118 +2527,88 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20-arm32v7",
-      "scanned_at": "2026-06-23T06:22:32Z",
+      "scanned_at": "2026-06-24T06:23:23Z",
       "total": 119,
       "unknown": 0
     },
     "sha256:a9b6c60899f51520c69c34c84069977ca36aae4cadeef19f6d6ec3d2834a34e2": {
       "critical": 24,
-      "high": 191,
+      "high": 189,
       "low": 1006,
-      "medium": 501,
+      "medium": 534,
       "reference": "python:3.13.14",
-      "scanned_at": "2026-06-23T06:09:29Z",
-      "total": 1855,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:26Z",
+      "total": 1905,
+      "unknown": 152
     },
     "sha256:a9bd605cd31827c6c20d145d7ba0c0c5ec66827ad26894a8f07d5575f3110c1d": {
       "critical": 9,
-      "high": 351,
+      "high": 352,
       "low": 863,
-      "medium": 1731,
+      "medium": 1732,
       "reference": "rust:1.95.0-slim-bullseye",
-      "scanned_at": "2026-06-23T06:12:01Z",
-      "total": 2970,
-      "unknown": 16
+      "scanned_at": "2026-06-24T06:12:03Z",
+      "total": 2971,
+      "unknown": 15
     },
-    "sha256:aa4ede69c792cbf607078486ad4f370936b48bfa262f1366599facdea723dc25": {
-      "critical": 4,
-      "high": 11,
-      "low": 102,
-      "medium": 51,
-      "reference": "node:26.3.1-bullseye-slim",
-      "scanned_at": "2026-06-23T06:09:39Z",
-      "total": 182,
-      "unknown": 14
-    },
-    "sha256:ab07539e0988b63558ff621f5fbe1077054c39d9809112974fb79993949d41cd": {
-      "critical": 0,
-      "high": 1,
-      "low": 0,
-      "medium": 4,
-      "reference": "node:22.23.0-alpine3.24",
-      "scanned_at": "2026-06-23T06:10:39Z",
-      "total": 5,
-      "unknown": 0
+    "sha256:aaa14c053d35dbb2f3501b18396dddd76ab4b10764c9006e2647ab7a7bf92fae": {
+      "critical": 9,
+      "high": 67,
+      "low": 657,
+      "medium": 345,
+      "reference": "golang:1.26.4-trixie",
+      "scanned_at": "2026-06-24T06:09:20Z",
+      "total": 1133,
+      "unknown": 55
     },
     "sha256:ab488411acea54a8301196d1ffc3dbf61bf1e2941c46e683f5861d3192f81200": {
       "critical": 29,
       "high": 98,
       "low": 203,
-      "medium": 197,
+      "medium": 204,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim-amd64",
-      "scanned_at": "2026-06-23T06:19:03Z",
-      "total": 558,
-      "unknown": 31
-    },
-    "sha256:ab995cf540fc78d921dc4a41afa4dbb5b2824a24d2d18b519708df1287f78ef3": {
-      "critical": 4,
-      "high": 299,
-      "low": 836,
-      "medium": 1426,
-      "reference": "rust:1.96.0-slim-bullseye",
-      "scanned_at": "2026-06-23T06:10:35Z",
-      "total": 2581,
-      "unknown": 16
-    },
-    "sha256:ac4dde31a7c4c6e210e46162ec02f1dd39f58e6972b8f9828f04a2b123a7c797": {
-      "critical": 23,
-      "high": 425,
-      "low": 1300,
-      "medium": 1677,
-      "reference": "node:26.3.1-bullseye",
-      "scanned_at": "2026-06-23T06:09:36Z",
-      "total": 3521,
-      "unknown": 96
+      "scanned_at": "2026-06-24T06:19:49Z",
+      "total": 559,
+      "unknown": 25
     },
     "sha256:ac4dfce5dbf3292de2c56ba80fd27377c91b583e7a1bf57bb72ff3e78eacaa7b": {
       "critical": 2,
       "high": 108,
       "low": 2,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-amd64",
-      "scanned_at": "2026-06-23T06:09:39Z",
-      "total": 154,
+      "scanned_at": "2026-06-24T06:09:40Z",
+      "total": 189,
       "unknown": 0
     },
-    "sha256:ae52c5bef62a6bdd42cd1e8dffef86b9cd284bde9427da79839de7a4b983e7ca": {
+    "sha256:aec3f1588bdda76cde971575692e33d11bf83a2bcaa2e1c315c47de6f72ee21a": {
       "critical": 2,
-      "high": 12,
-      "low": 64,
-      "medium": 42,
-      "reference": "python:3.11.15-slim-trixie",
-      "scanned_at": "2026-06-23T06:10:00Z",
-      "total": 156,
+      "high": 9,
+      "low": 63,
+      "medium": 39,
+      "reference": "python:3.13.14-slim-trixie",
+      "scanned_at": "2026-06-24T06:09:34Z",
+      "total": 149,
       "unknown": 36
     },
     "sha256:b08dc31bdebb6feed5f3303851c41e8d9e72cdfcab61185fa2f8f07a72fffd72": {
       "critical": 21,
       "high": 87,
       "low": 192,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:26:11Z",
-      "total": 514,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:27:21Z",
+      "total": 515,
+      "unknown": 25
     },
     "sha256:b097c2123af7bac0cc542b46fb3f6804987130f3946390bf6884197ecf23ab50": {
       "critical": 5,
       "high": 28,
       "low": 68,
-      "medium": 478,
+      "medium": 482,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-aot-amd64",
-      "scanned_at": "2026-06-23T06:11:15Z",
-      "total": 580,
+      "scanned_at": "2026-06-24T06:11:19Z",
+      "total": 584,
       "unknown": 1
     },
     "sha256:b1139e2f11e3265bb2bf8b2d4f3171882fb67e9d5420b3c59e9e3fe6e27dd13a": {
@@ -2647,7 +2617,17 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jre-alpine-3.22",
-      "scanned_at": "2026-06-23T06:11:37Z",
+      "scanned_at": "2026-06-24T06:11:07Z",
+      "total": 0,
+      "unknown": 0
+    },
+    "sha256:b165067c5afc37fa5608a3c05609cc3d51aafd808a30fbfd822ee594fef55ad4": {
+      "critical": 0,
+      "high": 0,
+      "low": 0,
+      "medium": 0,
+      "reference": "python:3.14.6-alpine3.23",
+      "scanned_at": "2026-06-24T06:09:10Z",
       "total": 0,
       "unknown": 0
     },
@@ -2655,11 +2635,11 @@
       "critical": 9,
       "high": 26,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:13:52Z",
-      "total": 305,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:13:53Z",
+      "total": 306,
+      "unknown": 25
     },
     "sha256:b27224be335158c2857cec7de74cb3900da05aac92cb7c47836a65a8df9e9ac1": {
       "critical": 5,
@@ -2667,7 +2647,7 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.20",
-      "scanned_at": "2026-06-23T06:22:28Z",
+      "scanned_at": "2026-06-24T06:23:18Z",
       "total": 121,
       "unknown": 0
     },
@@ -2677,7 +2657,7 @@
       "low": 13,
       "medium": 61,
       "reference": "eclipse-temurin:26-resolute",
-      "scanned_at": "2026-06-23T06:09:59Z",
+      "scanned_at": "2026-06-24T06:09:48Z",
       "total": 84,
       "unknown": 1
     },
@@ -2687,7 +2667,7 @@
       "low": 1,
       "medium": 0,
       "reference": "eclipse-temurin:21-jdk-alpine-3.21",
-      "scanned_at": "2026-06-23T06:11:13Z",
+      "scanned_at": "2026-06-24T06:10:49Z",
       "total": 2,
       "unknown": 0
     },
@@ -2695,21 +2675,31 @@
       "critical": 5,
       "high": 28,
       "low": 68,
-      "medium": 478,
+      "medium": 482,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-aot",
-      "scanned_at": "2026-06-23T06:11:15Z",
-      "total": 580,
+      "scanned_at": "2026-06-24T06:11:19Z",
+      "total": 584,
       "unknown": 1
     },
     "sha256:b3718dfa716e7069b7ee7d67cd0684d88d8c4d1d6d8072f31d3be8de828e978c": {
       "critical": 29,
       "high": 98,
       "low": 203,
-      "medium": 197,
+      "medium": 204,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:19:15Z",
-      "total": 558,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:20:07Z",
+      "total": 559,
+      "unknown": 25
+    },
+    "sha256:b41865bf7198f0060d60af0bb58ed20ea2c1f0364897537b599102a05526bfb6": {
+      "critical": 28,
+      "high": 302,
+      "low": 1071,
+      "medium": 1183,
+      "reference": "node:22.23.1-bookworm",
+      "scanned_at": "2026-06-24T06:10:38Z",
+      "total": 2708,
+      "unknown": 124
     },
     "sha256:b695dcb046de4f122c13749b14bc07fc2ef80ce3a45d80ce16dfbf885d281bcb": {
       "critical": 3,
@@ -2717,19 +2707,29 @@
       "low": 15,
       "medium": 31,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-focal",
-      "scanned_at": "2026-06-23T06:26:46Z",
+      "scanned_at": "2026-06-24T06:27:55Z",
       "total": 57,
       "unknown": 0
     },
     "sha256:b73ad28cabbe8929288c3a898c763cca868bc82ca401bb63900a2f61a4011103": {
       "critical": 24,
-      "high": 191,
+      "high": 189,
       "low": 1006,
-      "medium": 501,
+      "medium": 534,
       "reference": "python:3.13.14-trixie",
-      "scanned_at": "2026-06-23T06:09:39Z",
-      "total": 1855,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:35Z",
+      "total": 1905,
+      "unknown": 152
+    },
+    "sha256:b74b9e6cf3c7a43bf7eb1abc4fd073f673521d4d424f2acae1adc22bfa9e816b": {
+      "critical": 4,
+      "high": 9,
+      "low": 76,
+      "medium": 48,
+      "reference": "python:3.14.6-slim-bookworm",
+      "scanned_at": "2026-06-24T06:09:22Z",
+      "total": 154,
+      "unknown": 17
     },
     "sha256:b8506ad3a1e483bf3b1b28bbcd81ea27373b56903a61e91ad493e0cb7085e3b9": {
       "critical": 0,
@@ -2737,7 +2737,7 @@
       "low": 13,
       "medium": 61,
       "reference": "eclipse-temurin:25-resolute",
-      "scanned_at": "2026-06-23T06:10:50Z",
+      "scanned_at": "2026-06-24T06:10:31Z",
       "total": 84,
       "unknown": 1
     },
@@ -2747,7 +2747,7 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-arm64v8",
-      "scanned_at": "2026-06-23T06:11:04Z",
+      "scanned_at": "2026-06-24T06:11:08Z",
       "total": 45,
       "unknown": 0
     },
@@ -2757,7 +2757,7 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:17-jre-resolute",
-      "scanned_at": "2026-06-23T06:12:41Z",
+      "scanned_at": "2026-06-24T06:12:00Z",
       "total": 77,
       "unknown": 1
     },
@@ -2767,7 +2767,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-cbl-mariner2.0-amd64",
-      "scanned_at": "2026-06-23T06:23:11Z",
+      "scanned_at": "2026-06-24T06:24:07Z",
       "total": 467,
       "unknown": 0
     },
@@ -2775,51 +2775,21 @@
       "critical": 2,
       "high": 108,
       "low": 2,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0",
-      "scanned_at": "2026-06-23T06:09:39Z",
-      "total": 154,
+      "scanned_at": "2026-06-24T06:09:40Z",
+      "total": 189,
       "unknown": 0
     },
-    "sha256:ba6ba81bf21dfcccdb8c9832c5f09d775cd19a6ed1b323b3220949361958ca30": {
-      "critical": 0,
-      "high": 0,
-      "low": 0,
-      "medium": 0,
-      "reference": "golang:1.25.11-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:30Z",
-      "total": 0,
-      "unknown": 0
-    },
-    "sha256:bbb255b0e131db500cf0520adc97441d2260cf629c7fa7e39e025ddf53995a24": {
-      "critical": 11,
-      "high": 202,
-      "low": 746,
-      "medium": 1025,
-      "reference": "golang:1.25.11-bookworm",
-      "scanned_at": "2026-06-23T06:09:34Z",
-      "total": 2019,
-      "unknown": 35
-    },
-    "sha256:bbf22ddccb3205344f2755ea8fa4fe39f7a8b2b77b9f7b764ec2aad31406f6fc": {
-      "critical": 9,
-      "high": 76,
-      "low": 659,
-      "medium": 376,
-      "reference": "golang:1.26.4-trixie",
-      "scanned_at": "2026-06-23T06:09:22Z",
-      "total": 1175,
-      "unknown": 55
-    },
-    "sha256:bc2fe6e76b6ff5641e4e647376a9ccade96c9fe0502a44895f7f78c3b49c5d5f": {
-      "critical": 4,
-      "high": 11,
-      "low": 99,
-      "medium": 53,
-      "reference": "node:22.23.0-bullseye-slim",
-      "scanned_at": "2026-06-23T06:10:49Z",
-      "total": 181,
-      "unknown": 14
+    "sha256:ba7e2064c4e1ab67d2af2cd761183b4af961cbc21f47020ef785b738472b01ac": {
+      "critical": 2,
+      "high": 9,
+      "low": 64,
+      "medium": 42,
+      "reference": "python:3.12.13-slim-trixie",
+      "scanned_at": "2026-06-24T06:09:44Z",
+      "total": 153,
+      "unknown": 36
     },
     "sha256:bc542d2413cdef4756b76af369b1441e2de22b734ccc94418f155264e77f769a": {
       "critical": 0,
@@ -2827,7 +2797,7 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy-amd64",
-      "scanned_at": "2026-06-23T06:16:51Z",
+      "scanned_at": "2026-06-24T06:17:22Z",
       "total": 76,
       "unknown": 0
     },
@@ -2837,7 +2807,7 @@
       "low": 6,
       "medium": 59,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-resolute-arm32v7",
-      "scanned_at": "2026-06-23T06:11:29Z",
+      "scanned_at": "2026-06-24T06:11:33Z",
       "total": 75,
       "unknown": 1
     },
@@ -2845,10 +2815,10 @@
       "critical": 2,
       "high": 123,
       "low": 2,
-      "medium": 47,
+      "medium": 87,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-aot",
-      "scanned_at": "2026-06-23T06:10:05Z",
-      "total": 174,
+      "scanned_at": "2026-06-24T06:10:06Z",
+      "total": 214,
       "unknown": 0
     },
     "sha256:bdf453c44d3729380bab181de1a9178d9920ad4f84273382d683ed2003e4e890": {
@@ -2857,7 +2827,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-noble",
-      "scanned_at": "2026-06-23T06:14:34Z",
+      "scanned_at": "2026-06-24T06:14:44Z",
       "total": 55,
       "unknown": 0
     },
@@ -2867,7 +2837,7 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20-arm32v7",
-      "scanned_at": "2026-06-23T06:25:56Z",
+      "scanned_at": "2026-06-24T06:27:01Z",
       "total": 119,
       "unknown": 0
     },
@@ -2877,29 +2847,29 @@
       "low": 65,
       "medium": 57,
       "reference": "eclipse-temurin:17-jdk-jammy",
-      "scanned_at": "2026-06-23T06:12:15Z",
+      "scanned_at": "2026-06-24T06:11:38Z",
       "total": 124,
       "unknown": 0
     },
     "sha256:bf3368a992915f128293ac76917ab6e561e4dda883273c8f5c9f6f8ea37a378e": {
       "critical": 9,
-      "high": 296,
+      "high": 298,
       "low": 741,
-      "medium": 1545,
+      "medium": 1547,
       "reference": "rust:1.92.0-slim-trixie",
-      "scanned_at": "2026-06-23T06:16:48Z",
+      "scanned_at": "2026-06-24T06:16:56Z",
       "total": 2633,
-      "unknown": 42
+      "unknown": 38
     },
     "sha256:c0a38f5662afdb298898da1d70b909af4bda4e0acff2dc52aea6360a9b9c6956": {
       "critical": 8,
-      "high": 230,
+      "high": 232,
       "low": 693,
-      "medium": 1268,
+      "medium": 1270,
       "reference": "rust:1.93.1-slim-trixie",
-      "scanned_at": "2026-06-23T06:15:11Z",
+      "scanned_at": "2026-06-24T06:15:17Z",
       "total": 2241,
-      "unknown": 42
+      "unknown": 38
     },
     "sha256:c1fbcc5b172c5f415beb92333878a89df2a42e4d450435072691c221172665c5": {
       "critical": 0,
@@ -2907,39 +2877,9 @@
       "low": 7,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-arm32v7",
-      "scanned_at": "2026-06-23T06:11:03Z",
+      "scanned_at": "2026-06-24T06:11:08Z",
       "total": 45,
       "unknown": 0
-    },
-    "sha256:c2d5ade763cacfb03fe9cb8e8af5d1be5041ff331921fa26a9b231ca3a4f780a": {
-      "critical": 3,
-      "high": 7,
-      "low": 70,
-      "medium": 50,
-      "reference": "node:24.17.0-slim",
-      "scanned_at": "2026-06-23T06:10:02Z",
-      "total": 146,
-      "unknown": 16
-    },
-    "sha256:c334dedc1163d5360a3a3bf6d8720cb8f4123477bcf00d18767e8685e33ffd75": {
-      "critical": 4,
-      "high": 12,
-      "low": 93,
-      "medium": 52,
-      "reference": "python:3.10.20-slim-bookworm",
-      "scanned_at": "2026-06-23T06:10:10Z",
-      "total": 177,
-      "unknown": 16
-    },
-    "sha256:c33f0bc4364a6881bed1ec0cc2665e6c53c87a43e774aaeab88e6f17af105e4f": {
-      "critical": 2,
-      "high": 9,
-      "low": 63,
-      "medium": 39,
-      "reference": "python:3.13.14-slim-trixie",
-      "scanned_at": "2026-06-23T06:09:38Z",
-      "total": 149,
-      "unknown": 36
     },
     "sha256:c397f5aeae1d761068ccca300c50ab7de4ec1aaafee5e399d81ec2634f94082f": {
       "critical": 0,
@@ -2947,7 +2887,7 @@
       "low": 0,
       "medium": 3,
       "reference": "ubuntu:26.10",
-      "scanned_at": "2026-06-23T06:09:05Z",
+      "scanned_at": "2026-06-24T06:08:57Z",
       "total": 13,
       "unknown": 1
     },
@@ -2957,7 +2897,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-cbl-mariner2.0",
-      "scanned_at": "2026-06-23T06:23:11Z",
+      "scanned_at": "2026-06-24T06:24:07Z",
       "total": 467,
       "unknown": 0
     },
@@ -2967,7 +2907,7 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-arm32v7",
-      "scanned_at": "2026-06-23T06:09:30Z",
+      "scanned_at": "2026-06-24T06:09:30Z",
       "total": 32,
       "unknown": 0
     },
@@ -2977,7 +2917,7 @@
       "low": 35,
       "medium": 38,
       "reference": "eclipse-temurin:25-jre-jammy",
-      "scanned_at": "2026-06-23T06:10:41Z",
+      "scanned_at": "2026-06-24T06:10:23Z",
       "total": 75,
       "unknown": 0
     },
@@ -2985,11 +2925,21 @@
       "critical": 0,
       "high": 1,
       "low": 153,
-      "medium": 114,
+      "medium": 116,
       "reference": "eclipse-temurin:11-ubi9-minimal",
-      "scanned_at": "2026-06-23T06:13:47Z",
-      "total": 268,
+      "scanned_at": "2026-06-24T06:12:55Z",
+      "total": 270,
       "unknown": 0
+    },
+    "sha256:c47190ddc029b96d88af035a89cc66507e87ffb667639f734822e9348889dabc": {
+      "critical": 2,
+      "high": 9,
+      "low": 62,
+      "medium": 43,
+      "reference": "node:22.23.1-trixie-slim",
+      "scanned_at": "2026-06-24T06:10:55Z",
+      "total": 152,
+      "unknown": 36
     },
     "sha256:c4a22bec4f4368636abb9b6fe2b2350fd7fae1ec0d3bf43fcaae1be720c3bbd1": {
       "critical": 0,
@@ -2997,7 +2947,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:26-jre-alpine-3.23",
-      "scanned_at": "2026-06-23T06:09:47Z",
+      "scanned_at": "2026-06-24T06:09:38Z",
       "total": 0,
       "unknown": 0
     },
@@ -3007,19 +2957,19 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-nanoserver-1809",
-      "scanned_at": "2026-06-23T06:24:02Z",
+      "scanned_at": "2026-06-24T06:25:05Z",
       "total": 11,
       "unknown": 0
     },
     "sha256:c6811167278337db5f3b0234964ced5f538f154a2a20f09ec03721d7411c933d": {
       "critical": 24,
-      "high": 189,
+      "high": 187,
       "low": 983,
-      "medium": 491,
+      "medium": 524,
       "reference": "rust:1.96.0-trixie",
-      "scanned_at": "2026-06-23T06:10:37Z",
-      "total": 1820,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:10:36Z",
+      "total": 1870,
+      "unknown": 152
     },
     "sha256:c6ae8885b823b94dd1f95ce2551e7bdc4d043f1ebb4d5568f5482bfc3c1a526d": {
       "critical": 0,
@@ -3027,29 +2977,19 @@
       "low": 5,
       "medium": 61,
       "reference": "eclipse-temurin:25-jre-resolute",
-      "scanned_at": "2026-06-23T06:10:45Z",
+      "scanned_at": "2026-06-24T06:10:26Z",
       "total": 76,
       "unknown": 1
     },
     "sha256:c6d501c039204c21e9fa374f234bd41bdc8b36cfd455a407ef145d9bef19f2b7": {
       "critical": 149,
-      "high": 925,
+      "high": 926,
       "low": 1413,
-      "medium": 2713,
+      "medium": 2741,
       "reference": "rust:1.92.0-bullseye",
-      "scanned_at": "2026-06-23T06:16:20Z",
-      "total": 5300,
-      "unknown": 100
-    },
-    "sha256:c8a94a78f67ec8c4d474ec7f71e0720f21eb7e584e158daec0874cafa7c30e4d": {
-      "critical": 4,
-      "high": 159,
-      "low": 652,
-      "medium": 917,
-      "reference": "rust:1.96.0-slim-bookworm",
-      "scanned_at": "2026-06-23T06:10:26Z",
-      "total": 1752,
-      "unknown": 20
+      "scanned_at": "2026-06-24T06:16:27Z",
+      "total": 5354,
+      "unknown": 125
     },
     "sha256:c8eef8b8817642e2b04539af353ee484d9be63abf538d76cd61838b52e2587fc": {
       "critical": 3,
@@ -3057,9 +2997,19 @@
       "low": 15,
       "medium": 25,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-focal-arm64v8",
-      "scanned_at": "2026-06-23T06:23:34Z",
+      "scanned_at": "2026-06-24T06:24:33Z",
       "total": 51,
       "unknown": 0
+    },
+    "sha256:c8f8844d3d10108db2e99ea97f4682412fcb7a08e3fbf36140d2750c12a77ecb": {
+      "critical": 11,
+      "high": 203,
+      "low": 746,
+      "medium": 1034,
+      "reference": "golang:1.25.11-bookworm",
+      "scanned_at": "2026-06-24T06:09:34Z",
+      "total": 2034,
+      "unknown": 40
     },
     "sha256:c9e434279daea50858dd40f984e47b43337c9f47ca89cf34c46f9030fb4ef658": {
       "critical": 0,
@@ -3067,19 +3017,29 @@
       "low": 33,
       "medium": 33,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-jammy-arm64v8",
-      "scanned_at": "2026-06-23T06:17:03Z",
+      "scanned_at": "2026-06-24T06:17:36Z",
       "total": 76,
       "unknown": 0
     },
+    "sha256:ca38c9e8c05e56656ecdca7f788652afbda9742d7469b2dad6a4f8fc1ef7baf8": {
+      "critical": 24,
+      "high": 188,
+      "low": 985,
+      "medium": 526,
+      "reference": "node:26.3.1-trixie",
+      "scanned_at": "2026-06-24T06:09:40Z",
+      "total": 1875,
+      "unknown": 152
+    },
     "sha256:cac80dc03dafb0e9ffc5d390ada6c2e8f6323a275bb89c1d132fedf7a195e054": {
       "critical": 24,
-      "high": 191,
+      "high": 189,
       "low": 1006,
-      "medium": 501,
+      "medium": 534,
       "reference": "python:3.14.6-trixie",
-      "scanned_at": "2026-06-23T06:09:26Z",
-      "total": 1855,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:24Z",
+      "total": 1905,
+      "unknown": 152
     },
     "sha256:cb0f3c7df8d980aed5c2a84cc6b83cdcd3ef5a359a2ff68ec750946e86fe281a": {
       "critical": 0,
@@ -3087,7 +3047,7 @@
       "low": 1,
       "medium": 4,
       "reference": "python:3.10.20-alpine3.24",
-      "scanned_at": "2026-06-23T06:10:05Z",
+      "scanned_at": "2026-06-24T06:09:59Z",
       "total": 8,
       "unknown": 0
     },
@@ -3097,7 +3057,7 @@
       "low": 0,
       "medium": 0,
       "reference": "ubuntu:24.10",
-      "scanned_at": "2026-06-23T06:09:14Z",
+      "scanned_at": "2026-06-24T06:09:03Z",
       "total": 0,
       "unknown": 0
     },
@@ -3105,11 +3065,21 @@
       "critical": 9,
       "high": 26,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim-amd64",
-      "scanned_at": "2026-06-23T06:13:40Z",
-      "total": 305,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:13:40Z",
+      "total": 306,
+      "unknown": 25
+    },
+    "sha256:ce9ba277dbd9e266dfd04ba6bb85dfc86c136f6f0620d5628a2f61697dd16526": {
+      "critical": 24,
+      "high": 188,
+      "low": 985,
+      "medium": 528,
+      "reference": "node:24.17.0-trixie",
+      "scanned_at": "2026-06-24T06:10:06Z",
+      "total": 1877,
+      "unknown": 152
     },
     "sha256:ceb9c9300fb59303c20cc3f0fb1bbcea33cfaaaf247ac5d119584dd9da160b5e": {
       "critical": 7,
@@ -3117,7 +3087,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-23T06:21:55Z",
+      "scanned_at": "2026-06-24T06:22:45Z",
       "total": 16,
       "unknown": 0
     },
@@ -3127,19 +3097,19 @@
       "low": 1,
       "medium": 3,
       "reference": "python:3.11.15-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:55Z",
+      "scanned_at": "2026-06-24T06:09:49Z",
       "total": 7,
       "unknown": 0
     },
     "sha256:cf09adf8c3ebaba10779e5c23ff7fe4df4cccdab8a91f199b0c142c53fef3e1a": {
       "critical": 8,
-      "high": 220,
+      "high": 222,
       "low": 685,
-      "medium": 1249,
+      "medium": 1251,
       "reference": "rust:1.94.1-slim-trixie",
-      "scanned_at": "2026-06-23T06:13:36Z",
+      "scanned_at": "2026-06-24T06:13:40Z",
       "total": 2204,
-      "unknown": 42
+      "unknown": 38
     },
     "sha256:cf29a894b0af2df1a07c401e320197be2d729301f97479894ffa12c9d1819b2c": {
       "critical": 10,
@@ -3147,7 +3117,7 @@
       "low": 19,
       "medium": 243,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-cbl-mariner2.0-arm64v8",
-      "scanned_at": "2026-06-23T06:26:41Z",
+      "scanned_at": "2026-06-24T06:27:49Z",
       "total": 467,
       "unknown": 0
     },
@@ -3157,38 +3127,38 @@
       "low": 1,
       "medium": 0,
       "reference": "eclipse-temurin:25-jdk-alpine-3.21",
-      "scanned_at": "2026-06-23T06:10:18Z",
+      "scanned_at": "2026-06-24T06:10:05Z",
       "total": 2,
       "unknown": 0
     },
     "sha256:cf9dd0ec73e75f827fe59123fff9dc65af1a1c8363c3c31ee8d7f8ad0b6a5fb2": {
       "critical": 10,
-      "high": 246,
+      "high": 247,
       "low": 704,
-      "medium": 1419,
+      "medium": 1421,
       "reference": "rust:1.94.1-slim-bookworm",
-      "scanned_at": "2026-06-23T06:13:26Z",
-      "total": 2400,
-      "unknown": 21
+      "scanned_at": "2026-06-24T06:13:30Z",
+      "total": 2401,
+      "unknown": 19
     },
     "sha256:cfa3db6c98cf58da9135d0641b03db4f7eb2e43bdbf97b7294e70908abc3d99b": {
       "critical": 29,
       "high": 98,
       "low": 203,
-      "medium": 197,
+      "medium": 204,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-bookworm-slim",
-      "scanned_at": "2026-06-23T06:19:02Z",
-      "total": 558,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:19:49Z",
+      "total": 559,
+      "unknown": 25
     },
-    "sha256:cfd8f2a5bc50526aee08e88970979f92722828e7dcc6d8983607fb8bff4bdb82": {
+    "sha256:d07d1b51c39f51188e60be9b64e6bf769fa94e187f092bc32b91305cfa34ba5a": {
       "critical": 2,
-      "high": 9,
+      "high": 8,
       "low": 62,
-      "medium": 43,
-      "reference": "node:22.23.0-trixie-slim",
-      "scanned_at": "2026-06-23T06:10:57Z",
-      "total": 152,
+      "medium": 39,
+      "reference": "debian:13",
+      "scanned_at": "2026-06-24T06:09:05Z",
+      "total": 147,
       "unknown": 36
     },
     "sha256:d0abfceaee12f0b0704fd116dc3d520078ec1c355f59115a4b48f0f50e16f975": {
@@ -3197,9 +3167,19 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:11-jdk",
-      "scanned_at": "2026-06-23T06:13:09Z",
+      "scanned_at": "2026-06-24T06:12:23Z",
       "total": 77,
       "unknown": 1
+    },
+    "sha256:d16a600dd352dd9a1bd0d262aaef18dba17b02a758cdba1069cf3ae1aad93fa5": {
+      "critical": 11,
+      "high": 203,
+      "low": 746,
+      "medium": 1034,
+      "reference": "golang:1.26.4-bookworm",
+      "scanned_at": "2026-06-24T06:09:17Z",
+      "total": 2034,
+      "unknown": 40
     },
     "sha256:d1e5dd229d0d1d936df1273de6ff4b7114a39be127f0b1dfb0aa61fd922d3b7e": {
       "critical": 0,
@@ -3207,7 +3187,7 @@
       "low": 17,
       "medium": 38,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-noble",
-      "scanned_at": "2026-06-23T06:17:41Z",
+      "scanned_at": "2026-06-24T06:18:18Z",
       "total": 65,
       "unknown": 0
     },
@@ -3217,7 +3197,7 @@
       "low": 2,
       "medium": 2,
       "reference": "node:26.3.1-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:14Z",
+      "scanned_at": "2026-06-24T06:09:12Z",
       "total": 5,
       "unknown": 0
     },
@@ -3227,29 +3207,29 @@
       "low": 5,
       "medium": 62,
       "reference": "eclipse-temurin:17-jre",
-      "scanned_at": "2026-06-23T06:12:30Z",
+      "scanned_at": "2026-06-24T06:11:51Z",
       "total": 77,
       "unknown": 1
     },
     "sha256:d2d2bc1c84f7e60d7d2438a3836ae7d0c847f4888464e7ec9ba3a1339a1ee804": {
       "critical": 17,
-      "high": 607,
+      "high": 609,
       "low": 830,
-      "medium": 1820,
+      "medium": 1829,
       "reference": "golang:1.24.13",
-      "scanned_at": "2026-06-23T06:09:46Z",
-      "total": 3331,
+      "scanned_at": "2026-06-24T06:09:46Z",
+      "total": 3342,
       "unknown": 57
     },
     "sha256:d32bd65cf5843f413e81f5d917057c82da99737cb1637e905a1a4bc2e7ec6c8d": {
       "critical": 31,
       "high": 109,
       "low": 193,
-      "medium": 189,
+      "medium": 196,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410",
-      "scanned_at": "2026-06-23T06:18:27Z",
-      "total": 563,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:19:07Z",
+      "total": 564,
+      "unknown": 35
     },
     "sha256:d573bb4968a6bf6982921dc83b1cd2cca5d8bed4daff79f1d7e80fb0a843322d": {
       "critical": 11,
@@ -3257,29 +3237,19 @@
       "low": 21,
       "medium": 30,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-alpine3.18-amd64",
-      "scanned_at": "2026-06-23T06:18:32Z",
+      "scanned_at": "2026-06-24T06:19:12Z",
       "total": 83,
       "unknown": 0
     },
     "sha256:d7482085ff5b415f84dba5647ae71606650bdef00db7aeb69f4b3d170c3e4082": {
       "critical": 6,
-      "high": 167,
+      "high": 168,
       "low": 665,
-      "medium": 937,
+      "medium": 939,
       "reference": "rust:1.95.0-slim-bookworm",
-      "scanned_at": "2026-06-23T06:11:52Z",
-      "total": 1795,
-      "unknown": 20
-    },
-    "sha256:d764629ce0ddd8c71fd371e9901efb324a95789d2315a47db7e4d27e78f1b0e9": {
-      "critical": 2,
-      "high": 9,
-      "low": 64,
-      "medium": 42,
-      "reference": "python:3.12.13-slim-trixie",
-      "scanned_at": "2026-06-23T06:09:50Z",
-      "total": 153,
-      "unknown": 36
+      "scanned_at": "2026-06-24T06:11:54Z",
+      "total": 1796,
+      "unknown": 18
     },
     "sha256:d773975212728ee9e13c588e0221f2f148e3a9d961be6c9f98b68440e6a9bec1": {
       "critical": 0,
@@ -3287,7 +3257,7 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-aot-arm64v8",
-      "scanned_at": "2026-06-23T06:09:24Z",
+      "scanned_at": "2026-06-24T06:09:24Z",
       "total": 32,
       "unknown": 0
     },
@@ -3295,11 +3265,11 @@
       "critical": 9,
       "high": 36,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim",
-      "scanned_at": "2026-06-23T06:16:33Z",
-      "total": 315,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:16:58Z",
+      "total": 316,
+      "unknown": 25
     },
     "sha256:d8568475e3c225baaf8325af75448b4cd84f29dac6a43a8bf84742d95fd8b52a": {
       "critical": 0,
@@ -3307,7 +3277,7 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23-aot-amd64",
-      "scanned_at": "2026-06-23T06:09:18Z",
+      "scanned_at": "2026-06-24T06:09:18Z",
       "total": 32,
       "unknown": 0
     },
@@ -3317,7 +3287,7 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.20.10",
-      "scanned_at": "2026-06-23T06:09:09Z",
+      "scanned_at": "2026-06-24T06:08:59Z",
       "total": 0,
       "unknown": 0
     },
@@ -3327,19 +3297,9 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23",
-      "scanned_at": "2026-06-23T06:16:11Z",
+      "scanned_at": "2026-06-24T06:16:24Z",
       "total": 52,
       "unknown": 0
-    },
-    "sha256:d9f850096136edbc402debdd8729579a288aac64574ada0ff4db26b6ae58b0b2": {
-      "critical": 3,
-      "high": 7,
-      "low": 68,
-      "medium": 50,
-      "reference": "node:22.23.0-slim",
-      "scanned_at": "2026-06-23T06:10:50Z",
-      "total": 144,
-      "unknown": 16
     },
     "sha256:dbd1eb49d27c9ea86af6384d1a9e046b1dd32298ce5509bc145e7ce0332ec9bf": {
       "critical": 0,
@@ -3347,7 +3307,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-nanoserver-ltsc2025",
-      "scanned_at": "2026-06-23T06:17:36Z",
+      "scanned_at": "2026-06-24T06:18:13Z",
       "total": 20,
       "unknown": 0
     },
@@ -3357,7 +3317,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:17-jre-ubi10-minimal",
-      "scanned_at": "2026-06-23T06:12:43Z",
+      "scanned_at": "2026-06-24T06:12:02Z",
       "total": 0,
       "unknown": 0
     },
@@ -3367,7 +3327,7 @@
       "low": 20,
       "medium": 29,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.19-amd64",
-      "scanned_at": "2026-06-23T06:25:39Z",
+      "scanned_at": "2026-06-24T06:26:39Z",
       "total": 69,
       "unknown": 0
     },
@@ -3375,11 +3335,11 @@
       "critical": 9,
       "high": 26,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-bookworm-slim-arm32v7",
-      "scanned_at": "2026-06-23T06:13:46Z",
-      "total": 305,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:13:47Z",
+      "total": 306,
+      "unknown": 25
     },
     "sha256:dfc0093e3dbf43dae57827111c6e374f5b44fac19a9451584b2b336b81474d64": {
       "critical": 0,
@@ -3387,19 +3347,29 @@
       "low": 13,
       "medium": 61,
       "reference": "eclipse-temurin:25-jdk",
-      "scanned_at": "2026-06-23T06:10:17Z",
+      "scanned_at": "2026-06-24T06:10:04Z",
       "total": 84,
       "unknown": 1
     },
-    "sha256:e0d149b4727ac0c20d9774e801e423d7a946a0bffced886f42cfe9cd3c67820a": {
-      "critical": 28,
-      "high": 305,
-      "low": 1071,
-      "medium": 1150,
-      "reference": "node:22.23.0-bookworm",
-      "scanned_at": "2026-06-23T06:10:40Z",
-      "total": 2654,
-      "unknown": 100
+    "sha256:e020a82d80aada3f52f05e94623d15006e7c95f8a5d6cde38f9c2c408ec1dc9a": {
+      "critical": 23,
+      "high": 426,
+      "low": 1298,
+      "medium": 1707,
+      "reference": "node:22.23.1-bullseye",
+      "scanned_at": "2026-06-24T06:10:45Z",
+      "total": 3575,
+      "unknown": 121
+    },
+    "sha256:e09fe4e2f53ffae8fb7cadf60efc16a443fc34d5bb72a9348ab538c9d4a24d80": {
+      "critical": 4,
+      "high": 9,
+      "low": 76,
+      "medium": 48,
+      "reference": "python:3.13.14-slim-bookworm",
+      "scanned_at": "2026-06-24T06:09:34Z",
+      "total": 154,
+      "unknown": 17
     },
     "sha256:e11ae6fc4cb4626d03c9ab711e4bd69bfeecb9f1e8197943853eff98ef7571ce": {
       "critical": 0,
@@ -3407,39 +3377,29 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-windowsservercore-ltsc2025",
-      "scanned_at": "2026-06-23T06:18:21Z",
+      "scanned_at": "2026-06-24T06:19:00Z",
       "total": 20,
       "unknown": 0
     },
     "sha256:e12c121572a8e557ce164e10755da72047be5b689edb5ae617a6a5d37683a0fc": {
       "critical": 23,
-      "high": 424,
+      "high": 425,
       "low": 1298,
-      "medium": 1675,
+      "medium": 1703,
       "reference": "rust:1.96.0-bullseye",
-      "scanned_at": "2026-06-23T06:10:08Z",
-      "total": 3516,
-      "unknown": 96
+      "scanned_at": "2026-06-24T06:10:07Z",
+      "total": 3570,
+      "unknown": 121
     },
     "sha256:e14e87345b4d5964ddcc3491d27ee046a0f23820f340c3c1e24da6880141f7c0": {
       "critical": 3,
-      "high": 58,
+      "high": 60,
       "low": 613,
-      "medium": 331,
+      "medium": 333,
       "reference": "rust:1.95.0-slim-trixie",
-      "scanned_at": "2026-06-23T06:12:02Z",
+      "scanned_at": "2026-06-24T06:12:03Z",
       "total": 1045,
-      "unknown": 40
-    },
-    "sha256:e21fc383b50d5347dc7a9f1cae45b8f4e2f0d39f7ade28e4eef7d2934522b752": {
-      "critical": 3,
-      "high": 7,
-      "low": 68,
-      "medium": 50,
-      "reference": "node:22.22.3-slim",
-      "scanned_at": "2026-06-23T06:11:13Z",
-      "total": 144,
-      "unknown": 16
+      "unknown": 36
     },
     "sha256:e2603da2bd2b47c671b3f3f8ae127aa916cfea7aba0061e83d6b0e6004c89ec9": {
       "critical": 3,
@@ -3447,19 +3407,9 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19",
-      "scanned_at": "2026-06-23T06:22:14Z",
+      "scanned_at": "2026-06-24T06:23:02Z",
       "total": 67,
       "unknown": 0
-    },
-    "sha256:e2d3af735aff6eeee600b1933bedd99da6645fedf572cc12ef4cc1331f2ceebe": {
-      "critical": 4,
-      "high": 12,
-      "low": 93,
-      "medium": 51,
-      "reference": "python:3.11.15-slim-bookworm",
-      "scanned_at": "2026-06-23T06:10:00Z",
-      "total": 176,
-      "unknown": 16
     },
     "sha256:e30e31a306c189d2c2d36ecb43005cfbb4b25ece72ba863d09444c662402e5cc": {
       "critical": 0,
@@ -3467,7 +3417,7 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23-arm32v7",
-      "scanned_at": "2026-06-23T06:13:24Z",
+      "scanned_at": "2026-06-24T06:13:24Z",
       "total": 42,
       "unknown": 0
     },
@@ -3475,10 +3425,10 @@
       "critical": 11,
       "high": 38,
       "low": 90,
-      "medium": 1544,
+      "medium": 1548,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-aot-amd64",
-      "scanned_at": "2026-06-23T06:10:50Z",
-      "total": 1683,
+      "scanned_at": "2026-06-24T06:10:50Z",
+      "total": 1687,
       "unknown": 0
     },
     "sha256:e493800567c44a41a3ad437da7b2cdb6918baacce0a443b7165a7d4e6c83420f": {
@@ -3487,7 +3437,7 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23-arm32v7",
-      "scanned_at": "2026-06-23T06:16:16Z",
+      "scanned_at": "2026-06-24T06:16:31Z",
       "total": 52,
       "unknown": 0
     },
@@ -3497,7 +3447,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-nanoserver-1809",
-      "scanned_at": "2026-06-23T06:14:04Z",
+      "scanned_at": "2026-06-24T06:14:07Z",
       "total": 12,
       "unknown": 0
     },
@@ -3505,11 +3455,11 @@
       "critical": 19,
       "high": 83,
       "low": 191,
-      "medium": 179,
+      "medium": 186,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-bullseye-slim-amd64",
-      "scanned_at": "2026-06-23T06:22:54Z",
-      "total": 513,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:23:48Z",
+      "total": 514,
+      "unknown": 35
     },
     "sha256:e58326d0d441090181ac150dc2078d3e2cf6a0d42e809aebba3ef5880935ffdd": {
       "critical": 0,
@@ -3517,9 +3467,19 @@
       "low": 0,
       "medium": 4,
       "reference": "node:22.22.3-alpine3.24",
-      "scanned_at": "2026-06-23T06:11:04Z",
+      "scanned_at": "2026-06-24T06:11:02Z",
       "total": 5,
       "unknown": 0
+    },
+    "sha256:e7100042ddfd3c1fb9d4a5bf15acbdb1058d7bb3340142916d3413a5c001fc89": {
+      "critical": 4,
+      "high": 9,
+      "low": 95,
+      "medium": 49,
+      "reference": "debian:11",
+      "scanned_at": "2026-06-24T06:09:13Z",
+      "total": 172,
+      "unknown": 15
     },
     "sha256:e74b58c515df27fb8a8b2407c657446eccc0f40323c559000ad3b567ad8bbc16": {
       "critical": 5,
@@ -3527,7 +3487,7 @@
       "low": 37,
       "medium": 41,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-alpine3.20",
-      "scanned_at": "2026-06-23T06:25:51Z",
+      "scanned_at": "2026-06-24T06:26:56Z",
       "total": 121,
       "unknown": 0
     },
@@ -3537,7 +3497,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-23T06:27:35Z",
+      "scanned_at": "2026-06-24T06:28:52Z",
       "total": 11,
       "unknown": 0
     },
@@ -3547,49 +3507,49 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-alpine3.23-amd64",
-      "scanned_at": "2026-06-23T06:13:20Z",
+      "scanned_at": "2026-06-24T06:13:20Z",
       "total": 42,
       "unknown": 0
     },
     "sha256:e90e846de4124376164ddfbaab4b0774c7bdeef5e738866295e5a90a34a307a2": {
       "critical": 153,
-      "high": 850,
+      "high": 847,
       "low": 1210,
-      "medium": 2471,
+      "medium": 2504,
       "reference": "rust:1.92.0-bookworm",
-      "scanned_at": "2026-06-23T06:16:10Z",
-      "total": 4785,
-      "unknown": 101
+      "scanned_at": "2026-06-24T06:16:16Z",
+      "total": 4839,
+      "unknown": 125
     },
     "sha256:e944b33fd76c802eeb5709737fdd3156277ea20904b0422d7361a16018c2a4c4": {
       "critical": 24,
-      "high": 194,
+      "high": 192,
       "low": 1007,
-      "medium": 505,
+      "medium": 538,
       "reference": "python:3.10.20-trixie",
-      "scanned_at": "2026-06-23T06:10:11Z",
-      "total": 1863,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:10:04Z",
+      "total": 1913,
+      "unknown": 152
     },
     "sha256:e95d62f31e39e3ed9d21452146525ee0c8d5f9991096bf02eefe2762e7c4d09b": {
       "critical": 9,
-      "high": 355,
+      "high": 356,
       "low": 863,
-      "medium": 1741,
+      "medium": 1742,
       "reference": "rust:1.94.1-slim-bullseye",
-      "scanned_at": "2026-06-23T06:13:35Z",
-      "total": 2985,
-      "unknown": 17
+      "scanned_at": "2026-06-24T06:13:39Z",
+      "total": 2986,
+      "unknown": 16
     },
     "sha256:ea7b35cdb10b8a1381848aeb90a434997da25649c86d842d19fe6154c535cd11": {
       "critical": 24,
-      "high": 191,
+      "high": 189,
       "low": 1007,
-      "medium": 504,
+      "medium": 537,
       "reference": "python:3.12.13-trixie",
-      "scanned_at": "2026-06-23T06:09:50Z",
-      "total": 1859,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:09:45Z",
+      "total": 1909,
+      "unknown": 152
     },
     "sha256:ea9c4e878622d44f0db1d70e14b4ef648e414e88f961e2b9661097bc81389f62": {
       "critical": 0,
@@ -3597,7 +3557,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:21-jdk-alpine-3.22",
-      "scanned_at": "2026-06-23T06:11:14Z",
+      "scanned_at": "2026-06-24T06:10:49Z",
       "total": 0,
       "unknown": 0
     },
@@ -3605,20 +3565,10 @@
       "critical": 11,
       "high": 38,
       "low": 90,
-      "medium": 1544,
+      "medium": 1548,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-noble-aot-arm64v8",
-      "scanned_at": "2026-06-23T06:10:57Z",
-      "total": 1683,
-      "unknown": 0
-    },
-    "sha256:eb5a920799142c2fe9ec705cfa0ebcc4380e2e2f041b84e9ae5c6d82a2e56c82": {
-      "critical": 0,
-      "high": 0,
-      "low": 0,
-      "medium": 0,
-      "reference": "golang:1.26.4-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:14Z",
-      "total": 0,
+      "scanned_at": "2026-06-24T06:11:00Z",
+      "total": 1687,
       "unknown": 0
     },
     "sha256:eb7a8929818cfae93c9dc3a2aea0665966b4a34f484023553d885fa7195110fd": {
@@ -3627,7 +3577,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy-amd64",
-      "scanned_at": "2026-06-23T06:27:03Z",
+      "scanned_at": "2026-06-24T06:28:15Z",
       "total": 275,
       "unknown": 0
     },
@@ -3637,7 +3587,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-jammy-amd64",
-      "scanned_at": "2026-06-23T06:23:40Z",
+      "scanned_at": "2026-06-24T06:24:38Z",
       "total": 275,
       "unknown": 0
     },
@@ -3647,7 +3597,7 @@
       "low": 1,
       "medium": 0,
       "reference": "eclipse-temurin:25-jre-alpine-3.21",
-      "scanned_at": "2026-06-23T06:10:36Z",
+      "scanned_at": "2026-06-24T06:10:19Z",
       "total": 2,
       "unknown": 0
     },
@@ -3655,21 +3605,21 @@
       "critical": 21,
       "high": 87,
       "low": 192,
-      "medium": 183,
+      "medium": 190,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bookworm-slim-amd64",
-      "scanned_at": "2026-06-23T06:26:05Z",
-      "total": 514,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:27:14Z",
+      "total": 515,
+      "unknown": 25
     },
     "sha256:ecbe59a8408895edd02d9ef422504b8501dd9fa1526de27a45b73406d734d659": {
       "critical": 148,
-      "high": 846,
+      "high": 844,
       "low": 1189,
-      "medium": 2189,
+      "medium": 2222,
       "reference": "rust:1.93.1-trixie",
-      "scanned_at": "2026-06-23T06:15:12Z",
-      "total": 4507,
-      "unknown": 135
+      "scanned_at": "2026-06-24T06:15:18Z",
+      "total": 4557,
+      "unknown": 154
     },
     "sha256:ecde8a1faf9650a41a6dc21239d9867d6a14f3ba7504b30cfbdd708fe4a395ad": {
       "critical": 3,
@@ -3677,7 +3627,7 @@
       "low": 20,
       "medium": 27,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-1-alpine3.19-arm32v7",
-      "scanned_at": "2026-06-23T06:22:19Z",
+      "scanned_at": "2026-06-24T06:23:08Z",
       "total": 65,
       "unknown": 0
     },
@@ -3687,7 +3637,7 @@
       "low": 21,
       "medium": 252,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-cbl-mariner2.0",
-      "scanned_at": "2026-06-23T06:19:33Z",
+      "scanned_at": "2026-06-24T06:20:27Z",
       "total": 505,
       "unknown": 0
     },
@@ -3695,10 +3645,10 @@
       "critical": 0,
       "high": 1,
       "low": 153,
-      "medium": 114,
+      "medium": 116,
       "reference": "eclipse-temurin:17-jre-ubi9-minimal",
-      "scanned_at": "2026-06-23T06:12:45Z",
-      "total": 268,
+      "scanned_at": "2026-06-24T06:12:03Z",
+      "total": 270,
       "unknown": 0
     },
     "sha256:ee9b8ef0bd2161ef0f4724850135d75f8d1cd5f1d73aa78abee7952da67bfdd8": {
@@ -3707,7 +3657,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-nanoserver-1809",
-      "scanned_at": "2026-06-23T06:20:08Z",
+      "scanned_at": "2026-06-24T06:21:06Z",
       "total": 16,
       "unknown": 0
     },
@@ -3717,7 +3667,7 @@
       "low": 0,
       "medium": 0,
       "reference": "eclipse-temurin:11-jre-alpine-3.23",
-      "scanned_at": "2026-06-23T06:13:33Z",
+      "scanned_at": "2026-06-24T06:12:43Z",
       "total": 0,
       "unknown": 0
     },
@@ -3727,39 +3677,39 @@
       "low": 31,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-alpine3.23-amd64",
-      "scanned_at": "2026-06-23T06:16:11Z",
+      "scanned_at": "2026-06-24T06:16:24Z",
       "total": 52,
       "unknown": 0
     },
     "sha256:ef77d58f040360235852fc0c05b349e06004b35482781525e10b1c567898fddb": {
       "critical": 24,
-      "high": 190,
+      "high": 188,
       "low": 983,
-      "medium": 495,
+      "medium": 528,
       "reference": "node:22.22.3-trixie",
-      "scanned_at": "2026-06-23T06:11:18Z",
-      "total": 1825,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:11:08Z",
+      "total": 1875,
+      "unknown": 152
     },
-    "sha256:f0025a955ae20d6fb94db3db2d88f3851183bacc0b77690502a6a3ccb1aaea56": {
+    "sha256:f01a2926cacb1fe0c50a7ccfc69837c992a268e4bb0b01f3b4c9f6fee9f90421": {
       "critical": 4,
-      "high": 11,
-      "low": 101,
+      "high": 10,
+      "low": 95,
       "medium": 53,
-      "reference": "node:24.17.0-bullseye-slim",
-      "scanned_at": "2026-06-23T06:10:02Z",
-      "total": 183,
-      "unknown": 14
+      "reference": "node:22.23.1-bullseye-slim",
+      "scanned_at": "2026-06-24T06:10:47Z",
+      "total": 177,
+      "unknown": 15
     },
     "sha256:f05bc25fbe10cc6fa37dbe198072a842d2264ac8f2850c964efba681cf68dc75": {
       "critical": 28,
-      "high": 309,
+      "high": 306,
       "low": 1095,
-      "medium": 1160,
+      "medium": 1193,
       "reference": "python:3.10.20-bookworm",
-      "scanned_at": "2026-06-23T06:10:07Z",
-      "total": 2692,
-      "unknown": 100
+      "scanned_at": "2026-06-24T06:10:00Z",
+      "total": 2746,
+      "unknown": 124
     },
     "sha256:f07295a0b909023f8545c68a63d7e33b78de79e925e42be89399e30af9dff99f": {
       "critical": 0,
@@ -3767,7 +3717,7 @@
       "low": 1,
       "medium": 0,
       "reference": "eclipse-temurin:21-jre-alpine-3.21",
-      "scanned_at": "2026-06-23T06:11:36Z",
+      "scanned_at": "2026-06-24T06:11:06Z",
       "total": 2,
       "unknown": 0
     },
@@ -3775,31 +3725,41 @@
       "critical": 2,
       "high": 108,
       "low": 2,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-azurelinux3.0-arm64v8",
-      "scanned_at": "2026-06-23T06:10:16Z",
-      "total": 154,
+      "scanned_at": "2026-06-24T06:10:16Z",
+      "total": 189,
       "unknown": 0
     },
     "sha256:f0a109d780d99d7b45f4fc4db8113eba95b914ed5fb563650fa67899afb3703a": {
       "critical": 9,
       "high": 36,
       "low": 147,
-      "medium": 92,
+      "medium": 99,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-bookworm-slim-amd64",
-      "scanned_at": "2026-06-23T06:16:33Z",
-      "total": 315,
-      "unknown": 31
+      "scanned_at": "2026-06-24T06:16:59Z",
+      "total": 316,
+      "unknown": 25
+    },
+    "sha256:f18adf4e1d04b1d8ba48025b8e35003f4c748ddd3dd8e875fe4e7d9a9c0dec84": {
+      "critical": 4,
+      "high": 9,
+      "low": 95,
+      "medium": 49,
+      "reference": "debian:11-slim",
+      "scanned_at": "2026-06-24T06:09:15Z",
+      "total": 172,
+      "unknown": 15
     },
     "sha256:f1f73538ebe623fd3673a35aff3df358ae1084c64c55646516e5b17b321b6c9b": {
       "critical": 11,
-      "high": 317,
+      "high": 318,
       "low": 739,
-      "medium": 1677,
+      "medium": 1679,
       "reference": "rust:1.92.0-slim-bookworm",
-      "scanned_at": "2026-06-23T06:16:38Z",
-      "total": 2765,
-      "unknown": 21
+      "scanned_at": "2026-06-24T06:16:46Z",
+      "total": 2766,
+      "unknown": 19
     },
     "sha256:f2be621d241ce9b2ad0c1adf155598e088029d02caece0ed08181c1dd5853c5d": {
       "critical": 3,
@@ -3807,7 +3767,7 @@
       "low": 112,
       "medium": 147,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-jammy-arm64v8",
-      "scanned_at": "2026-06-23T06:27:12Z",
+      "scanned_at": "2026-06-24T06:28:27Z",
       "total": 275,
       "unknown": 0
     },
@@ -3815,31 +3775,31 @@
       "critical": 0,
       "high": 1,
       "low": 153,
-      "medium": 114,
+      "medium": 116,
       "reference": "eclipse-temurin:21-ubi9-minimal",
-      "scanned_at": "2026-06-23T06:11:52Z",
-      "total": 268,
+      "scanned_at": "2026-06-24T06:11:20Z",
+      "total": 270,
       "unknown": 0
     },
     "sha256:f49565f188ee00bc2a18dd418183f2c5f23ef7d6e691890517ed341a598f67c3": {
       "critical": 26,
-      "high": 285,
+      "high": 283,
       "low": 1064,
-      "medium": 667,
+      "medium": 700,
       "reference": "rust:1.95.0-trixie",
-      "scanned_at": "2026-06-23T06:12:03Z",
-      "total": 2175,
-      "unknown": 133
+      "scanned_at": "2026-06-24T06:12:04Z",
+      "total": 2225,
+      "unknown": 152
     },
     "sha256:f4f82b80e5f2945fed4ba17af177c6d6be85d98cde38ff318fc7666ce4505617": {
       "critical": 54,
-      "high": 719,
+      "high": 720,
       "low": 1372,
-      "medium": 2360,
+      "medium": 2388,
       "reference": "rust:1.94.1-bullseye",
-      "scanned_at": "2026-06-23T06:13:08Z",
-      "total": 4604,
-      "unknown": 99
+      "scanned_at": "2026-06-24T06:13:12Z",
+      "total": 4658,
+      "unknown": 124
     },
     "sha256:f531bc1fa59c4cd8f76b61aea910a7033a693827bba1395a6352dd8af5771c65": {
       "critical": 3,
@@ -3847,19 +3807,29 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-23T06:28:17Z",
+      "scanned_at": "2026-06-24T06:29:38Z",
       "total": 11,
       "unknown": 0
     },
+    "sha256:f54c5f39326ef06c7cb7f5fc57025aa5b7a1d3367cea42d8b5d3c8e082338ec5": {
+      "critical": 2,
+      "high": 9,
+      "low": 63,
+      "medium": 39,
+      "reference": "python:3.14.6-slim-trixie",
+      "scanned_at": "2026-06-24T06:09:23Z",
+      "total": 149,
+      "unknown": 36
+    },
     "sha256:f58923369ba295ae1f60bc49d03f2c955a5c93a0b7d49acfb2b2a65bebaf350d": {
       "critical": 175,
-      "high": 939,
+      "high": 937,
       "low": 1245,
-      "medium": 2487,
+      "medium": 2520,
       "reference": "rust:1.92.0-trixie",
-      "scanned_at": "2026-06-23T06:16:49Z",
-      "total": 4981,
-      "unknown": 135
+      "scanned_at": "2026-06-24T06:16:57Z",
+      "total": 5031,
+      "unknown": 154
     },
     "sha256:f6562b8e1deabd8492cba462dc0098d402c1de82c4b4df12e2a63044e5af5f53": {
       "critical": 0,
@@ -3867,7 +3837,7 @@
       "low": 10,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-nanoserver-ltsc2022",
-      "scanned_at": "2026-06-23T06:17:25Z",
+      "scanned_at": "2026-06-24T06:18:01Z",
       "total": 20,
       "unknown": 0
     },
@@ -3877,19 +3847,19 @@
       "low": 36,
       "medium": 20,
       "reference": "rust:1.92.0-alpine3.23",
-      "scanned_at": "2026-06-23T06:15:59Z",
+      "scanned_at": "2026-06-24T06:16:05Z",
       "total": 76,
       "unknown": 0
     },
     "sha256:f7a4434bddc5865c07ec0e2804fcde20e9898a2b4c12cac53b22310550a8d6f5": {
       "critical": 9,
-      "high": 397,
+      "high": 398,
       "low": 889,
-      "medium": 1905,
+      "medium": 1906,
       "reference": "rust:1.92.0-slim-bullseye",
-      "scanned_at": "2026-06-23T06:16:47Z",
-      "total": 3218,
-      "unknown": 18
+      "scanned_at": "2026-06-24T06:16:55Z",
+      "total": 3219,
+      "unknown": 17
     },
     "sha256:f800c06daae24db26d34e43cc3a5c72e5aa863b0ef7f95569a0d13b1ad8891af": {
       "critical": 2,
@@ -3897,7 +3867,7 @@
       "low": 0,
       "medium": 6,
       "reference": "rust:1.94.1-alpine3.21",
-      "scanned_at": "2026-06-23T06:12:39Z",
+      "scanned_at": "2026-06-24T06:12:41Z",
       "total": 20,
       "unknown": 0
     },
@@ -3907,7 +3877,7 @@
       "low": 0,
       "medium": 0,
       "reference": "rust:1.96.0-alpine3.24",
-      "scanned_at": "2026-06-23T06:09:48Z",
+      "scanned_at": "2026-06-24T06:09:45Z",
       "total": 0,
       "unknown": 0
     },
@@ -3915,10 +3885,10 @@
       "critical": 2,
       "high": 118,
       "low": 12,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:8.0.422-azurelinux3.0",
-      "scanned_at": "2026-06-23T06:16:26Z",
-      "total": 174,
+      "scanned_at": "2026-06-24T06:16:45Z",
+      "total": 209,
       "unknown": 0
     },
     "sha256:f9bd8815e73632c22985ebb133ec49b9fc4ad5ffe0657594ac02748ad0431ab7": {
@@ -3927,7 +3897,7 @@
       "low": 20,
       "medium": 44,
       "reference": "eclipse-temurin:25-jre-noble",
-      "scanned_at": "2026-06-23T06:10:44Z",
+      "scanned_at": "2026-06-24T06:10:26Z",
       "total": 66,
       "unknown": 0
     },
@@ -3937,28 +3907,18 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-windowsservercore-ltsc2022",
-      "scanned_at": "2026-06-23T06:15:49Z",
+      "scanned_at": "2026-06-24T06:15:57Z",
       "total": 12,
       "unknown": 0
-    },
-    "sha256:fa184fce49c170a8b1032a4f752f9fe1a7e463e7f5795a3952ca275e166fa913": {
-      "critical": 2,
-      "high": 12,
-      "low": 64,
-      "medium": 43,
-      "reference": "python:3.10.20-slim-trixie",
-      "scanned_at": "2026-06-23T06:10:10Z",
-      "total": 157,
-      "unknown": 36
     },
     "sha256:fab1e7dc295247875b2688853e00859d4f1f94244650606e25b79f49d165a31c": {
       "critical": 0,
       "high": 1,
       "low": 153,
-      "medium": 114,
+      "medium": 116,
       "reference": "eclipse-temurin:11-jre-ubi9-minimal",
-      "scanned_at": "2026-06-23T06:13:42Z",
-      "total": 268,
+      "scanned_at": "2026-06-24T06:12:51Z",
+      "total": 270,
       "unknown": 0
     },
     "sha256:fac7cce841f78faa4bca416fb4c636d1a129c09abd9b50e9b45664b95fd008a0": {
@@ -3967,7 +3927,7 @@
       "low": 21,
       "medium": 8,
       "reference": "mcr.microsoft.com/dotnet/sdk:10.0.301-alpine3.23",
-      "scanned_at": "2026-06-23T06:09:12Z",
+      "scanned_at": "2026-06-24T06:09:12Z",
       "total": 32,
       "unknown": 0
     },
@@ -3975,21 +3935,21 @@
       "critical": 2,
       "high": 108,
       "low": 12,
-      "medium": 42,
+      "medium": 77,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-azurelinux3.0-arm64v8",
-      "scanned_at": "2026-06-23T06:13:39Z",
-      "total": 164,
+      "scanned_at": "2026-06-24T06:13:39Z",
+      "total": 199,
       "unknown": 0
     },
     "sha256:fae8ebcb8eda28d37df2b965c87c15a572dac2b6d3893a72d6dea99d700d1786": {
       "critical": 132,
-      "high": 861,
+      "high": 862,
       "low": 1374,
-      "medium": 2508,
+      "medium": 2536,
       "reference": "rust:1.93.1-bullseye",
-      "scanned_at": "2026-06-23T06:14:43Z",
-      "total": 4974,
-      "unknown": 99
+      "scanned_at": "2026-06-24T06:14:49Z",
+      "total": 5028,
+      "unknown": 124
     },
     "sha256:fb9eebeed2b14fa30300797a51467150f683d87f1720bbc2620fa4f225938d0f": {
       "critical": 0,
@@ -3997,7 +3957,7 @@
       "low": 12,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:9.0.315-windowsservercore-ltsc2025",
-      "scanned_at": "2026-06-23T06:16:00Z",
+      "scanned_at": "2026-06-24T06:16:13Z",
       "total": 12,
       "unknown": 0
     },
@@ -4007,7 +3967,7 @@
       "low": 0,
       "medium": 0,
       "reference": "mcr.microsoft.com/dotnet/sdk:7.0.410-windowsservercore-ltsc2019",
-      "scanned_at": "2026-06-23T06:21:11Z",
+      "scanned_at": "2026-06-24T06:22:05Z",
       "total": 16,
       "unknown": 0
     },
@@ -4017,7 +3977,7 @@
       "low": 1,
       "medium": 0,
       "reference": "eclipse-temurin:17-jre-alpine-3.21",
-      "scanned_at": "2026-06-23T06:12:34Z",
+      "scanned_at": "2026-06-24T06:11:54Z",
       "total": 2,
       "unknown": 0
     },
@@ -4025,11 +3985,11 @@
       "critical": 21,
       "high": 85,
       "low": 191,
-      "medium": 181,
+      "medium": 188,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim-arm64v8",
-      "scanned_at": "2026-06-23T06:26:28Z",
-      "total": 519,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:27:38Z",
+      "total": 520,
+      "unknown": 35
     },
     "sha256:fd791d74b68913cbb027c6546007b3f0d3bc45125f797758156952bc2d6daf40": {
       "critical": 0,
@@ -4037,42 +3997,42 @@
       "low": 0,
       "medium": 0,
       "reference": "alpine:3.23.5",
-      "scanned_at": "2026-06-23T06:09:06Z",
+      "scanned_at": "2026-06-24T06:08:58Z",
       "total": 0,
       "unknown": 0
     },
-    "sha256:fe7312b5f05bf5f43fad76bcd8945642e4e47a68aefd1b73f447615899d0fac1": {
-      "critical": 2,
-      "high": 8,
-      "low": 62,
-      "medium": 39,
-      "reference": "debian:13",
-      "scanned_at": "2026-06-23T06:09:00Z",
-      "total": 147,
-      "unknown": 36
-    },
-    "sha256:ff4b13408ab702565720c6b23582ebda7bfdddfe9ce2b8c5b49e6d40430fdb05": {
-      "critical": 4,
-      "high": 10,
-      "low": 99,
-      "medium": 49,
-      "reference": "debian:11-slim",
-      "scanned_at": "2026-06-23T06:09:08Z",
-      "total": 176,
-      "unknown": 14
+    "sha256:ff485c5a8fe9cac2060eee9f778219a3db1ef75ce4e96d3af9aeb6093991830e": {
+      "critical": 23,
+      "high": 426,
+      "low": 1300,
+      "medium": 1705,
+      "reference": "node:26.3.1-bullseye",
+      "scanned_at": "2026-06-24T06:09:34Z",
+      "total": 3575,
+      "unknown": 121
     },
     "sha256:ff4c6ba14e2285747d2e03d343d31237aaedc10254b0fcfdfbc28504c2f19f2a": {
       "critical": 21,
       "high": 85,
       "low": 191,
-      "medium": 181,
+      "medium": 188,
       "reference": "mcr.microsoft.com/dotnet/sdk:6.0.425-bullseye-slim",
-      "scanned_at": "2026-06-23T06:26:17Z",
-      "total": 519,
-      "unknown": 41
+      "scanned_at": "2026-06-24T06:27:27Z",
+      "total": 520,
+      "unknown": 35
+    },
+    "sha256:ffc93d3fbec9f89ceb7dba123df3a093dca1fa7f4dd23dd95a5feb4730a05fa6": {
+      "critical": 25,
+      "high": 188,
+      "low": 994,
+      "medium": 526,
+      "reference": "gcc:14.3.0-trixie",
+      "scanned_at": "2026-06-24T06:09:54Z",
+      "total": 1885,
+      "unknown": 152
     }
   },
   "schema_version": 2,
-  "trivy_db_updated_at": "2026-06-23T01:09:22.52431422Z",
+  "trivy_db_updated_at": "2026-06-24T01:08:55.60783987Z",
   "trivy_version": "0.71.1"
 }
