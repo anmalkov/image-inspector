@@ -173,7 +173,7 @@ After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `
   - Retry after checking network access and image/tags; this is often transient.
 
 - **Do I need Trivy or Docker locally?**
-  - No. Security counts shown in the interactive panel come from a bundled `report.json` snapshot — the copy that shipped with the installed release, which may lag behind the live data. The current data is published nightly to GitHub Pages via Trivy runs in CI.
+  - No. When online, the interactive panel **fetches the latest report from GitHub Pages**; when offline (or if the fetch fails) it falls back to the `report.json` **bundled** with the installed release. Either way the counts come from precomputed Trivy data — fresh data no longer requires a new package release. The **SECURITY** panel's `Source` row tells you which copy you're seeing (`online (latest)` vs `offline (bundled copy)`).
   - You do **not** need Docker or Trivy installed to run image resolution locally.
 
 ## Automation and JSON output
@@ -187,23 +187,32 @@ image-inspector --json -l ubuntu --version 24.04 --variant '(none)'
 
 The JSON object includes the source label, language/version/variant, the resolved `image` reference,
 the digest, the `pinned_reference`, the `from_line`, the compressed `size_bytes`, a `vulnerabilities`
-block (critical / high / medium / low / unknown / total, plus `scanned_at`), and a `scanner` block
-(the Trivy version and DB date behind the counts). When no scan data exists for the image,
-`vulnerabilities` is `null`.
+block (critical / high / medium / low / unknown / total, plus `scanned_at`), a `scanner` block
+(the Trivy version and DB date behind the counts), and a top-level `data_source`
+(`"online"`, `"offline"`, or `null`) telling you whether the counts came from the live GitHub Pages
+report or the bundled offline copy. When no scan data exists for the image, `vulnerabilities` is `null`.
 
 ## Vulnerability scanning
 
 When you resolve an image, the **SECURITY** section shows how many vulnerabilities it has —
-**critical**, **high** and **total** — the date the scan was taken, and the scan source (the Trivy
-version plus the vulnerability-DB update date, e.g. `Trivy v0.71.1 · DB Jun 14, 2026`).
+**critical**, **high** and **total** — the date the scan was taken (`Scanned`), the scanner behind
+the counts (`Scanner`, the Trivy version plus the vulnerability-DB update date, e.g.
+`Trivy v0.71.1 · DB Jun 14, 2026`), and where the data came from (`Source`: `online (latest)`,
+`offline (bundled copy)`, or `not found`).
 
-These counts come from a JSON report (`src/image_inspector/data/report.json`) that ships with the
-tool, so the interactive picker stays fast and needs no Docker or Trivy on your machine. A GitHub
-Actions workflow runs [Trivy](https://trivy.dev/) against every selectable image (all versions and
-variants) **nightly** and **deploys the refreshed report to GitHub Pages**
-(`https://anmalkov.github.io/image-inspector/report.json`) — the live source of truth — instead of
-committing it back to the repository. The `data/report.json` bundled in the package is the snapshot
-that shipped with that release, so it may lag behind the live Pages copy.
+By default the picker is **online-first**: it fetches the latest report from **GitHub Pages**
+(`https://anmalkov.github.io/image-inspector/report.json`) — the live source of truth, refreshed
+**nightly** by a GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against every
+selectable image (all versions and variants). The fetch uses a short timeout and conditional
+(`ETag`) requests so it never slows the picker down, and **falls back to the `report.json` bundled
+with the package** whenever you're offline or the fetch fails. The bundled copy is a snapshot pinned
+at release time, so it works without any network access. Nothing is pulled or scanned on your
+machine, so no Docker or Trivy is required.
+
+You can control this with environment variables:
+
+- `IMAGE_INSPECTOR_OFFLINE=1` — skip the network fetch and always use the bundled copy.
+- `IMAGE_INSPECTOR_REPORT_URL=<url>` — fetch the report from a different URL.
 
 The report is keyed by the image's immutable **digest**, so the counts always match the exact
 `name:tag@sha256:…` reference the tool pins. If an image isn't in the report yet (e.g. a brand-new
@@ -290,9 +299,9 @@ src/image_inspector/
   registry.py   # RegistryProvider protocol + Docker Hub & MCR clients
   versions.py   # tag parsing, version-scheme selection (semver/major), variants
   ui.py         # theme, banner, prompts, spinners, result panel
-  report.py     # loads the bundled Trivy vulnerability report
+  report.py     # loads the Trivy vulnerability report (online-first, bundled offline fallback)
   scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
-  data/         # bundled report.json (snapshot shipped with the release; live copy on GitHub Pages)
+  data/         # bundled report.json (offline snapshot pinned at release; live copy on GitHub Pages)
 ```
 
 ## See also

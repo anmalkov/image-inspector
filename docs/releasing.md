@@ -51,6 +51,8 @@ The version is derived **from the git tag** at release time:
 4. The **Release** workflow triggers automatically and will:
    - verify the tagged commit is on `main` (the release fails fast otherwise),
    - set the project version from the tag (`uv version`),
+   - **snapshot the latest report from GitHub Pages** into `src/image_inspector/data/report.json`
+     so the wheel ships a release-pinned offline fallback (see below),
    - build the source distribution and wheel (`uv build`),
    - publish them to PyPI via Trusted Publishing (`uv publish`),
    - create a GitHub Release for the tag with auto-generated notes and the built
@@ -64,6 +66,22 @@ The version is derived **from the git tag** at release time:
    - the [GitHub Releases page](https://github.com/anmalkov/image-inspector/releases) shows the new release,
    - the new version appears on [PyPI](https://pypi.org/project/base-image-inspector/),
    - `uv tool install base-image-inspector` (or `pip install base-image-inspector`) installs the new version.
+
+## Offline report snapshot
+
+At runtime the tool is **online-first**: it fetches the latest vulnerability report from
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json) and only falls back to the
+copy bundled in the wheel when offline. To keep that bundled fallback fresh, the release workflow
+has a **"Snapshot the latest Pages report into the package"** step that runs *before* `uv build`:
+it downloads the current Pages `report.json` into `src/image_inspector/data/report.json` so each
+release ships a release-pinned offline snapshot.
+
+This is why the nightly scan job publishes the report to Pages rather than committing it back to the
+repo — the bundled copy is refreshed here, at release time, instead.
+
+The step **fails soft**: if the download fails, times out, or doesn't return a valid report, it logs
+a warning and ships whatever `report.json` is already committed, so a transient Pages hiccup never
+blocks a release.
 
 ## Package metadata
 

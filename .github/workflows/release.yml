@@ -51,6 +51,25 @@ jobs:
       - name: Set project version
         run: uv version "${{ steps.version.outputs.version }}"
 
+      - name: Snapshot the latest Pages report into the package
+        # Pin a release-time offline snapshot into the wheel so the bundled fallback is
+        # fresh. The nightly job publishes to Pages instead of committing the report, so
+        # we refresh the bundled copy here. Fail soft: ship the committed copy if the
+        # fetch fails or returns something that isn't a valid report.
+        run: |
+          url="https://anmalkov.github.io/image-inspector/report.json"
+          dest="src/image_inspector/data/report.json"
+          tmp="$(mktemp)"
+          if curl --fail --silent --show-error --location --max-time 30 "$url" -o "$tmp" \
+            && python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert isinstance(d, dict) and isinstance(d.get('images'), dict)" "$tmp"; then
+            count="$(python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]))['images']))" "$tmp")"
+            mv "$tmp" "$dest"
+            echo "Snapshotted ${count} image(s) from Pages into ${dest}."
+          else
+            echo "::warning::Could not fetch a valid report from ${url}; shipping the committed copy at ${dest}."
+            rm -f "$tmp"
+          fi
+
       - name: Build distributions
         run: uv build
 
