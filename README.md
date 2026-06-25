@@ -17,6 +17,35 @@
 
 ---
 
+## ⚡ Try it in 5 seconds
+
+No install, no Docker daemon, no local scanner — just [uv](https://docs.astral.sh/uv/):
+
+```bash
+uvx --from base-image-inspector image-inspector
+```
+
+Pick a base image with the arrow keys and copy the digest-pinned `FROM` line. That's it.
+
+## Why this exists
+
+| Tool | Great at | The gap it leaves |
+|------|----------|-------------------|
+| `docker pull` + `trivy scan` | Accurate, thorough scanning | Slower, and runs locally — you pull the image first |
+| Renovate | Keeping base images up to date | Helps *after* you've already chosen a base image |
+| **image-inspector** | **Choose + compare + pin _before_ you write `FROM`** | Approximate counts from bundled nightly data, not a live scan |
+
+## Who is this for?
+
+Use **image-inspector** if you:
+
+- write Dockerfiles often
+- want reproducible base images
+- want quick vulnerability context before choosing a base image
+- don't want to pull images or run a scanner locally
+
+---
+
 ## What is this?
 
 When you write a `Dockerfile`, you start from a **base image** like `python:3.13` or `node:22`.
@@ -42,6 +71,10 @@ when it was built — so you can choose a good base image with confidence.
 Vulnerability counts come from nightly precomputed Trivy data bundled with the package.
 Images are not pulled or scanned locally at runtime. No Docker daemon or local scanner is
 required.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/screenshot.png" alt="image-inspector result panel showing a digest-pinned FROM line and vulnerability counts">
+</p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo">
