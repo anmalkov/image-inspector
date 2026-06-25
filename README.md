@@ -194,10 +194,12 @@ The full list of flags lives in the [Getting started guide](https://github.com/a
 ## Vulnerability data
 
 The critical / high / total counts come from **precomputed nightly [Trivy](https://github.com/aquasecurity/trivy)
-data bundled with the tool**. Nothing is scanned locally at runtime — image-inspector doesn't run Trivy
+data**. Nothing is scanned locally at runtime — image-inspector doesn't run Trivy
 on your machine, pull images, or talk to a scanner. That keeps it fast and means no Docker daemon or
-scanner is required. Because the data is precomputed nightly, counts reflect the most recent bundled
-snapshot rather than a live, on-the-spot scan.
+scanner is required. A GitHub Actions workflow regenerates this data **nightly** and publishes it to
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json); the copy bundled with the
+tool is the snapshot that shipped with the installed release and may lag behind the live data. Because
+the data is precomputed, counts reflect the most recent snapshot rather than a live, on-the-spot scan.
 
 ## Limitations
 

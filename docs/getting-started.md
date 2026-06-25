@@ -173,7 +173,7 @@ After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `
   - Retry after checking network access and image/tags; this is often transient.
 
 - **Do I need Trivy or Docker locally?**
-  - No. Security counts shown in the interactive panel come from a bundled `report.json` file that is refreshed nightly in CI via Trivy runs.
+  - No. Security counts shown in the interactive panel come from a bundled `report.json` snapshot — the copy that shipped with the installed release, which may lag behind the live data. The current data is published nightly to GitHub Pages via Trivy runs in CI.
   - You do **not** need Docker or Trivy installed to run image resolution locally.
 
 ## Automation and JSON output
@@ -198,10 +198,12 @@ When you resolve an image, the **SECURITY** section shows how many vulnerabiliti
 version plus the vulnerability-DB update date, e.g. `Trivy v0.71.1 · DB Jun 14, 2026`).
 
 These counts come from a JSON report (`src/image_inspector/data/report.json`) that ships with the
-tool, so the interactive picker stays fast and needs no Docker or Trivy on your machine. The report is
-regenerated **nightly** by a GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against
-every selectable image (all versions and variants) and commits the refreshed report back to the
-repository.
+tool, so the interactive picker stays fast and needs no Docker or Trivy on your machine. A GitHub
+Actions workflow runs [Trivy](https://trivy.dev/) against every selectable image (all versions and
+variants) **nightly** and **deploys the refreshed report to GitHub Pages**
+(`https://anmalkov.github.io/image-inspector/report.json`) — the live source of truth — instead of
+committing it back to the repository. The `data/report.json` bundled in the package is the snapshot
+that shipped with that release, so it may lag behind the live Pages copy.
 
 The report is keyed by the image's immutable **digest**, so the counts always match the exact
 `name:tag@sha256:…` reference the tool pins. If an image isn't in the report yet (e.g. a brand-new
@@ -226,11 +228,12 @@ per-language reports into a single `report.json` with `image-inspector-merge`:
 
 ```bash
 image-inspector-merge report-python.json report-alpine.json \
-  -o src/image_inspector/data/report.json
+  -o pages-dir/report.json
 ```
 
 `image-inspector-merge` takes any number of partial reports and unions their images by digest, so
-parallel matrix jobs still produce one combined report.
+parallel matrix jobs still produce one combined report. In CI the combined report is **deployed to
+GitHub Pages** rather than committed back to the repository.
 
 > Running from a source checkout? Prefix these with `uv run` (e.g. `uv run image-inspector-scan`).
 
@@ -289,7 +292,7 @@ src/image_inspector/
   ui.py         # theme, banner, prompts, spinners, result panel
   report.py     # loads the bundled Trivy vulnerability report
   scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
-  data/         # bundled report.json (refreshed nightly in CI)
+  data/         # bundled report.json (snapshot shipped with the release; live copy on GitHub Pages)
 ```
 
 ## See also
