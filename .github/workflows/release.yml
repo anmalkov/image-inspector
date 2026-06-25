@@ -80,8 +80,8 @@ jobs:
         # (isolated from the source tree) and load the report offline. Fails the release
         # if the artifact ships without a usable offline fallback.
         run: |
-          python3 -m venv /tmp/smoke
-          /tmp/smoke/bin/pip install --quiet dist/*.whl
+          uv venv --python 3.13 /tmp/smoke
+          uv pip install --python /tmp/smoke/bin/python --quiet dist/*.whl
           IMAGE_INSPECTOR_OFFLINE=1 /tmp/smoke/bin/python -c "
           import sys
           from image_inspector.report import load_report, ReportSource
