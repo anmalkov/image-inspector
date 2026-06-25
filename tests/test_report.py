@@ -121,9 +121,7 @@ def test_load_report_returns_report_object(monkeypatch):
 
 @respx.mock
 def test_load_report_online_prefers_fetched(isolate_loader):
-    respx.get(isolate_loader).mock(
-        return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST))
-    )
+    respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST)))
     report = load_report()
     assert report.source is ReportSource.ONLINE
     assert report.lookup(_ONLINE_DIGEST) is not None
@@ -202,9 +200,7 @@ def test_load_report_honours_url_override(monkeypatch, tmp_path):
     monkeypatch.delenv("IMAGE_INSPECTOR_OFFLINE", raising=False)
     custom = "https://custom.test/some/report.json"
     monkeypatch.setenv("IMAGE_INSPECTOR_REPORT_URL", custom)
-    route = respx.get(custom).mock(
-        return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST))
-    )
+    route = respx.get(custom).mock(return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST)))
     report = load_report()
     assert route.called
     assert report.source is ReportSource.ONLINE
@@ -228,4 +224,3 @@ def test_cache_roundtrip(monkeypatch, tmp_path):
     assert report_module._read_cache(url) == ('"etag"', body)
     # A different URL must not return another URL's cached body.
     assert report_module._read_cache("https://other.test/report.json") == (None, None)
-

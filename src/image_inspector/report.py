@@ -183,9 +183,7 @@ def _fetch_report() -> dict | None:
     etag, cached_body = _read_cache(url)
     headers = {"If-None-Match": etag} if etag else {}
     try:
-        response = httpx.get(
-            url, headers=headers, timeout=_FETCH_TIMEOUT, follow_redirects=True
-        )
+        response = httpx.get(url, headers=headers, timeout=_FETCH_TIMEOUT, follow_redirects=True)
     except httpx.HTTPError:
         return None
 
