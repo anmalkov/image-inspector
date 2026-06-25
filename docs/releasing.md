@@ -57,6 +57,8 @@ The version is derived **from the git tag** at release time:
    - **verify the tool can read that bundled report** (`pytest -m integration`) and fail the
      release otherwise,
    - build the source distribution and wheel (`uv build`),
+   - **smoke-test the built wheel** by installing it into a throwaway venv and loading the
+     report offline, so the *published artifact* (not just the working tree) is validated,
    - publish them to PyPI via Trusted Publishing (`uv publish`),
    - create a GitHub Release for the tag with auto-generated notes and the built
      artifacts attached.

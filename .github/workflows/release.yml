@@ -74,6 +74,23 @@ jobs:
       - name: Build distributions
         run: uv build
 
+      - name: Smoke-test the built wheel
+        # The bundled report.json is git-ignored/untracked, so verify the *published*
+        # wheel actually contains it: install the built wheel into a throwaway venv
+        # (isolated from the source tree) and load the report offline. Fails the release
+        # if the artifact ships without a usable offline fallback.
+        run: |
+          python3 -m venv /tmp/smoke
+          /tmp/smoke/bin/pip install --quiet dist/*.whl
+          IMAGE_INSPECTOR_OFFLINE=1 /tmp/smoke/bin/python -c "
+          import sys
+          from image_inspector.report import load_report, ReportSource
+          report = load_report()
+          if report.source is not ReportSource.OFFLINE or not report.images:
+              sys.exit('Built wheel does not ship a usable offline report (source=%r, images=%d); refusing to release.' % (report.source, len(report.images)))
+          print('Built wheel ships a usable offline report: %d image(s).' % len(report.images))
+          "
+
       - name: Publish to PyPI
         run: uv publish
 

@@ -216,6 +216,78 @@ def test_load_report_falls_back_when_images_not_dict(isolate_loader):
 
 
 @respx.mock
+def test_load_report_falls_back_when_entry_malformed(isolate_loader):
+    # Passes _validate_payload (images is a dict) but an entry is a list, which would
+    # crash ImageVulnerabilities.from_dict -- must fall back to the packaged copy.
+    bad = {"schema_version": 2, "trivy_version": "0.58.0", "images": {"sha256:bad": []}}
+    respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=bad))
+    report = load_report()
+    assert report.source is ReportSource.OFFLINE
+    assert report.lookup(_PACKAGED_DIGEST) is not None
+
+
+def test_load_report_empty_when_packaged_entry_malformed(monkeypatch):
+    # The packaged copy itself has a malformed entry: _build_report must swallow the error
+    # and degrade to an empty report rather than crashing startup.
+    monkeypatch.setenv("IMAGE_INSPECTOR_OFFLINE", "1")
+    monkeypatch.setattr(
+        report_module,
+        "_load_packaged",
+        lambda: {"schema_version": 2, "images": {"sha256:bad": ["not", "a", "dict"]}},
+    )
+    report = load_report()
+    assert report.source is None
+    assert report.images == {}
+
+
+class _FakeResource:
+    """Stand-in for importlib.resources.files(...).joinpath(...) in _load_packaged tests."""
+
+    def __init__(self, *, text: str | None = None, exc: Exception | None = None) -> None:
+        self._text = text
+        self._exc = exc
+
+    def joinpath(self, *_args: str) -> "_FakeResource":
+        return self
+
+    def read_text(self, *_args: object, **_kwargs: object) -> str:
+        if self._exc is not None:
+            raise self._exc
+        assert self._text is not None
+        return self._text
+
+
+def test_load_packaged_accepts_valid(monkeypatch):
+    monkeypatch.setattr(
+        report_module.resources,
+        "files",
+        lambda _pkg: _FakeResource(text=json.dumps(_payload(_PACKAGED_DIGEST))),
+    )
+    data = report_module._load_packaged()
+    assert data is not None
+    assert _PACKAGED_DIGEST in data["images"]
+
+
+def test_load_packaged_rejects_invalid_schema(monkeypatch):
+    # images present but not a dict: _validate_payload rejects it -> packaged load miss.
+    monkeypatch.setattr(
+        report_module.resources,
+        "files",
+        lambda _pkg: _FakeResource(text='{"schema_version": 2, "images": []}'),
+    )
+    assert report_module._load_packaged() is None
+
+
+def test_load_packaged_is_non_fatal_on_unicode_error(monkeypatch):
+    monkeypatch.setattr(
+        report_module.resources,
+        "files",
+        lambda _pkg: _FakeResource(exc=UnicodeDecodeError("utf-8", b"", 0, 1, "bad")),
+    )
+    assert report_module._load_packaged() is None
+
+
+@respx.mock
 def test_corrupt_cache_is_non_fatal(isolate_loader):
     # A non-UTF-8 / unparsable cache file must be treated as a miss, not crash the loader.
     cache_path = report_module._cache_path()

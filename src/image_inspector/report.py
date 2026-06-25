@@ -216,13 +216,31 @@ def _fetch_report() -> dict | None:
 
 
 def _load_packaged() -> dict | None:
-    """Load and parse the packaged ``report.json`` (``None`` on any failure)."""
+    """Load, parse and validate the packaged ``report.json`` (``None`` on any failure).
+
+    Reuses ``_validate_payload`` so a packaged copy that is non-UTF-8, malformed, of an
+    unsupported schema, or whose ``images`` map is not a dict is treated as a load miss
+    instead of crashing ``VulnerabilityReport.from_dict``.
+    """
     try:
         raw = resources.files(f"{__package__}.data").joinpath(_REPORT_RESOURCE).read_text("utf-8")
-        data = json.loads(raw)
-    except (FileNotFoundError, ModuleNotFoundError, json.JSONDecodeError, OSError):
+    except (FileNotFoundError, ModuleNotFoundError, OSError, UnicodeDecodeError):
         return None
-    return data if isinstance(data, dict) else None
+    return _validate_payload(raw)
+
+
+def _build_report(payload: dict, source: ReportSource) -> VulnerabilityReport | None:
+    """Build a ``VulnerabilityReport`` from ``payload``, or ``None`` if it can't.
+
+    ``_validate_payload`` only guarantees ``images`` is a dict; individual entries (or
+    count/timestamp fields) can still have unexpected types that raise inside
+    ``from_dict``/``ImageVulnerabilities.from_dict``. Treat any such error as a load
+    failure so the caller can fall back instead of crashing the picker at startup.
+    """
+    try:
+        return replace(VulnerabilityReport.from_dict(payload), source=source)
+    except (TypeError, ValueError, AttributeError, KeyError):
+        return None
 
 
 def load_report() -> VulnerabilityReport:
@@ -236,10 +254,14 @@ def load_report() -> VulnerabilityReport:
     if not _env_truthy("IMAGE_INSPECTOR_OFFLINE"):
         payload = _fetch_report()
         if payload is not None:
-            return replace(VulnerabilityReport.from_dict(payload), source=ReportSource.ONLINE)
+            report = _build_report(payload, ReportSource.ONLINE)
+            if report is not None:
+                return report
 
     packaged = _load_packaged()
     if packaged is not None:
-        return replace(VulnerabilityReport.from_dict(packaged), source=ReportSource.OFFLINE)
+        report = _build_report(packaged, ReportSource.OFFLINE)
+        if report is not None:
+            return report
 
     return VulnerabilityReport.empty()
