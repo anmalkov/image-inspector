@@ -215,6 +215,38 @@ def test_load_report_empty_when_all_sources_fail(isolate_loader, monkeypatch):
     assert report.images == {}
 
 
+@respx.mock
+def test_load_report_falls_back_when_images_not_dict(isolate_loader):
+    # schema_version is fine but images is a list, not a dict: must not crash from_dict.
+    bad = {"schema_version": 2, "trivy_version": "0.58.0", "images": []}
+    respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=bad))
+    report = load_report()
+    assert report.source is ReportSource.OFFLINE
+    assert report.lookup(_PACKAGED_DIGEST) is not None
+
+
+@respx.mock
+def test_corrupt_cache_is_non_fatal(isolate_loader):
+    # A non-UTF-8 / unparsable cache file must be treated as a miss, not crash the loader.
+    cache_path = report_module._cache_path()
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_bytes(b"\xff\xfe not valid utf-8 or json")
+    respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST)))
+    report = load_report()
+    assert report.source is ReportSource.ONLINE
+    assert report.lookup(_ONLINE_DIGEST) is not None
+
+
+def test_read_cache_coerces_wrong_types(monkeypatch, tmp_path):
+    monkeypatch.setenv("IMAGE_INSPECTOR_CACHE_DIR", str(tmp_path / "cache"))
+    url = "https://example.test/report.json"
+    path = report_module._cache_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    # etag as a list and body as a dict must both be coerced to None.
+    path.write_text(json.dumps({"url": url, "etag": ["x"], "body": {"a": 1}}), encoding="utf-8")
+    assert report_module._read_cache(url) == (None, None)
+
+
 def test_cache_roundtrip(monkeypatch, tmp_path):
     monkeypatch.setenv("IMAGE_INSPECTOR_CACHE_DIR", str(tmp_path / "cache"))
     url = "https://example.test/report.json"

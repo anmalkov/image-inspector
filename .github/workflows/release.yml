@@ -54,14 +54,16 @@ jobs:
       - name: Snapshot the latest Pages report into the package
         # Pin a release-time offline snapshot into the wheel so the bundled fallback is
         # fresh. The nightly job publishes to Pages instead of committing the report, so
-        # we refresh the bundled copy here. Fail soft: ship the committed copy if the
-        # fetch fails or returns something that isn't a valid report.
+        # we refresh the bundled copy here. The schema_version check below mirrors
+        # SCHEMA_VERSION in src/image_inspector/report.py so we never bundle an
+        # incompatible report. Fail soft: ship the committed copy if the fetch fails or
+        # returns something that isn't a valid, supported report.
         run: |
           url="https://anmalkov.github.io/image-inspector/report.json"
           dest="src/image_inspector/data/report.json"
           tmp="$(mktemp)"
           if curl --fail --silent --show-error --location --max-time 30 "$url" -o "$tmp" \
-            && python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert isinstance(d, dict) and isinstance(d.get('images'), dict)" "$tmp"; then
+            && python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert isinstance(d, dict) and d.get('schema_version') == 2 and isinstance(d.get('images'), dict)" "$tmp"; then
             count="$(python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]))['images']))" "$tmp")"
             mv "$tmp" "$dest"
             echo "Snapshotted ${count} image(s) from Pages into ${dest}."

@@ -142,14 +142,21 @@ def _cache_path() -> Path:
 
 
 def _read_cache(url: str) -> tuple[str | None, str | None]:
-    """Return the cached ``(etag, body)`` for ``url`` (``(None, None)`` if absent)."""
+    """Return the cached ``(etag, body)`` for ``url`` (``(None, None)`` if absent).
+
+    Never raises: a missing, unreadable, non-UTF-8, malformed, or wrongly-typed cache is
+    treated as a cache miss so cache corruption can never break the loader.
+    """
     try:
+        # ValueError covers both UnicodeDecodeError (non-UTF-8) and JSONDecodeError.
         cached = json.loads(_cache_path().read_text("utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except (OSError, ValueError):
         return None, None
     if not isinstance(cached, dict) or cached.get("url") != url:
         return None, None
-    return cached.get("etag"), cached.get("body")
+    etag = cached.get("etag")
+    body = cached.get("body")
+    return (etag if isinstance(etag, str) else None, body if isinstance(body, str) else None)
 
 
 def _write_cache(url: str, etag: str | None, body: str) -> None:
@@ -162,12 +169,21 @@ def _write_cache(url: str, etag: str | None, body: str) -> None:
 
 
 def _validate_payload(body: str) -> dict | None:
-    """Parse ``body`` and return it only if it is a dict with the supported schema."""
+    """Parse ``body`` and return it only if it is a usable report payload.
+
+    Requires a dict with the supported ``schema_version`` and a dict ``images`` map, so
+    any malformed payload degrades to the packaged fallback instead of crashing
+    ``VulnerabilityReport.from_dict``.
+    """
+    if not isinstance(body, str):
+        return None
     try:
         data = json.loads(body)
     except json.JSONDecodeError:
         return None
     if not isinstance(data, dict) or data.get("schema_version") != SCHEMA_VERSION:
+        return None
+    if not isinstance(data.get("images"), dict):
         return None
     return data
 
