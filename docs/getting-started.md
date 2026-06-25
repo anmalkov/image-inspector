@@ -301,7 +301,7 @@ src/image_inspector/
   ui.py         # theme, banner, prompts, spinners, result panel
   report.py     # loads the Trivy vulnerability report (online-first, bundled offline fallback)
   scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
-  data/         # bundled report.json (offline snapshot pinned at release; live copy on GitHub Pages)
+  data/         # report.json fetched into the wheel at release time (git-ignored; live copy on GitHub Pages)
 ```
 
 ## See also

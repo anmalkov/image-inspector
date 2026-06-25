@@ -52,8 +52,10 @@ The version is derived **from the git tag** at release time:
    - verify the tagged commit is on `main` (the release fails fast otherwise),
    - set the project version from the tag (`uv version`),
    - **snapshot the latest report from GitHub Pages** into `src/image_inspector/data/report.json`
-     so the wheel ships a release-pinned offline fallback (see below),
-   - **verify the tool can read its own bundled report** and fail the release otherwise,
+     so the wheel ships an offline fallback — a hard requirement; the release fails if the
+     report can't be fetched (see below),
+   - **verify the tool can read that bundled report** (`pytest -m integration`) and fail the
+     release otherwise,
    - build the source distribution and wheel (`uv build`),
    - publish them to PyPI via Trusted Publishing (`uv publish`),
    - create a GitHub Release for the tag with auto-generated notes and the built
@@ -72,24 +74,27 @@ The version is derived **from the git tag** at release time:
 
 At runtime the tool is **online-first**: it fetches the latest vulnerability report from
 [GitHub Pages](https://anmalkov.github.io/image-inspector/report.json) and only falls back to the
-copy bundled in the wheel when offline. To keep that bundled fallback fresh, the release workflow
-has a **"Snapshot the latest Pages report into the package"** step that runs *before* `uv build`:
-it downloads the current Pages `report.json` into `src/image_inspector/data/report.json` so each
-release ships a release-pinned offline snapshot.
+copy bundled in the wheel when offline. The bundled `report.json` is **not committed to the repo** —
+it is a generated artifact (git-ignored) that the nightly scan job publishes to Pages. The release
+workflow fetches it into `src/image_inspector/data/report.json` *before* `uv build`, so each release
+pins a fresh offline snapshot into the wheel.
 
-This is why the nightly scan job publishes the report to Pages rather than committing it back to the
-repo — the bundled copy is refreshed here, at release time, instead.
+The snapshot is a **hard requirement, not fail-soft**: if the download fails, times out, or doesn't
+return parseable JSON, the release **fails**. There is no committed copy to fall back to, and
+shipping a stale or empty fallback is worse than not releasing — so a Pages outage blocks the
+release until it's resolved. (Releases are infrequent and you control their timing, so this is an
+acceptable trade for never shipping degraded data.)
 
-The snapshot step **fails soft**: if the download fails, times out, or doesn't return parseable
-JSON, it logs a warning and keeps whatever `report.json` is already committed, so a transient Pages
-hiccup never blocks a release. The snapshot deliberately does **not** re-validate the report's
-schema — deciding whether a report is usable is the tool's job, not the workflow's.
+After the snapshot, a hard **release gate** runs `pytest -m integration`, which loads the freshly
+bundled report through `image_inspector` itself and fails if the tool can't read it or it's empty.
+This integration test is deselected from the default unit run (`-m "not integration"` in
+`pyproject.toml`) precisely because it depends on that generated artifact; the release opts back into
+it. Because the gate runs the real loader, the definition of "valid" lives entirely in the package
+and the workflow never needs updating when the report format or schema version changes.
 
-That check is instead enforced as a hard **release gate** by the next step, *"Verify the tool
-accepts the bundled report"*. It loads the bundled copy through `image_inspector` itself
-(`IMAGE_INSPECTOR_OFFLINE=1`) and **fails the release** if the tool rejects it or it loads empty.
-Because the gate runs the real loader, the definition of "valid" lives entirely in the package and
-the workflow never needs updating when the report format or schema version changes.
+For local development you are expected to be **online**, so no bundled `report.json` is needed —
+`load_report()` fetches from Pages. Running offline from a source checkout (with no snapshot) simply
+yields an empty report.
 
 ## Package metadata
 

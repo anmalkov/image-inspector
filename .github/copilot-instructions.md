@@ -26,4 +26,8 @@ to fix them, then re-run the checks and commit the result.
 - Keep line length ≤ 100 (`ruff` is configured for this).
 - Tests must not make real network calls — mock HTTP with `respx` (a dev dependency). The
   `tests/conftest.py` autouse fixture forces the report loader offline by default.
+- `uv run pytest` runs unit tests only; integration tests (marked `integration`, under
+  `tests/integration/`) are deselected by default because they depend on the bundled
+  `report.json`, which is **not committed** — it is fetched from GitHub Pages into the wheel
+  at release time. The release workflow runs them with `uv run pytest -m integration`.
 - Prefer small, surgical changes; only comment code that genuinely needs clarification.

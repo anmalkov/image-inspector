@@ -52,41 +52,24 @@ jobs:
         run: uv version "${{ steps.version.outputs.version }}"
 
       - name: Snapshot the latest Pages report into the package
-        # Pin a release-time offline snapshot into the wheel so the bundled fallback is
-        # fresh. The nightly job publishes to Pages instead of committing the report, so
-        # we refresh the bundled copy here. Fail soft: only overwrite the committed copy
-        # when the download succeeds and is parseable JSON; otherwise keep the committed
-        # copy. We do NOT re-validate the report schema here -- that is the tool's job,
-        # enforced as a hard gate by the next step.
+        # Pin a release-time offline snapshot into the wheel so the package ships a
+        # bundled fallback for end users who run offline. The report is NOT committed to
+        # the repo (the nightly job publishes it to Pages); it is fetched here at release
+        # time. This is a HARD requirement: if the report can't be downloaded or isn't
+        # parseable JSON, the release fails rather than shipping a stale or empty copy.
         run: |
           url="https://anmalkov.github.io/image-inspector/report.json"
           dest="src/image_inspector/data/report.json"
-          tmp="$(mktemp)"
-          if curl --fail --silent --show-error --location --max-time 30 "$url" -o "$tmp" \
-            && python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$tmp"; then
-            mv "$tmp" "$dest"
-            echo "Snapshotted the latest report from Pages into ${dest}."
-          else
-            echo "::warning::Could not fetch a usable report from ${url}; shipping the committed copy at ${dest}."
-            rm -f "$tmp"
-          fi
+          curl --fail --silent --show-error --location --max-time 30 "$url" -o "$dest"
+          python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$dest"
+          echo "Snapshotted the latest report from Pages into ${dest}."
 
       - name: Verify the tool accepts the bundled report
-        # Release gate: load the bundled report through the tool itself, so the
-        # definition of "valid" lives entirely in image_inspector (not duplicated here).
-        # Fail the release if the version we are about to ship cannot read its own
-        # bundled offline report.
-        run: |
-          IMAGE_INSPECTOR_OFFLINE=1 uv run python -c "
-          import sys
-          from image_inspector.report import load_report, ReportSource
-          report = load_report()
-          if report.source is not ReportSource.OFFLINE:
-              sys.exit('Bundled report was rejected by the tool (source=%r); refusing to release.' % report.source)
-          if not report.images:
-              sys.exit('Bundled report loaded but is empty; refusing to release.')
-          print('Bundled report accepted by the tool: %d image(s).' % len(report.images))
-          "
+        # Release gate: run the integration test (deselected from the default unit run)
+        # that loads the freshly snapshotted report through the tool itself. The
+        # definition of "valid" lives entirely in image_inspector, so this never needs
+        # updating when the report format or schema version changes.
+        run: uv run pytest -m integration
 
       - name: Build distributions
         run: uv build

@@ -109,16 +109,6 @@ def test_empty_report_has_no_images():
     assert report.source is None
 
 
-def test_load_report_returns_report_object(monkeypatch):
-    # Force the offline path so the test never touches the network; the packaged
-    # report.json ships with the wheel.
-    monkeypatch.setenv("IMAGE_INSPECTOR_OFFLINE", "1")
-    report = load_report()
-    assert isinstance(report, VulnerabilityReport)
-    assert isinstance(report.images, dict)
-    assert report.source is ReportSource.OFFLINE
-
-
 @respx.mock
 def test_load_report_online_prefers_fetched(isolate_loader):
     respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST)))
