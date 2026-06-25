@@ -173,7 +173,7 @@ After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `
   - Retry after checking network access and image/tags; this is often transient.
 
 - **Do I need Trivy or Docker locally?**
-  - No. Security counts shown in the interactive panel come from a bundled `report.json` snapshot (refreshed at release time). A fresh copy is also published nightly to GitHub Pages via Trivy runs in CI.
+  - No. Security counts shown in the interactive panel come from a bundled `report.json` snapshot — the copy that shipped with the installed release, which may lag behind the live data. The current data is published nightly to GitHub Pages via Trivy runs in CI.
   - You do **not** need Docker or Trivy installed to run image resolution locally.
 
 ## Automation and JSON output
@@ -202,8 +202,8 @@ tool, so the interactive picker stays fast and needs no Docker or Trivy on your 
 Actions workflow runs [Trivy](https://trivy.dev/) against every selectable image (all versions and
 variants) **nightly** and **deploys the refreshed report to GitHub Pages**
 (`https://anmalkov.github.io/image-inspector/report.json`) — the live source of truth — instead of
-committing it back to the repository. The bundled `data/report.json` is a release-pinned snapshot,
-refreshed when a new version is released rather than nightly.
+committing it back to the repository. The `data/report.json` bundled in the package is the snapshot
+that shipped with that release, so it may lag behind the live Pages copy.
 
 The report is keyed by the image's immutable **digest**, so the counts always match the exact
 `name:tag@sha256:…` reference the tool pins. If an image isn't in the report yet (e.g. a brand-new
@@ -292,7 +292,7 @@ src/image_inspector/
   ui.py         # theme, banner, prompts, spinners, result panel
   report.py     # loads the bundled Trivy vulnerability report
   scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
-  data/         # bundled report.json (release-pinned snapshot; live copy on GitHub Pages)
+  data/         # bundled report.json (snapshot shipped with the release; live copy on GitHub Pages)
 ```
 
 ## See also

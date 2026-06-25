@@ -198,8 +198,8 @@ data**. Nothing is scanned locally at runtime — image-inspector doesn't run Tr
 on your machine, pull images, or talk to a scanner. That keeps it fast and means no Docker daemon or
 scanner is required. A GitHub Actions workflow regenerates this data **nightly** and publishes it to
 [GitHub Pages](https://anmalkov.github.io/image-inspector/report.json); the copy bundled with the
-tool is a release-pinned snapshot. Because the data is precomputed, counts reflect the most recent
-snapshot rather than a live, on-the-spot scan.
+tool is the snapshot that shipped with the installed release and may lag behind the live data. Because
+the data is precomputed, counts reflect the most recent snapshot rather than a live, on-the-spot scan.
 
 ## Limitations
 

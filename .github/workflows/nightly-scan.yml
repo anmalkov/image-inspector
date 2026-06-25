@@ -63,6 +63,7 @@ jobs:
     needs: scan
     runs-on: ubuntu-latest
     permissions:
+      contents: read    # actions/checkout
       pages: write      # deploy to GitHub Pages
       id-token: write   # OIDC token for deploy-pages
     environment:
