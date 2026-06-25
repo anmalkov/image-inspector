@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>A CLI for finding official container base images, checking their known vulnerabilities, and generating digest-pinned <code>FROM</code> lines.</strong>
+  <strong>A CLI for finding official container base images, showing precomputed vulnerability counts, and generating digest-pinned <code>FROM</code> lines — without pulling images, running Docker, or scanning locally.</strong>
 </p>
 
 <p align="center">
@@ -27,13 +27,17 @@ uvx --from base-image-inspector image-inspector
 
 Pick a base image with the arrow keys and copy the digest-pinned `FROM` line. That's it.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/screenshot.png" alt="image-inspector result panel showing a digest-pinned FROM line and vulnerability counts">
+</p>
+
 ## Why this exists
 
 | Tool | Great at | The gap it leaves |
 |------|----------|-------------------|
 | `docker pull` + `trivy scan` | Accurate, thorough scanning | Slower, and runs locally — you pull the image first |
 | Renovate | Keeping base images up to date | Helps *after* you've already chosen a base image |
-| **image-inspector** | **Choose + compare + pin _before_ you write `FROM`** | Approximate counts from bundled nightly data, not a live scan |
+| **image-inspector** | **Choose + inspect + pin _before_ you write `FROM`** | Approximate counts from bundled nightly data, not a live scan |
 
 ## Who is this for?
 
@@ -73,16 +77,12 @@ Images are not pulled or scanned locally at runtime. No Docker daemon or local s
 required.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/screenshot.png" alt="image-inspector result panel showing a digest-pinned FROM line and vulnerability counts">
-</p>
-
-<p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo">
 </p>
 
 ## Quick start
 
-**1. Install it** (pick whichever you have):
+**1. Already tried it with `uvx`? Install it permanently** (pick whichever you have):
 
 ```bash
 uv tool install base-image-inspector     # recommended
@@ -95,7 +95,7 @@ pip install base-image-inspector
 > **Package vs. command:** the PyPI package is `base-image-inspector`, but the installed CLI command
 > is `image-inspector`.
 
-Just want to try it without installing? Run it one-shot with [uv](https://docs.astral.sh/uv/):
+Prefer one-shot usage? Use [uv](https://docs.astral.sh/uv/):
 
 ```bash
 uvx --from base-image-inspector image-inspector
