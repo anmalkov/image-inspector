@@ -181,7 +181,10 @@ def generate_sbom(image_ref: str, out_path: Path) -> bool:
             check=True,
         )
         return True
-    except (OSError, subprocess.CalledProcessError) as exc:
+    except subprocess.CalledProcessError as exc:
+        print(f"  ! sbom generation failed for {image_ref}: {exc.stderr.strip()}", file=sys.stderr)
+        return False
+    except OSError as exc:
         print(f"  ! sbom generation failed for {image_ref}: {exc}", file=sys.stderr)
         return False
 
@@ -205,7 +208,10 @@ def score_sbom(sbom_path: Path) -> dict[str, int] | None:
             check=True,
         )
         return parse_trivy_counts(json.loads(proc.stdout))
-    except (OSError, subprocess.CalledProcessError) as exc:
+    except subprocess.CalledProcessError as exc:
+        print(f"  ! trivy sbom failed for {sbom_path}: {exc.stderr.strip()}", file=sys.stderr)
+        return None
+    except OSError as exc:
         print(f"  ! trivy sbom failed for {sbom_path}: {exc}", file=sys.stderr)
         return None
     except json.JSONDecodeError as exc:
@@ -624,6 +630,9 @@ def merge_main(argv: list[str] | None = None) -> int:
         help="Directory to copy retained digests' SBOMs into (requires --sbom-src-dir).",
     )
     args = parser.parse_args(argv)
+
+    if (args.sbom_src_dir is None) != (args.sbom_out_dir is None):
+        parser.error("--sbom-src-dir and --sbom-out-dir must be provided together.")
 
     payloads: list[dict] = []
     for path in args.inputs:

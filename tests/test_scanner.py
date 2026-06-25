@@ -6,6 +6,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import httpx
+import pytest
 import respx
 
 from image_inspector import scanner
@@ -447,6 +448,24 @@ def test_generate_sbom_invokes_trivy(monkeypatch, tmp_path):
     assert str(out_path) in captured["cmd"]
 
 
+def test_generate_sbom_surfaces_stderr_on_failure(monkeypatch, tmp_path, capsys):
+    def _run(cmd, **kwargs):
+        raise scanner.subprocess.CalledProcessError(1, cmd, stderr="trivy: boom\n")
+
+    monkeypatch.setattr(scanner.subprocess, "run", _run)
+    assert scanner.generate_sbom("python@sha256:x", tmp_path / "o.cdx.json") is False
+    assert "trivy: boom" in capsys.readouterr().err
+
+
+def test_score_sbom_surfaces_stderr_on_failure(monkeypatch, tmp_path, capsys):
+    def _run(cmd, **kwargs):
+        raise scanner.subprocess.CalledProcessError(1, cmd, stderr="sbom: boom\n")
+
+    monkeypatch.setattr(scanner.subprocess, "run", _run)
+    assert scanner.score_sbom(tmp_path / "s.cdx.json") is None
+    assert "sbom: boom" in capsys.readouterr().err
+
+
 # --- Prior-report fetch and SBOM publishing --------------------------------------------------
 
 
@@ -550,6 +569,17 @@ def test_merge_main_publishes_retained_sboms(tmp_path):
     assert rc == 0
     assert (out_sboms / scanner._sbom_name("sha256:keep")).exists()
     assert not (out_sboms / scanner._sbom_name("sha256:drop")).exists()
+
+
+@pytest.mark.parametrize("flag", ["--sbom-src-dir", "--sbom-out-dir"])
+def test_merge_main_requires_both_sbom_dirs(tmp_path, flag):
+    partial = tmp_path / "report-python.json"
+    partial.write_text(json.dumps({"images": {}}), encoding="utf-8")
+    with pytest.raises(SystemExit) as exc:
+        scanner.merge_main(
+            [str(partial), flag, str(tmp_path / "d"), "-o", str(tmp_path / "o.json")]
+        )
+    assert exc.value.code == 2
 
 
 def test_main_passes_prior_and_sbom_store(monkeypatch, tmp_path):
