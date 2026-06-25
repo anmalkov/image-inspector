@@ -25,7 +25,6 @@ from __future__ import annotations
 import json
 import os
 import re
-import tempfile
 from dataclasses import dataclass, replace
 from datetime import datetime
 from enum import StrEnum
@@ -135,9 +134,27 @@ def _report_url() -> str:
     return os.environ.get("IMAGE_INSPECTOR_REPORT_URL", "").strip() or _PAGES_URL
 
 
+def _is_windows() -> bool:
+    return os.name == "nt"
+
+
+def _default_cache_dir() -> Path:
+    """Per-user cache directory (never world-writable, unlike the system temp dir)."""
+    xdg = os.environ.get("XDG_CACHE_HOME", "").strip()
+    if xdg:
+        return Path(xdg) / "image-inspector"
+    if _is_windows():
+        local = os.environ.get("LOCALAPPDATA", "").strip()
+        if local:
+            return Path(local) / "image-inspector"
+    # ``expanduser`` returns "~" unchanged when home is undeterminable, whereas
+    # ``Path.home()`` raises ``RuntimeError`` and would break the never-crash guarantee.
+    return Path(os.path.expanduser("~")) / ".cache" / "image-inspector"
+
+
 def _cache_path() -> Path:
     override = os.environ.get("IMAGE_INSPECTOR_CACHE_DIR", "").strip()
-    base = Path(override) if override else Path(tempfile.gettempdir()) / "image-inspector"
+    base = Path(override) if override else _default_cache_dir()
     return base / _CACHE_FILENAME
 
 
@@ -162,7 +179,7 @@ def _read_cache(url: str) -> tuple[str | None, str | None]:
 def _write_cache(url: str, etag: str | None, body: str) -> None:
     path = _cache_path()
     try:
-        path.parent.mkdir(parents=True, exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         path.write_text(json.dumps({"url": url, "etag": etag, "body": body}), encoding="utf-8")
     except OSError:
         pass

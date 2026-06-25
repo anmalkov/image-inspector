@@ -1,7 +1,9 @@
 """Tests for the vulnerability report loader."""
 
 import json
+import os
 from datetime import UTC, datetime
+from pathlib import Path
 
 import httpx
 import pytest
@@ -318,3 +320,32 @@ def test_cache_roundtrip(monkeypatch, tmp_path):
     assert report_module._read_cache(url) == ('"etag"', body)
     # A different URL must not return another URL's cached body.
     assert report_module._read_cache("https://other.test/report.json") == (None, None)
+
+
+def test_cache_dir_override_wins(monkeypatch, tmp_path):
+    monkeypatch.setenv("IMAGE_INSPECTOR_CACHE_DIR", str(tmp_path / "custom"))
+    assert report_module._cache_path() == tmp_path / "custom" / report_module._CACHE_FILENAME
+
+
+def test_default_cache_dir_uses_xdg(monkeypatch):
+    monkeypatch.delenv("IMAGE_INSPECTOR_CACHE_DIR", raising=False)
+    monkeypatch.setattr(report_module, "_is_windows", lambda: False)
+    monkeypatch.setenv("XDG_CACHE_HOME", "/xdg/cache")
+    assert report_module._default_cache_dir() == Path("/xdg/cache") / "image-inspector"
+
+
+def test_default_cache_dir_falls_back_to_dot_cache(monkeypatch):
+    monkeypatch.delenv("IMAGE_INSPECTOR_CACHE_DIR", raising=False)
+    monkeypatch.delenv("XDG_CACHE_HOME", raising=False)
+    monkeypatch.setattr(report_module, "_is_windows", lambda: False)
+    monkeypatch.setattr(os.path, "expanduser", lambda _: "/home/user")
+    assert report_module._default_cache_dir() == Path("/home/user") / ".cache" / "image-inspector"
+
+
+def test_default_cache_dir_uses_localappdata_on_windows(monkeypatch):
+    monkeypatch.delenv("IMAGE_INSPECTOR_CACHE_DIR", raising=False)
+    monkeypatch.delenv("XDG_CACHE_HOME", raising=False)
+    monkeypatch.setattr(report_module, "_is_windows", lambda: True)
+    local = r"C:\\Users\\u\\AppData\\Local"
+    monkeypatch.setenv("LOCALAPPDATA", local)
+    assert report_module._default_cache_dir() == Path(local) / "image-inspector"
