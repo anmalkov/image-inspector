@@ -37,7 +37,7 @@ Pick a base image with the arrow keys and copy the digest-pinned `FROM` line. Th
 |------|----------|-------------------|
 | `docker pull` + `trivy scan` | Accurate, thorough scanning | Slower, and runs locally — you pull the image first |
 | Renovate | Keeping base images up to date | Helps *after* you've already chosen a base image |
-| **image-inspector** | **Choose + inspect + pin _before_ you write `FROM`** | Approximate counts from bundled nightly data, not a live scan |
+| **image-inspector** | **Choose + inspect + pin _before_ you write `FROM`** | Approximate counts from precomputed nightly data (fetched from GitHub Pages, bundled offline fallback), not a live scan |
 
 ## Who is this for?
 
@@ -72,9 +72,9 @@ when it was built — so you can choose a good base image with confidence.
 > image contents. Pinning to a digest means everyone who builds your `Dockerfile` gets the *identical*
 > base image, every time. That's what makes a build reproducible.
 
-Vulnerability counts come from nightly precomputed Trivy data bundled with the package.
-Images are not pulled or scanned locally at runtime. No Docker daemon or local scanner is
-required.
+Vulnerability counts come from precomputed nightly Trivy data — fetched from GitHub Pages
+when online, with a copy bundled in the package as an offline fallback. Images are not pulled
+or scanned locally at runtime. No Docker daemon or local scanner is required.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/anmalkov/image-inspector/main/docs/assets/demo.gif" alt="image-inspector demo">
@@ -116,7 +116,7 @@ New here and want the full walkthrough? See the **[Getting started guide](https:
 
 - 📌 **Digest pinning** — outputs a `name:tag@sha256:…` reference for reproducible builds.
 - 🛡️ **Security at a glance** — critical / high / total vulnerability counts for the chosen image,
-  from precomputed nightly Trivy data bundled with the tool.
+  from precomputed nightly Trivy data fetched from GitHub Pages (with a bundled offline fallback).
 - 🧱 **Many ecosystems, one interface** — Python, .NET, Java, Go, Node, Rust, C/C++, plus Ubuntu,
   Debian and Alpine base images.
 - 🤖 **Automation-friendly** — `--json` for non-interactive use and `--plain` / `NO_COLOR` support.
@@ -197,13 +197,17 @@ The critical / high / total counts come from **precomputed nightly [Trivy](https
 data**. Nothing is scanned locally at runtime — image-inspector doesn't run Trivy
 on your machine, pull images, or talk to a scanner. That keeps it fast and means no Docker daemon or
 scanner is required. A GitHub Actions workflow regenerates this data **nightly** and publishes it to
-[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json); the copy bundled with the
-tool is the snapshot that shipped with the installed release and may lag behind the live data. Because
-the data is precomputed, counts reflect the most recent snapshot rather than a live, on-the-spot scan.
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json). At runtime the tool is
+**online-first**: it fetches that live report when online (short timeout, `ETag`-cached) and **falls
+back to the copy bundled with the package when offline** or if the fetch fails. The **SECURITY**
+panel's `Source` row shows which you're seeing (`online (latest)` vs `offline (bundled copy)`). Set
+`IMAGE_INSPECTOR_OFFLINE=1` to force the bundled copy, or `IMAGE_INSPECTOR_REPORT_URL` to point at a
+different report. Because the data is precomputed, counts reflect the most recent snapshot rather
+than a live, on-the-spot scan.
 
 ## Limitations
 
-- Vulnerability counts are from the latest bundled nightly dataset, not a live scan.
+- Vulnerability counts come from the precomputed nightly dataset (online from GitHub Pages, or the bundled offline fallback), not a live scan.
 - Counts are for the selected base image only, not your final application image.
 - Digest pinning improves reproducibility, but you still need a process for updating pinned
   images.

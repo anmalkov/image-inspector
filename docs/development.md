@@ -64,6 +64,33 @@ main interactive command from source with:
 uv run image-inspector
 ```
 
+The tool is **online-first**: it fetches the vulnerability report from
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json) at runtime, so a normal
+online dev setup needs nothing extra. The bundled offline copy at `src/image_inspector/data/report.json`
+is **not committed** (it's a release-time artifact, git-ignored) — running offline from a source
+checkout without it simply yields an empty report.
+
+### Download the offline report snapshot (optional)
+
+If you want to work offline, or run the integration tests, fetch the latest report from GitHub Pages
+into the package — the same file the release workflow bundles into the wheel:
+
+```bash
+# macOS / Linux
+curl --fail --location https://anmalkov.github.io/image-inspector/report.json \
+  -o src/image_inspector/data/report.json
+```
+
+```powershell
+# Windows (PowerShell)
+curl.exe --fail --location https://anmalkov.github.io/image-inspector/report.json `
+  -o src/image_inspector/data/report.json
+```
+
+The file is git-ignored, so it won't show up in `git status`. With it in place you can force the
+offline path with `IMAGE_INSPECTOR_OFFLINE=1 uv run image-inspector`, and run the integration tests
+(see below).
+
 ## Quality checks
 
 These are the same checks the CI pipeline runs on every pull request and on `main`.
@@ -106,6 +133,18 @@ Run a single test file or test:
 uv run pytest tests/test_cli.py
 uv run pytest tests/test_cli.py::test_name
 ```
+
+### Integration tests
+
+Integration tests (under `tests/integration/`) check the real bundled `report.json` and are
+**deselected from the default `uv run pytest`** because they need that artifact. Download the
+snapshot first (see [above](#download-the-offline-report-snapshot-optional)), then run:
+
+```bash
+uv run pytest -m integration
+```
+
+This is the same check the release workflow runs after snapshotting the report from GitHub Pages.
 
 ## Before opening a pull request
 

@@ -51,8 +51,45 @@ jobs:
       - name: Set project version
         run: uv version "${{ steps.version.outputs.version }}"
 
+      - name: Snapshot the latest Pages report into the package
+        # Pin a release-time offline snapshot into the wheel so the package ships a
+        # bundled fallback for end users who run offline. The report is NOT committed to
+        # the repo (the nightly job publishes it to Pages); it is fetched here at release
+        # time. This is a HARD requirement: if the report can't be downloaded or isn't
+        # parseable JSON, the release fails rather than shipping a stale or empty copy.
+        run: |
+          url="https://anmalkov.github.io/image-inspector/report.json"
+          dest="src/image_inspector/data/report.json"
+          curl --fail --silent --show-error --location --max-time 30 "$url" -o "$dest"
+          python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$dest"
+          echo "Snapshotted the latest report from Pages into ${dest}."
+
+      - name: Verify the tool accepts the bundled report
+        # Release gate: run the integration test (deselected from the default unit run)
+        # that loads the freshly snapshotted report through the tool itself. The
+        # definition of "valid" lives entirely in image_inspector, so this never needs
+        # updating when the report format or schema version changes.
+        run: uv run pytest -m integration
+
       - name: Build distributions
         run: uv build
+
+      - name: Smoke-test the built wheel
+        # The bundled report.json is git-ignored/untracked, so verify the *published*
+        # wheel actually contains it: install the built wheel into a throwaway venv
+        # (isolated from the source tree) and load the report offline. Fails the release
+        # if the artifact ships without a usable offline fallback.
+        run: |
+          python3 -m venv /tmp/smoke
+          /tmp/smoke/bin/pip install --quiet dist/*.whl
+          IMAGE_INSPECTOR_OFFLINE=1 /tmp/smoke/bin/python -c "
+          import sys
+          from image_inspector.report import load_report, ReportSource
+          report = load_report()
+          if report.source is not ReportSource.OFFLINE or not report.images:
+              sys.exit('Built wheel does not ship a usable offline report (source=%r, images=%d); refusing to release.' % (report.source, len(report.images)))
+          print('Built wheel ships a usable offline report: %d image(s).' % len(report.images))
+          "
 
       - name: Publish to PyPI
         run: uv publish

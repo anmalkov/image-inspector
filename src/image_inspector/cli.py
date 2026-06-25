@@ -75,6 +75,7 @@ def _resolve(
         variant=_display_variant(variant),
         is_lts=bool(_lts_versions(language, [version])),
         scan_source=ScanSource.from_report(report),
+        report_source=report.source,
     )
 
 
@@ -188,6 +189,7 @@ def _run_json(args: argparse.Namespace, report: VulnerabilityReport) -> int:
         variant=_display_variant(variant),
         is_lts=bool(_lts_versions(language, [version])),
         scan_source=ScanSource.from_report(report),
+        report_source=report.source,
     )
     ui.show_result_json(image)
     return 0

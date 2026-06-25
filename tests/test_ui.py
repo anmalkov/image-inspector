@@ -3,9 +3,10 @@
 from datetime import UTC, datetime
 
 from image_inspector.models import LANGUAGES_BY_KEY, ResolvedImage, ScanSource
-from image_inspector.report import ImageVulnerabilities
+from image_inspector.report import ImageVulnerabilities, ReportSource
 from image_inspector.ui import (
     copy_to_clipboard,
+    format_data_source,
     format_datetime,
     format_scan_source,
     format_size,
@@ -59,6 +60,12 @@ def test_format_scan_source_none():
     assert format_scan_source(ScanSource(version=None)) is None
 
 
+def test_format_data_source_values():
+    assert format_data_source(ReportSource.ONLINE) == "online (latest)"
+    assert format_data_source(ReportSource.OFFLINE) == "offline (bundled copy)"
+    assert format_data_source(None) == "not found"
+
+
 def _resolved(**kwargs) -> ResolvedImage:
     base = dict(
         language=LANGUAGES_BY_KEY["ubuntu"],
@@ -101,6 +108,7 @@ def test_result_payload_shape():
         variant="slim",
         vulnerabilities=ImageVulnerabilities(critical=1, high=2, total=7),
         scan_source=ScanSource(version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)),
+        report_source=ReportSource.ONLINE,
     )
     payload = result_payload(image)
     assert payload["language"] == "python"
@@ -109,6 +117,7 @@ def test_result_payload_shape():
     assert payload["pinned_reference"] == "python:3.13.14-slim@sha256:deadbeef"
     assert payload["from_line"] == "FROM python:3.13.14-slim@sha256:deadbeef"
     assert payload["vulnerabilities"]["high"] == 2
+    assert payload["data_source"] == "online"
     assert payload["scanner"] == {
         "name": "trivy",
         "version": "0.71.1",
@@ -120,6 +129,7 @@ def test_result_payload_scanner_null_when_unscanned():
     image = _resolved(language=LANGUAGES_BY_KEY["python"], tag="3.13.14", version="3.13.14")
     payload = result_payload(image)
     assert payload["scanner"] == {"name": "trivy", "version": None, "db_updated_at": None}
+    assert payload["data_source"] is None
 
 
 def test_result_sections_structure():
@@ -134,6 +144,7 @@ def test_result_sections_structure():
             critical=1, high=2, total=7, scanned_at=datetime(2026, 6, 15, tzinfo=UTC)
         ),
         scan_source=ScanSource(version="0.71.1", db_updated_at=datetime(2026, 6, 14, tzinfo=UTC)),
+        report_source=ReportSource.ONLINE,
     )
     sections = _result_sections(image)
     titles = [title for title, _ in sections]
@@ -141,8 +152,9 @@ def test_result_sections_structure():
 
     security = next(rows for title, rows in sections if title == "SECURITY")
     labels = {label: value for label, value in security}
-    assert set(labels) == {"Vulnerabilities", "Scanned", "Source"}
-    assert labels["Source"] == "Trivy v0.71.1 · DB Jun 14, 2026"
+    assert set(labels) == {"Vulnerabilities", "Scanned", "Scanner", "Source"}
+    assert labels["Scanner"] == "Trivy v0.71.1 · DB Jun 14, 2026"
+    assert labels["Source"] == "online (latest)"
 
 
 def test_result_sections_security_omits_unknown_rows():
@@ -150,8 +162,9 @@ def test_result_sections_security_omits_unknown_rows():
 
     image = _resolved(language=LANGUAGES_BY_KEY["python"], tag="3.13.14", version="3.13.14")
     security = next(rows for title, rows in _result_sections(image) if title == "SECURITY")
-    # No scan data: only the Vulnerabilities row, no Scanned/Source.
-    assert [label for label, _ in security] == ["Vulnerabilities"]
+    # No scan data and no report: only Vulnerabilities plus the always-shown Source row.
+    assert [label for label, _ in security] == ["Vulnerabilities", "Source"]
+    assert dict(security)["Source"] == "not found"
 
 
 def test_copy_to_clipboard_emits_osc52(capsys):

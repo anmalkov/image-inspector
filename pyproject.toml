@@ -69,6 +69,10 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not integration'"
+markers = [
+    "integration: checks against real build artifacts (e.g. the bundled report.json); deselected by default, run explicitly in the release workflow",
+]
 
 [tool.mypy]
 python_version = "3.13"

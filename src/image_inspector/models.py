@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from .report import ImageVulnerabilities, VulnerabilityReport
+from .report import ImageVulnerabilities, ReportSource, VulnerabilityReport
 
 
 class RegistryKind(StrEnum):
@@ -146,6 +146,7 @@ class ResolvedImage:
     variant: str | None = None
     is_lts: bool = False
     scan_source: ScanSource | None = None
+    report_source: ReportSource | None = None
 
     @property
     def source_label(self) -> str:

@@ -25,7 +25,7 @@ from rich.theme import Theme
 
 from . import __version__
 from .models import Category, Language, ResolvedImage, ScanSource
-from .report import ImageVulnerabilities
+from .report import ImageVulnerabilities, ReportSource
 
 _THEME = Theme(
     {
@@ -252,6 +252,19 @@ def format_scan_source(source: ScanSource | None) -> str | None:
     return label
 
 
+def format_data_source(source: ReportSource | None) -> str:
+    """Render the data-origin line for the SECURITY panel's ``Source`` row.
+
+    ``ONLINE`` → fresh data fetched online; ``OFFLINE`` → the packaged snapshot;
+    ``None`` → no report was available at all.
+    """
+    if source is ReportSource.ONLINE:
+        return "online (latest)"
+    if source is ReportSource.OFFLINE:
+        return "offline (bundled copy)"
+    return "not found"
+
+
 def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, str | Text]]]]:
     """Group the resolved-image details into labelled (title, rows) sections."""
     vulns = image.vulnerabilities
@@ -260,9 +273,10 @@ def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, st
     ]
     if vulns is not None and vulns.scanned_at is not None:
         security.append(("Scanned", format_datetime(vulns.scanned_at)))
-    source = format_scan_source(image.scan_source)
-    if source is not None:
-        security.append(("Source", source))
+    scanner = format_scan_source(image.scan_source)
+    if scanner is not None:
+        security.append(("Scanner", scanner))
+    security.append(("Source", format_data_source(image.report_source)))
 
     return [
         ("SELECTED", [("", image.source_label)]),
@@ -313,6 +327,7 @@ def result_payload(image: ResolvedImage) -> dict:
             if source and source.db_updated_at
             else None,
         },
+        "data_source": image.report_source.value if image.report_source else None,
     }
 
 
