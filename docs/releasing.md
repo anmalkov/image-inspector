@@ -53,6 +53,7 @@ The version is derived **from the git tag** at release time:
    - set the project version from the tag (`uv version`),
    - **snapshot the latest report from GitHub Pages** into `src/image_inspector/data/report.json`
      so the wheel ships a release-pinned offline fallback (see below),
+   - **verify the tool can read its own bundled report** and fail the release otherwise,
    - build the source distribution and wheel (`uv build`),
    - publish them to PyPI via Trusted Publishing (`uv publish`),
    - create a GitHub Release for the tag with auto-generated notes and the built
@@ -79,9 +80,16 @@ release ships a release-pinned offline snapshot.
 This is why the nightly scan job publishes the report to Pages rather than committing it back to the
 repo — the bundled copy is refreshed here, at release time, instead.
 
-The step **fails soft**: if the download fails, times out, or doesn't return a valid report, it logs
-a warning and ships whatever `report.json` is already committed, so a transient Pages hiccup never
-blocks a release.
+The snapshot step **fails soft**: if the download fails, times out, or doesn't return parseable
+JSON, it logs a warning and keeps whatever `report.json` is already committed, so a transient Pages
+hiccup never blocks a release. The snapshot deliberately does **not** re-validate the report's
+schema — deciding whether a report is usable is the tool's job, not the workflow's.
+
+That check is instead enforced as a hard **release gate** by the next step, *"Verify the tool
+accepts the bundled report"*. It loads the bundled copy through `image_inspector` itself
+(`IMAGE_INSPECTOR_OFFLINE=1`) and **fails the release** if the tool rejects it or it loads empty.
+Because the gate runs the real loader, the definition of "valid" lives entirely in the package and
+the workflow never needs updating when the report format or schema version changes.
 
 ## Package metadata
 

@@ -54,23 +54,39 @@ jobs:
       - name: Snapshot the latest Pages report into the package
         # Pin a release-time offline snapshot into the wheel so the bundled fallback is
         # fresh. The nightly job publishes to Pages instead of committing the report, so
-        # we refresh the bundled copy here. The schema_version check below mirrors
-        # SCHEMA_VERSION in src/image_inspector/report.py so we never bundle an
-        # incompatible report. Fail soft: ship the committed copy if the fetch fails or
-        # returns something that isn't a valid, supported report.
+        # we refresh the bundled copy here. Fail soft: only overwrite the committed copy
+        # when the download succeeds and is parseable JSON; otherwise keep the committed
+        # copy. We do NOT re-validate the report schema here -- that is the tool's job,
+        # enforced as a hard gate by the next step.
         run: |
           url="https://anmalkov.github.io/image-inspector/report.json"
           dest="src/image_inspector/data/report.json"
           tmp="$(mktemp)"
           if curl --fail --silent --show-error --location --max-time 30 "$url" -o "$tmp" \
-            && python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert isinstance(d, dict) and d.get('schema_version') == 2 and isinstance(d.get('images'), dict)" "$tmp"; then
-            count="$(python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]))['images']))" "$tmp")"
+            && python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$tmp"; then
             mv "$tmp" "$dest"
-            echo "Snapshotted ${count} image(s) from Pages into ${dest}."
+            echo "Snapshotted the latest report from Pages into ${dest}."
           else
-            echo "::warning::Could not fetch a valid report from ${url}; shipping the committed copy at ${dest}."
+            echo "::warning::Could not fetch a usable report from ${url}; shipping the committed copy at ${dest}."
             rm -f "$tmp"
           fi
+
+      - name: Verify the tool accepts the bundled report
+        # Release gate: load the bundled report through the tool itself, so the
+        # definition of "valid" lives entirely in image_inspector (not duplicated here).
+        # Fail the release if the version we are about to ship cannot read its own
+        # bundled offline report.
+        run: |
+          IMAGE_INSPECTOR_OFFLINE=1 uv run python -c "
+          import sys
+          from image_inspector.report import load_report, ReportSource
+          report = load_report()
+          if report.source is not ReportSource.OFFLINE:
+              sys.exit('Bundled report was rejected by the tool (source=%r); refusing to release.' % report.source)
+          if not report.images:
+              sys.exit('Bundled report loaded but is empty; refusing to release.')
+          print('Bundled report accepted by the tool: %d image(s).' % len(report.images))
+          "
 
       - name: Build distributions
         run: uv build
