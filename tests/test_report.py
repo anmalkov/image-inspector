@@ -319,6 +319,27 @@ def test_load_report_falls_back_when_entry_malformed(isolate_loader):
     assert report.lookup_digest(_PACKAGED_DIGEST) is not None
 
 
+@pytest.mark.parametrize("bad_counts", [None, {"critical": 1}, 5])
+def test_from_compact_rejects_non_list_counts(bad_counts):
+    # A missing or wrong-typed ``c`` is a structural malformation, not "zero vulns":
+    # it must raise so _build_report falls back rather than silently under-reporting.
+    with pytest.raises(TypeError):
+        ImageVulnerabilities.from_compact(bad_counts)
+
+
+def test_load_report_falls_back_when_entry_counts_missing(isolate_loader):
+    # A history entry with no ``c`` at all must trigger fallback, not load as all-zero counts.
+    bad = {
+        "schema_version": 3,
+        "trivy_version": "0.58.0",
+        "tags": {"python:3.13.14-slim": {"history": [{"d": "bad", "t": None}]}},
+    }
+    respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=bad))
+    report = load_report()
+    assert report.source is ReportSource.OFFLINE
+    assert report.lookup_digest(_PACKAGED_DIGEST) is not None
+
+
 def test_load_report_empty_when_packaged_entry_malformed(monkeypatch):
     # The packaged copy itself has a malformed entry: _build_report must swallow the error
     # and degrade to an empty report rather than crashing startup.

@@ -125,9 +125,15 @@ class ImageVulnerabilities:
         tolerated by padding/truncating to five severities. ``scanned_at`` carries the
         report's ``generated_at`` (the per-scan time lives in the header in v3, not per
         digest).
+
+        A missing or wrong-typed ``c`` (e.g. ``None`` or a dict) is a structurally
+        malformed entry, not "zero vulnerabilities", so it raises ``TypeError`` to let
+        ``_build_report`` treat the payload as unusable and fall back rather than silently
+        under-reporting.
         """
-        values = list(counts) if isinstance(counts, (list, tuple)) else []
-        nums = [int(v) for v in values[:5]]
+        if not isinstance(counts, (list, tuple)):
+            raise TypeError(f"v3 'c' must be a list, got {type(counts).__name__}")
+        nums = [int(v) for v in list(counts)[:5]]
         nums += [0] * (5 - len(nums))
         crit, high, medium, low, unknown = nums
         return cls(
