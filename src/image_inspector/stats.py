@@ -324,7 +324,7 @@ def _load_local_payload() -> dict | None:
 
 
 def _load_url_payload() -> dict | None:
-    return report_module._fetch_report()
+    return report_module._fetch_report().payload
 
 
 def _load_file_payload(path: str) -> dict | None:

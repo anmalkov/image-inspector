@@ -41,6 +41,12 @@ _FETCH_TIMEOUT = httpx.Timeout(3.0, connect=2.0)
 _CACHE_FILENAME = "report-cache.json"
 _TRUTHY = {"1", "true", "yes", "on"}
 
+# PyPI lookup used to tell the user a newer tool release is available. Kept on a short
+# timeout and fully offline-safe so it can never hang or crash startup.
+_DISTRIBUTION_NAME = "base-image-inspector"
+_PYPI_URL = f"https://pypi.org/pypi/{_DISTRIBUTION_NAME}/json"
+_PYPI_TIMEOUT = httpx.Timeout(3.0, connect=2.0)
+
 # Trivy emits nanosecond-precision timestamps (9 fractional digits) that
 # datetime.fromisoformat cannot parse; trim fractional seconds to 6 digits.
 _FRACTION_RE = re.compile(r"(\.\d{6})\d+")
@@ -86,6 +92,7 @@ class ReportSource(StrEnum):
 
     ONLINE = "online"
     OFFLINE = "offline"
+    OUTDATED = "outdated"
 
 
 @dataclass(frozen=True)
@@ -205,12 +212,47 @@ def _validate_payload(body: str) -> dict | None:
     return data
 
 
-def _fetch_report() -> dict | None:
+def _schema_is_newer(body: str) -> bool:
+    """Return ``True`` if ``body`` is a report whose ``schema_version`` exceeds ours.
+
+    This is the "outdated tool" signal: the online report parsed fine but uses a schema
+    newer than this build supports, so the published data exists but we can't read it.
+    Any non-dict / unparsable / non-integer / not-newer payload returns ``False``.
+    """
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return False
+    if not isinstance(data, dict):
+        return False
+    version = data.get("schema_version")
+    # bool is an int subclass; exclude it so ``True``/``False`` never count as a version.
+    if not isinstance(version, int) or isinstance(version, bool):
+        return False
+    return version > SCHEMA_VERSION
+
+
+@dataclass(frozen=True)
+class _FetchOutcome:
+    """Result of an online fetch attempt.
+
+    ``payload`` is a usable, schema-matching report (or ``None``); ``schema_too_new`` is
+    ``True`` when the online report parsed but uses a newer-than-supported schema, which
+    the caller surfaces as an outdated-tool warning.
+    """
+
+    payload: dict | None = None
+    schema_too_new: bool = False
+
+
+def _fetch_report() -> _FetchOutcome:
     """Fetch the hosted report, honouring ``ETag`` revalidation.
 
-    Returns the parsed, schema-validated payload, or ``None`` on any failure (offline,
-    timeout, non-200, malformed JSON, schema mismatch) so the caller can fall back to
-    the packaged copy.
+    Returns a usable, schema-validated payload when available. When the report instead
+    uses a newer-than-supported schema, returns an outcome flagged ``schema_too_new`` so
+    the caller can fall back to the packaged copy *and* warn that the tool is outdated.
+    Any other failure (offline, timeout, non-200, malformed JSON, older schema) yields an
+    empty outcome so the caller falls back quietly.
     """
     url = _report_url()
     etag, cached_body = _read_cache(url)
@@ -218,18 +260,25 @@ def _fetch_report() -> dict | None:
     try:
         response = httpx.get(url, headers=headers, timeout=_FETCH_TIMEOUT, follow_redirects=True)
     except httpx.HTTPError:
-        return None
+        return _FetchOutcome()
 
+    # A 304 means our cached body is still current. Normally it is a previously validated
+    # v2 body, but a newer tool version (or a later downgrade) could have populated the
+    # shared cache with a newer-schema body, so apply the same schema check as the 200 path.
     if response.status_code == 304 and cached_body is not None:
-        return _validate_payload(cached_body)
+        cached_payload = _validate_payload(cached_body)
+        if cached_payload is not None:
+            return _FetchOutcome(payload=cached_payload)
+        return _FetchOutcome(schema_too_new=_schema_is_newer(cached_body))
     if response.status_code != 200:
-        return None
+        return _FetchOutcome()
 
     body = response.text
     payload = _validate_payload(body)
     if payload is not None:
         _write_cache(url, response.headers.get("ETag"), body)
-    return payload
+        return _FetchOutcome(payload=payload)
+    return _FetchOutcome(schema_too_new=_schema_is_newer(body))
 
 
 def _load_packaged() -> dict | None:
@@ -267,18 +316,55 @@ def load_report() -> VulnerabilityReport:
     ``IMAGE_INSPECTOR_OFFLINE`` is set) falls back to the packaged ``report.json``.
     Returns an empty report if no usable data can be loaded at all, so the picker
     always keeps working.
+
+    When the online report uses a schema newer than this build supports, the packaged
+    fallback is marked :attr:`ReportSource.OUTDATED` so the UI can warn that the installed
+    tool is behind the published data; other fallbacks stay the quiet
+    :attr:`ReportSource.OFFLINE` path.
     """
+    schema_too_new = False
     if not _env_truthy("IMAGE_INSPECTOR_OFFLINE"):
-        payload = _fetch_report()
-        if payload is not None:
-            report = _build_report(payload, ReportSource.ONLINE)
+        outcome = _fetch_report()
+        if outcome.payload is not None:
+            report = _build_report(outcome.payload, ReportSource.ONLINE)
             if report is not None:
                 return report
+        schema_too_new = outcome.schema_too_new
 
     packaged = _load_packaged()
     if packaged is not None:
-        report = _build_report(packaged, ReportSource.OFFLINE)
+        source = ReportSource.OUTDATED if schema_too_new else ReportSource.OFFLINE
+        report = _build_report(packaged, source)
         if report is not None:
             return report
 
     return VulnerabilityReport.empty()
+
+
+def latest_pypi_version() -> str | None:
+    """Return the latest published ``base-image-inspector`` version on PyPI, or ``None``.
+
+    Used to tell the user that a newer tool release is available. Skips the lookup
+    entirely when ``IMAGE_INSPECTOR_OFFLINE`` is set, and is otherwise fully offline-safe:
+    a short timeout plus any network/parse error degrades to ``None`` so it can never hang
+    or crash startup.
+    """
+    if _env_truthy("IMAGE_INSPECTOR_OFFLINE"):
+        return None
+    try:
+        response = httpx.get(_PYPI_URL, timeout=_PYPI_TIMEOUT, follow_redirects=True)
+    except httpx.HTTPError:
+        return None
+    if response.status_code != 200:
+        return None
+    try:
+        data = response.json()
+    except ValueError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    info = data.get("info")
+    if not isinstance(info, dict):
+        return None
+    version = info.get("version")
+    return version if isinstance(version, str) and version else None

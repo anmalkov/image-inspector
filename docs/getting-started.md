@@ -174,6 +174,7 @@ After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `
 
 - **Do I need Trivy or Docker locally?**
   - No. When online, the interactive panel **fetches the latest report from GitHub Pages**; when offline (or if the fetch fails) it falls back to the `report.json` **bundled** with the installed release. Either way the counts come from precomputed Trivy data — fresh data no longer requires a new package release. The **SECURITY** panel's `Source` row tells you which copy you're seeing (`online (latest)` vs `offline (bundled copy)`).
+  - If the published report uses a **newer schema than your installed tool understands**, the panel shows `bundled (tool outdated)` and prints a warning that you're seeing stale data — with the right upgrade command for how you installed it (`uv tool upgrade`, `pipx upgrade`, or `pip install --upgrade base-image-inspector`), or a "new version coming soon" note when the matching release isn't on PyPI yet. The tool also notifies you whenever a newer version is published on PyPI, even when the report itself is current.
   - You do **not** need Docker or Trivy installed to run image resolution locally.
 
 ## Automation and JSON output

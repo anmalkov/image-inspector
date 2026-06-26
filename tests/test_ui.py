@@ -5,13 +5,20 @@ from datetime import UTC, datetime
 from image_inspector.models import LANGUAGES_BY_KEY, ResolvedImage, ScanSource
 from image_inspector.report import ImageVulnerabilities, ReportSource
 from image_inspector.ui import (
+    Installer,
+    _is_newer,
     copy_to_clipboard,
+    detect_installer,
     format_data_source,
     format_datetime,
+    format_outdated_warning,
     format_scan_source,
     format_size,
+    format_update_notice,
     format_vulnerabilities,
     result_payload,
+    show_version_status,
+    upgrade_command,
 )
 
 
@@ -63,7 +70,100 @@ def test_format_scan_source_none():
 def test_format_data_source_values():
     assert format_data_source(ReportSource.ONLINE) == "online (latest)"
     assert format_data_source(ReportSource.OFFLINE) == "offline (bundled copy)"
+    assert format_data_source(ReportSource.OUTDATED) == "bundled (tool outdated)"
     assert format_data_source(None) == "not found"
+
+
+def test_detect_installer_uv_tool():
+    assert detect_installer("/x/uv/tools/p/site-packages/ui.py") is Installer.UV_TOOL
+
+
+def test_detect_installer_uvx_cache():
+    assert detect_installer("/x/uv/cache/archive-v0/h/site-packages/ui.py") is Installer.UVX
+
+
+def test_detect_installer_uvx_cache_windows():
+    path = r"C:\Users\u\AppData\Local\uv\cache\archive-v0\h\Lib\site-packages\ui.py"
+    assert detect_installer(path) is Installer.UVX
+
+
+def test_detect_installer_pipx():
+    assert detect_installer("/home/u/.local/pipx/venvs/p/lib/ui.py") is Installer.PIPX
+
+
+def test_detect_installer_pip_fallback():
+    assert detect_installer("/home/u/project/.venv/lib/site-packages/ui.py") is Installer.PIP
+
+
+def test_upgrade_command_matches_installer():
+    assert upgrade_command("/x/uv/tools/p/ui.py") == "uv tool upgrade base-image-inspector"
+    assert upgrade_command("/x/pipx/venvs/p/ui.py") == "pipx upgrade base-image-inspector"
+    assert upgrade_command("/x/.venv/lib/ui.py") == "pip install --upgrade base-image-inspector"
+    assert (
+        upgrade_command("/x/uv/cache/archive-v0/h/ui.py")
+        == "uvx --from base-image-inspector@latest image-inspector"
+    )
+
+
+def test_is_newer():
+    assert _is_newer("0.2.1", "0.1.0") is True
+    assert _is_newer("0.1.0", "0.1.0") is False
+    assert _is_newer("0.1.0", "0.2.1") is False
+    assert _is_newer(None, "0.1.0") is False
+    assert _is_newer("not-a-version", "0.1.0") is False
+
+
+def test_format_update_notice_when_newer():
+    notice = format_update_notice("0.1.0", "0.2.1")
+    assert notice is not None
+    assert "0.2.1" in notice.plain
+    assert "base-image-inspector" in notice.plain
+
+
+def test_format_update_notice_none_when_current_or_unknown():
+    assert format_update_notice("0.2.1", "0.2.1") is None
+    assert format_update_notice("0.2.1", None) is None
+    assert format_update_notice("0.2.1", "0.1.0") is None
+
+
+def test_format_outdated_warning_update_available():
+    text = format_outdated_warning(datetime(2026, 6, 15, tzinfo=UTC), "0.1.0", "0.2.1").plain
+    assert "outdated" in text.lower()
+    assert "Jun 15, 2026" in text
+    assert "0.2.1" in text  # available version
+    assert "base-image-inspector" in text  # installer-aware upgrade command
+
+
+def test_format_outdated_warning_coming_soon():
+    # latest unknown (PyPI unreachable) -> 'coming soon', never an upgrade command.
+    text = format_outdated_warning(datetime(2026, 6, 15, tzinfo=UTC), "0.2.1", None).plain
+    assert "available soon" in text.lower()
+    assert "upgrade" not in text.lower()
+
+
+def test_format_outdated_warning_coming_soon_when_not_newer():
+    # latest == installed (matching release not published yet) -> 'coming soon'.
+    text = format_outdated_warning(None, "0.2.1", "0.2.1").plain
+    assert "available soon" in text.lower()
+
+
+def test_show_version_status_outdated_prints(capsys):
+    show_version_status(ReportSource.OUTDATED, datetime(2026, 6, 15, tzinfo=UTC), "0.1.0", "0.2.1")
+    out = capsys.readouterr().out
+    assert "outdated" in out.lower()
+    assert "0.2.1" in out
+
+
+def test_show_version_status_update_notice(capsys):
+    show_version_status(ReportSource.ONLINE, None, "0.1.0", "0.2.1")
+    out = capsys.readouterr().out.lower()
+    assert "update available" in out
+    assert "0.2.1" in out
+
+
+def test_show_version_status_silent_when_current(capsys):
+    show_version_status(ReportSource.ONLINE, None, "0.2.1", "0.2.1")
+    assert capsys.readouterr().out.strip() == ""
 
 
 def _resolved(**kwargs) -> ResolvedImage:
