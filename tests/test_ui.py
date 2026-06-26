@@ -130,7 +130,6 @@ def test_format_outdated_warning_update_available():
     text = format_outdated_warning(datetime(2026, 6, 15, tzinfo=UTC), "0.1.0", "0.2.1").plain
     assert "outdated" in text.lower()
     assert "Jun 15, 2026" in text
-    assert "0.1.0" in text  # installed version
     assert "0.2.1" in text  # available version
     assert "base-image-inspector" in text  # installer-aware upgrade command
 
@@ -157,7 +156,9 @@ def test_show_version_status_outdated_prints(capsys):
 
 def test_show_version_status_update_notice(capsys):
     show_version_status(ReportSource.ONLINE, None, "0.1.0", "0.2.1")
-    assert "new version" in capsys.readouterr().out.lower()
+    out = capsys.readouterr().out.lower()
+    assert "update available" in out
+    assert "0.2.1" in out
 
 
 def test_show_version_status_silent_when_current(capsys):

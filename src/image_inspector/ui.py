@@ -326,6 +326,17 @@ def _is_newer(latest: str | None, installed: str) -> bool:
         return False
 
 
+def _append_update_line(text: Text, latest_version: str) -> None:
+    """Append the shared "New version vX is available" call-to-action to ``text``.
+
+    The upgrade command goes on its own line so it stands out and is easy to copy.
+    """
+    text.append("New version ")
+    text.append(f"v{latest_version}", style="label")
+    text.append(" is available. Run:\n    ")
+    text.append(upgrade_command(), style="value")
+
+
 def format_update_notice(installed_version: str, latest_version: str | None) -> Text | None:
     """Build the light "a new version is available" line, or ``None`` if up to date.
 
@@ -333,12 +344,9 @@ def format_update_notice(installed_version: str, latest_version: str | None) -> 
     """
     if not _is_newer(latest_version, installed_version):
         return None
+    assert latest_version is not None
     notice = Text()
-    notice.append("⬆ ", style="accent")
-    notice.append("A new version ", style="warn")
-    notice.append(f"v{latest_version}", style="accent")
-    notice.append(f" is available (you have v{installed_version}). Update with:\n", style="warn")
-    notice.append(f"  {upgrade_command()}", style="value")
+    _append_update_line(notice, latest_version)
     return notice
 
 
@@ -355,18 +363,17 @@ def format_outdated_warning(
     yet, or PyPI is unreachable) tell them a new version is coming soon — never to update.
     """
     warning = Text()
-    warning.append("⚠ Using the bundled, outdated vulnerability report", style="warn")
-    warning.append(f" (generated {format_date(generated_at)}).\n", style="warn")
     warning.append(
-        f"  Your installed {_DISTRIBUTION_NAME} v{installed_version} is older than the "
-        "published vulnerability data.\n",
+        "This version can't read the latest security data, image-inspector will use ",
         style="warn",
     )
+    warning.append("outdated", style="err")
+    warning.append(f" copy from {format_date(generated_at)}.\n", style="warn")
     if _is_newer(latest_version, installed_version):
-        warning.append(f"  A newer version (v{latest_version}) is available — update with:\n")
-        warning.append(f"    {upgrade_command()}", style="value")
+        assert latest_version is not None
+        _append_update_line(warning, latest_version)
     else:
-        warning.append("  A new version will be available soon.")
+        warning.append("A new version will be available soon.", style="warn")
     return warning
 
 
@@ -379,14 +386,33 @@ def show_version_status(
     """Print the outdated-report warning or the lighter update notice, if either applies.
 
     An ``OUTDATED`` report always takes precedence (its data is stale); otherwise a newer
-    PyPI release surfaces the light update notice. Prints nothing when fully up to date.
+    PyPI release surfaces the light update notice. Both are shown in a compact, bordered
+    panel so they stand out; prints nothing when fully up to date.
     """
     if report_source is ReportSource.OUTDATED:
-        console.print(format_outdated_warning(generated_at, installed_version, latest_version))
+        console.print(
+            Panel(
+                format_outdated_warning(generated_at, installed_version, latest_version),
+                title="[err]⚠  OUTDATED SECURITY DATA[/err]",
+                title_align="left",
+                border_style="err",
+                padding=(0, 2),
+                expand=True,
+            )
+        )
         return
     notice = format_update_notice(installed_version, latest_version)
     if notice is not None:
-        console.print(notice)
+        console.print(
+            Panel(
+                notice,
+                title="[accent]⬆  UPDATE AVAILABLE[/accent]",
+                title_align="left",
+                border_style="accent",
+                padding=(0, 2),
+                expand=True,
+            )
+        )
 
 
 def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, str | Text]]]]:
