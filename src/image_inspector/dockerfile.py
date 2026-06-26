@@ -88,7 +88,7 @@ def parse_dockerfile_from(text: str) -> list[FromStage]:
 
 
 def _iter_instructions(text: str) -> list[str]:
-    """Yield logical instruction lines: comments stripped, continuations joined."""
+    """Return logical instruction lines: comments stripped, continuations joined."""
     instructions: list[str] = []
     buffer: list[str] = []
 
@@ -184,7 +184,9 @@ def _resolve_args(ref: str, arg_defaults: dict[str, str]) -> tuple[str, tuple[st
     unresolved: list[str] = []
 
     def replace(match: re.Match[str]) -> str:
+        # One of the two alternation groups always matches on a successful sub.
         name = match.group(1) or match.group(2)
+        assert name is not None
         if name in arg_defaults:
             return arg_defaults[name]
         if name not in unresolved:
