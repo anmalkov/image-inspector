@@ -64,27 +64,27 @@ main interactive command from source with:
 uv run image-inspector
 ```
 
-The tool is **online-first**: it fetches the vulnerability report from
-[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json) at runtime, so a normal
-online dev setup needs nothing extra. The bundled offline copy at `src/image_inspector/data/report.json`
+The tool is **online-first**: it fetches the gzipped vulnerability report from
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json.gz) at runtime, so a normal
+online dev setup needs nothing extra. The bundled offline copy at `src/image_inspector/data/report.json.gz`
 is **not committed** (it's a release-time artifact, git-ignored) — running offline from a source
 checkout without it simply yields an empty report.
 
 ### Download the offline report snapshot (optional)
 
-If you want to work offline, or run the integration tests, fetch the latest report from GitHub Pages
-into the package — the same file the release workflow bundles into the wheel:
+If you want to work offline, or run the integration tests, fetch the latest gzipped report from
+GitHub Pages into the package — the same file the release workflow bundles into the wheel:
 
 ```bash
 # macOS / Linux
-curl --fail --location https://anmalkov.github.io/image-inspector/report.json \
-  -o src/image_inspector/data/report.json
+curl --fail --location https://anmalkov.github.io/image-inspector/report.json.gz \
+  -o src/image_inspector/data/report.json.gz
 ```
 
 ```powershell
 # Windows (PowerShell)
-curl.exe --fail --location https://anmalkov.github.io/image-inspector/report.json `
-  -o src/image_inspector/data/report.json
+curl.exe --fail --location https://anmalkov.github.io/image-inspector/report.json.gz `
+  -o src/image_inspector/data/report.json.gz
 ```
 
 The file is git-ignored, so it won't show up in `git status`. With it in place you can force the
@@ -181,7 +181,7 @@ uv run pytest tests/test_cli.py::test_name
 
 ### Integration tests
 
-Integration tests (under `tests/integration/`) check the real bundled `report.json` and are
+Integration tests (under `tests/integration/`) check the real bundled `report.json.gz` and are
 **deselected from the default `uv run pytest`** because they need that artifact. Download the
 snapshot first (see [above](#download-the-offline-report-snapshot-optional)), then run:
 

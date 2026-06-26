@@ -2,7 +2,7 @@
 
 The report is produced nightly by :mod:`image_inspector.scanner` and published to
 GitHub Pages; a release-time snapshot is also bundled with the package as
-``data/report.json``. At runtime the inspector prefers the **latest report fetched
+``data/report.json.gz``. At runtime the inspector prefers the **latest report fetched
 from GitHub Pages** and falls back to the **packaged** copy when offline, so users see
 fresh nightly data without waiting on a PyPI release. The interactive inspector loads
 the report once and looks up the resolved image by its (immutable) digest. Missing or
@@ -22,9 +22,11 @@ Environment variables:
 
 from __future__ import annotations
 
+import gzip
 import json
 import os
 import re
+import zlib
 from dataclasses import dataclass, replace
 from datetime import datetime
 from enum import StrEnum
@@ -33,9 +35,9 @@ from pathlib import Path
 
 import httpx
 
-SCHEMA_VERSION = 2
-_REPORT_RESOURCE = "report.json"
-_PAGES_URL = "https://anmalkov.github.io/image-inspector/report.json"
+SCHEMA_VERSION = 3
+_REPORT_RESOURCE = "report.json.gz"
+_PAGES_URL = "https://anmalkov.github.io/image-inspector/report.json.gz"
 # Short timeout so the picker never hangs at startup when offline.
 _FETCH_TIMEOUT = httpx.Timeout(3.0, connect=2.0)
 _CACHE_FILENAME = "report-cache.json"
@@ -59,6 +61,33 @@ def _parse_dt(value: str | None) -> datetime | None:
     try:
         return datetime.fromisoformat(text)
     except ValueError:
+        return None
+
+
+def _strip_digest(digest: str) -> str:
+    """Drop the ``sha256:`` algorithm prefix so digests index consistently.
+
+    The v3 report stores ``d`` without the prefix, but callers look up the full
+    ``sha256:<hex>`` form, so both the index keys and lookups are normalised here.
+    """
+    return digest[7:] if digest.startswith("sha256:") else digest
+
+
+def _decode_report_bytes(content: bytes) -> str | None:
+    """Decode report bytes to text: gunzip when gzipped, else assume UTF-8 JSON.
+
+    Tolerant by design — we now request the gzipped resource, but a plain-JSON body must
+    still load (e.g. transparent transport decompression or a transition window). Returns
+    ``None`` if the bytes are a corrupt gzip stream or aren't valid UTF-8 after decoding.
+    """
+    if content[:2] == b"\x1f\x8b":
+        try:
+            content = gzip.decompress(content)
+        except (OSError, EOFError, zlib.error):
+            return None
+    try:
+        return content.decode("utf-8")
+    except UnicodeDecodeError:
         return None
 
 
@@ -86,6 +115,31 @@ class ImageVulnerabilities:
             scanned_at=_parse_dt(data.get("scanned_at")),
         )
 
+    @classmethod
+    def from_compact(
+        cls, counts: object, *, scanned_at: datetime | None = None
+    ) -> ImageVulnerabilities:
+        """Build counts from a v3 ``c`` array ``[crit, high, medium, low, unknown]``.
+
+        ``total`` is derived (``sum(c)``) rather than stored. Shorter/longer arrays are
+        tolerated by padding/truncating to five severities. ``scanned_at`` carries the
+        report's ``generated_at`` (the per-scan time lives in the header in v3, not per
+        digest).
+        """
+        values = list(counts) if isinstance(counts, (list, tuple)) else []
+        nums = [int(v) for v in values[:5]]
+        nums += [0] * (5 - len(nums))
+        crit, high, medium, low, unknown = nums
+        return cls(
+            critical=crit,
+            high=high,
+            medium=medium,
+            low=low,
+            unknown=unknown,
+            total=crit + high + medium + low + unknown,
+            scanned_at=scanned_at,
+        )
+
 
 class ReportSource(StrEnum):
     """Where a loaded report came from (used to show data freshness in the UI)."""
@@ -103,17 +157,30 @@ class VulnerabilityReport:
     trivy_version: str | None = None
     trivy_db_updated_at: datetime | None = None
     images: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
+    latest: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
     source: ReportSource | None = None
 
     def __post_init__(self) -> None:
         if self.images is None:
             object.__setattr__(self, "images", {})
+        if self.latest is None:
+            object.__setattr__(self, "latest", {})
 
-    def lookup(self, digest: str | None) -> ImageVulnerabilities | None:
-        """Return counts for an image ``digest``, or ``None`` if not scanned."""
+    def lookup_digest(self, digest: str | None) -> ImageVulnerabilities | None:
+        """Return counts for an image ``digest``, or ``None`` if not scanned.
+
+        Accepts either the bare hex digest or the full ``sha256:<hex>`` form; the
+        ``sha256:`` prefix is stripped to match the index built at load time.
+        """
         if not digest:
             return None
-        return self.images.get(digest)
+        return self.images.get(_strip_digest(digest))
+
+    def latest_for_tag(self, reference: str | None) -> ImageVulnerabilities | None:
+        """Return counts for a tag's current (head) digest, or ``None`` if unknown."""
+        if not reference:
+            return None
+        return self.latest.get(reference)
 
     @classmethod
     def empty(cls) -> VulnerabilityReport:
@@ -121,15 +188,39 @@ class VulnerabilityReport:
 
     @classmethod
     def from_dict(cls, data: dict) -> VulnerabilityReport:
-        images = {
-            digest: ImageVulnerabilities.from_dict(entry)
-            for digest, entry in data.get("images", {}).items()
-        }
+        """Build a report from the v3 ``tags`` payload.
+
+        The per-digest index (``images``) and the per-tag head index (``latest``) are both
+        derived from each tag's newest-first ``history``. Each digest's ``scanned_at`` is
+        the report's ``generated_at``, since v3 keeps the scan time only in the header.
+        """
+        generated_at = _parse_dt(data.get("generated_at"))
+        images: dict[str, ImageVulnerabilities] = {}
+        latest: dict[str, ImageVulnerabilities] = {}
+        tags = data.get("tags")
+        if isinstance(tags, dict):
+            for reference, tag_data in tags.items():
+                history = tag_data.get("history") if isinstance(tag_data, dict) else None
+                if not isinstance(history, list):
+                    continue
+                for index, entry in enumerate(history):
+                    if not isinstance(entry, dict):
+                        continue
+                    digest = entry.get("d")
+                    if not isinstance(digest, str) or not digest:
+                        continue
+                    vuln = ImageVulnerabilities.from_compact(
+                        entry.get("c"), scanned_at=generated_at
+                    )
+                    images[_strip_digest(digest)] = vuln
+                    if index == 0 and isinstance(reference, str):
+                        latest[reference] = vuln
         return cls(
-            generated_at=_parse_dt(data.get("generated_at")),
+            generated_at=generated_at,
             trivy_version=data.get("trivy_version"),
             trivy_db_updated_at=_parse_dt(data.get("trivy_db_updated_at")),
             images=images,
+            latest=latest,
         )
 
 
@@ -195,7 +286,7 @@ def _write_cache(url: str, etag: str | None, body: str) -> None:
 def _validate_payload(body: str) -> dict | None:
     """Parse ``body`` and return it only if it is a usable report payload.
 
-    Requires a dict with the supported ``schema_version`` and a dict ``images`` map, so
+    Requires a dict with the supported ``schema_version`` and a dict ``tags`` map, so
     any malformed payload degrades to the packaged fallback instead of crashing
     ``VulnerabilityReport.from_dict``.
     """
@@ -207,7 +298,7 @@ def _validate_payload(body: str) -> dict | None:
         return None
     if not isinstance(data, dict) or data.get("schema_version") != SCHEMA_VERSION:
         return None
-    if not isinstance(data.get("images"), dict):
+    if not isinstance(data.get("tags"), dict):
         return None
     return data
 
@@ -262,9 +353,9 @@ def _fetch_report() -> _FetchOutcome:
     except httpx.HTTPError:
         return _FetchOutcome()
 
-    # A 304 means our cached body is still current. Normally it is a previously validated
-    # v2 body, but a newer tool version (or a later downgrade) could have populated the
-    # shared cache with a newer-schema body, so apply the same schema check as the 200 path.
+    # A 304 means our cached body is still current. The cache holds the already-decoded
+    # (decompressed) text, but a newer tool version could have populated the shared cache
+    # with a newer-schema body, so apply the same schema check as the 200 path.
     if response.status_code == 304 and cached_body is not None:
         cached_payload = _validate_payload(cached_body)
         if cached_payload is not None:
@@ -273,7 +364,9 @@ def _fetch_report() -> _FetchOutcome:
     if response.status_code != 200:
         return _FetchOutcome()
 
-    body = response.text
+    body = _decode_report_bytes(response.content)
+    if body is None:
+        return _FetchOutcome()
     payload = _validate_payload(body)
     if payload is not None:
         _write_cache(url, response.headers.get("ETag"), body)
@@ -282,17 +375,21 @@ def _fetch_report() -> _FetchOutcome:
 
 
 def _load_packaged() -> dict | None:
-    """Load, parse and validate the packaged ``report.json`` (``None`` on any failure).
+    """Load, parse and validate the packaged ``report.json.gz`` (``None`` on any failure).
 
-    Reuses ``_validate_payload`` so a packaged copy that is non-UTF-8, malformed, of an
-    unsupported schema, or whose ``images`` map is not a dict is treated as a load miss
-    instead of crashing ``VulnerabilityReport.from_dict``.
+    Reuses ``_decode_report_bytes``/``_validate_payload`` so a packaged copy that is a
+    corrupt gzip, non-UTF-8, malformed, of an unsupported schema, or whose ``tags`` map is
+    not a dict is treated as a load miss instead of crashing
+    ``VulnerabilityReport.from_dict``.
     """
     try:
-        raw = resources.files(f"{__package__}.data").joinpath(_REPORT_RESOURCE).read_text("utf-8")
-    except (FileNotFoundError, ModuleNotFoundError, OSError, UnicodeDecodeError):
+        raw = resources.files(f"{__package__}.data").joinpath(_REPORT_RESOURCE).read_bytes()
+    except (FileNotFoundError, ModuleNotFoundError, OSError):
         return None
-    return _validate_payload(raw)
+    body = _decode_report_bytes(raw)
+    if body is None:
+        return None
+    return _validate_payload(body)
 
 
 def _build_report(payload: dict, source: ReportSource) -> VulnerabilityReport | None:
@@ -313,7 +410,7 @@ def load_report() -> VulnerabilityReport:
     """Load the vulnerability report: online-first, packaged fallback, empty on failure.
 
     Prefers the report hosted on GitHub Pages; on any network failure (or when
-    ``IMAGE_INSPECTOR_OFFLINE`` is set) falls back to the packaged ``report.json``.
+    ``IMAGE_INSPECTOR_OFFLINE`` is set) falls back to the packaged ``report.json.gz``.
     Returns an empty report if no usable data can be loaded at all, so the picker
     always keeps working.
 

@@ -2,7 +2,7 @@
 
 Run via the ``image-inspector-scan`` console script (typically in CI). It reuses
 the same enumeration and digest-resolution logic as the interactive picker, so
-the produced ``report.json`` is keyed by exactly the digests the inspector will
+the produced report's history is keyed by exactly the digests the inspector will
 look up. Trivy is required at runtime here (a CI-only dependency), not for the
 interactive tool.
 """
@@ -10,6 +10,7 @@ interactive tool.
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import shutil
 import subprocess
@@ -24,7 +25,7 @@ import httpx
 
 from .models import LANGUAGES, LANGUAGES_BY_KEY, Language
 from .registry import RegistryError, get_provider, make_client
-from .report import SCHEMA_VERSION, _parse_dt
+from .report import SCHEMA_VERSION, _decode_report_bytes, _parse_dt, _strip_digest
 from .versions import select_versions, tag_for_selection, variants_for_version
 
 MINOR_VERSION_COUNT = 5
@@ -34,7 +35,7 @@ MINOR_VERSION_COUNT = 5
 RETENTION_MAX_AGE_DAYS = 180
 RETENTION_MAX_PER_TAG = 30
 
-_DEFAULT_OUTPUT = Path(__file__).parent / "data" / "report.json"
+_DEFAULT_OUTPUT = Path(__file__).parent / "data" / "report.json.gz"
 _SEVERITIES = ("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN")
 # Generous timeout: CI fetches of the prior report / cached SBOMs should not hang a job.
 _FETCH_TIMEOUT = httpx.Timeout(10.0, connect=5.0)
@@ -42,11 +43,17 @@ _FETCH_TIMEOUT = httpx.Timeout(10.0, connect=5.0)
 
 @dataclass(frozen=True)
 class ScanTarget:
-    """One concrete image to scan, with its resolved digest."""
+    """One concrete image to scan, with its resolved digest.
+
+    ``created`` is the image's created-at timestamp (ISO-8601 string, or ``None`` when the
+    registry/prior report doesn't provide one). It is captured once and stored as the v3
+    history entry's ``t`` so a digest's age survives later re-scores.
+    """
 
     reference: str  # e.g. "python:3.13.14-slim"
     image_ref: str  # e.g. "python@sha256:..." (what Trivy scans)
     digest: str
+    created: str | None = None
 
 
 def _utcnow_iso() -> str:
@@ -103,9 +110,30 @@ def enumerate_targets(languages: tuple[Language, ...] = LANGUAGES) -> Iterator[S
                             reference=f"{language.image_name}:{tag}",
                             image_ref=f"{language.image_name}@{image_tag.digest}",
                             digest=image_tag.digest,
+                            created=_iso(image_tag.last_updated),
                         )
             except RegistryError as exc:
                 print(f"  ! skipping {language.label}: {exc}", file=sys.stderr)
+
+
+def _iso(dt: datetime | None) -> str | None:
+    """Format a datetime as a ``YYYY-MM-DDTHH:MM:SSZ`` UTC string (``None`` passes through)."""
+    if dt is None:
+        return None
+    aware = dt.replace(tzinfo=UTC) if dt.tzinfo is None else dt
+    return aware.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _int(value: object) -> int:
+    try:
+        return int(value)  # type: ignore[call-overload]
+    except (TypeError, ValueError):
+        return 0
+
+
+def _counts_to_c(counts: dict) -> list[int]:
+    """Pack a severity-counts dict into the compact ``c`` array order."""
+    return [_int(counts.get(sev.lower(), 0)) for sev in _SEVERITIES]
 
 
 def _empty_counts() -> dict[str, int]:
@@ -289,15 +317,19 @@ def build_report(
     prior: dict | None = None,
     sbom_store: SbomStore | None = None,
 ) -> dict:
-    """Scan the current images and return the full report payload.
+    """Scan the current images and return the full v3 report payload.
 
     When ``prior`` is given, historical digests for ``languages`` (read from the prior report)
     are re-scored too, so a tag that moved keeps its old digest with up-to-date counts. A
-    retained digest that can no longer be (re-)scored keeps its last-known counts. ``sbom_store``
+    retained digest that can no longer be (re-)scored keeps its last-known entry. ``sbom_store``
     routes scoring through cached SBOMs so only digests new since the last run are pulled.
+
+    Each tag's ``history`` holds ``{d, t, c}`` entries newest-``t``-first: ``d`` is the digest
+    without the ``sha256:`` prefix, ``t`` the image created-at, ``c`` the severity counts.
     """
     now = _utcnow_iso()
-    images: dict[str, dict] = {}
+    # reference -> list of {d, t, c} entries (fresh wins per digest).
+    tags: dict[str, list[dict]] = {}
     current: set[str] = set()
     for target in enumerate_targets(languages):
         current.add(target.digest)
@@ -305,38 +337,52 @@ def build_report(
         counts = _score_target(target, sbom_store)
         if counts is None:
             continue
-        images[target.digest] = {
-            "reference": target.reference,
-            **counts,
-            "scanned_at": now,
-            "last_active_at": now,
-        }
+        _set_entry(tags, target.reference, _make_entry(target.digest, target.created, counts))
 
     if prior is not None:
-        prior_images = prior.get("images") or {}
+        prior_tags = _prior_tags(prior)
         for target in retained_targets(prior, languages, exclude=current):
-            entry = prior_images.get(target.digest)
             print(f"  re-scoring {target.reference} ({target.digest[:19]}…)", file=sys.stderr)
             counts = _score_target(target, sbom_store)
             if counts is None:
-                # Carry the last-known counts forward (e.g. the image was GC'd from the registry).
-                if isinstance(entry, dict):
-                    images[target.digest] = dict(entry)
+                # Carry the last-known entry forward (e.g. the image was GC'd from the registry).
+                entry = _prior_entry(prior_tags, target.reference, target.digest)
+                if entry is not None:
+                    _set_entry(tags, target.reference, dict(entry))
                 continue
-            images[target.digest] = {
-                "reference": target.reference,
-                **counts,
-                "scanned_at": now,
-                "last_active_at": _last_active_value(entry, fallback=now),
-            }
+            _set_entry(tags, target.reference, _make_entry(target.digest, target.created, counts))
 
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": now,
         "trivy_version": trivy_version(),
         "trivy_db_updated_at": trivy_db_updated_at(),
-        "images": images,
+        "tags": _finalize_tags(tags),
     }
+
+
+def _make_entry(digest: str, created: str | None, counts: dict) -> dict:
+    """Build a compact ``{d, t, c}`` history entry."""
+    return {"d": _strip_digest(digest), "t": created, "c": _counts_to_c(counts)}
+
+
+def _set_entry(tags: dict[str, list[dict]], reference: str, entry: dict) -> None:
+    """Insert ``entry`` into ``reference``'s history, replacing any same-digest entry."""
+    history = tags.setdefault(reference, [])
+    for index, existing in enumerate(history):
+        if existing.get("d") == entry["d"]:
+            history[index] = entry
+            return
+    history.append(entry)
+
+
+def _prior_entry(tags: dict[str, list[dict]], reference: str, digest: str) -> dict | None:
+    """Return the stored history entry for ``reference``/``digest`` (``None`` if absent)."""
+    stripped = _strip_digest(digest)
+    for entry in tags.get(reference, []):
+        if entry.get("d") == stripped:
+            return entry
+    return None
 
 
 def _update_db() -> None:
@@ -358,7 +404,8 @@ def main(argv: list[str] | None = None) -> int:
         "--output",
         type=Path,
         default=_DEFAULT_OUTPUT,
-        help="Where to write the JSON report (default: packaged data/report.json).",
+        help="Where to write the report (default: packaged data/report.json.gz; "
+        "a .gz path is gzipped, otherwise plain JSON).",
     )
     parser.add_argument(
         "-l",
@@ -379,7 +426,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--prior-url",
-        help="URL of the previously published report.json; its history is re-scored and merged.",
+        help="URL of the previously published report; its history is re-scored and merged.",
     )
     parser.add_argument(
         "--sbom-cache-dir",
@@ -425,13 +472,19 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def merge_reports(payloads: list[dict]) -> dict:
-    """Combine several per-language reports into one (union of images by digest)."""
-    images: dict[str, dict] = {}
+    """Combine several per-language reports into one (union of tags, merged histories)."""
+    tags: dict[str, list[dict]] = {}
     trivy: str | None = None
     db_updated: str | None = None
     generated: list[str] = []
     for payload in payloads:
-        images.update(payload.get("images") or {})
+        for reference, history in _prior_tags(payload).items():
+            bucket = tags.setdefault(reference, [])
+            seen = {entry["d"] for entry in bucket}
+            for entry in history:
+                if entry["d"] not in seen:
+                    bucket.append(entry)
+                    seen.add(entry["d"])
         trivy = trivy or payload.get("trivy_version")
         db_updated = db_updated or payload.get("trivy_db_updated_at")
         if payload.get("generated_at"):
@@ -442,15 +495,17 @@ def merge_reports(payloads: list[dict]) -> dict:
         "generated_at": max(generated) if generated else _utcnow_iso(),
         "trivy_version": trivy,
         "trivy_db_updated_at": db_updated,
-        "images": images,
+        "tags": _finalize_tags(tags),
     }
 
 
 def fetch_prior_report(url: str) -> dict | None:
     """Fetch + light-validate the previously published report; ``None`` on any failure.
 
-    Used to seed history from the GitHub Pages copy. A missing/404/malformed prior is treated as
-    empty history so the nightly never fails on a cold start or a transient Pages error.
+    Used to seed history from the GitHub Pages copy. The body is gunzipped when gzipped, else
+    read as UTF-8 JSON. A v3 (``tags``) or legacy v2 (``images``) payload is accepted so a
+    cutover keeps prior history; a missing/404/malformed prior is treated as empty history so
+    the nightly never fails on a cold start or a transient Pages error.
     """
     try:
         resp = httpx.get(url, timeout=_FETCH_TIMEOUT, follow_redirects=True)
@@ -458,13 +513,18 @@ def fetch_prior_report(url: str) -> dict | None:
         return None
     if resp.status_code != 200:
         return None
+    body = _decode_report_bytes(resp.content)
+    if body is None:
+        return None
     try:
-        data = json.loads(resp.text)
+        data = json.loads(body)
     except json.JSONDecodeError:
         return None
-    if not isinstance(data, dict) or not isinstance(data.get("images"), dict):
+    if not isinstance(data, dict):
         return None
-    return data
+    if isinstance(data.get("tags"), dict) or isinstance(data.get("images"), dict):
+        return data
+    return None
 
 
 def retained_targets(
@@ -472,108 +532,218 @@ def retained_targets(
 ) -> Iterator[ScanTarget]:
     """Yield prior digests belonging to ``languages`` that are not currently enumerated.
 
-    A retained digest's image reference is reconstructed from its ``reference`` (``name:tag``):
-    the name before the last ``:`` plus ``@<digest>``.
+    Reads the prior report's tag histories (migrating a legacy v2 payload if needed) and
+    reconstructs each retained digest's full ``sha256:`` reference and stored created-at so
+    re-scoring preserves its ``t``.
     """
     names = {lang.image_name for lang in languages}
-    for digest, entry in (prior.get("images") or {}).items():
-        if digest in exclude or not isinstance(entry, dict):
-            continue
-        reference = entry.get("reference")
-        if not isinstance(reference, str) or ":" not in reference:
+    for reference, history in _prior_tags(prior).items():
+        if ":" not in reference:
             continue
         name = reference.rsplit(":", 1)[0]
         if name not in names:
             continue
-        yield ScanTarget(reference=reference, image_ref=f"{name}@{digest}", digest=digest)
+        for entry in history:
+            digest = entry.get("d")
+            if not isinstance(digest, str) or not digest:
+                continue
+            full = digest if digest.startswith("sha256:") else f"sha256:{digest}"
+            if full in exclude:
+                continue
+            created = entry.get("t")
+            yield ScanTarget(
+                reference=reference,
+                image_ref=f"{name}@{full}",
+                digest=full,
+                created=created if isinstance(created, str) else None,
+            )
 
 
-def _entry_dt(entry: dict, field: str) -> datetime | None:
-    value = entry.get(field)
+def _entry_dt(entry: dict) -> datetime | None:
+    """Parse a history entry's created-at (``t``) as an aware UTC datetime, or ``None``."""
+    value = entry.get("t")
     dt = _parse_dt(value) if isinstance(value, str) else None
     if dt is not None and dt.tzinfo is None:
         return dt.replace(tzinfo=UTC)
     return dt
 
 
-def _last_active(entry: dict) -> datetime | None:
-    """When the digest was last a live tag; falls back to ``scanned_at`` for older entries."""
-    return _entry_dt(entry, "last_active_at") or _entry_dt(entry, "scanned_at")
+def _entry_sort_key(entry: dict) -> tuple[bool, datetime, str]:
+    """Sort key for newest-``t``-first ordering; undated entries sort last (with reverse).
+
+    The ``d`` tiebreaker keeps ordering deterministic when two entries share a ``t``.
+    """
+    dt = _entry_dt(entry)
+    return (dt is not None, dt or datetime.min.replace(tzinfo=UTC), str(entry.get("d") or ""))
 
 
-def _last_active_value(entry: dict | None, *, fallback: str) -> str:
-    if isinstance(entry, dict):
-        for field in ("last_active_at", "scanned_at"):
-            value = entry.get(field)
-            if isinstance(value, str) and value:
-                return value
-    return fallback
+def _normalize_v3_tags(tags: dict) -> dict[str, list[dict]]:
+    """Coerce a v3 ``tags`` payload into ``{reference: [clean {d, t, c}, ...]}``."""
+    result: dict[str, list[dict]] = {}
+    for reference, tag_data in tags.items():
+        if not isinstance(reference, str):
+            continue
+        history = tag_data.get("history") if isinstance(tag_data, dict) else None
+        if not isinstance(history, list):
+            continue
+        cleaned = [e for e in (_clean_entry(entry) for entry in history) if e is not None]
+        if cleaned:
+            result[reference] = cleaned
+    return result
 
 
-def _retention_sort_key(item: tuple[str, dict]) -> tuple[bool, datetime, str]:
-    active = _last_active(item[1]) if isinstance(item[1], dict) else None
-    return (active is not None, active or datetime.min.replace(tzinfo=UTC), item[0])
+def _clean_entry(entry: object) -> dict | None:
+    """Validate/normalise one history entry to ``{d, t, c}`` (``None`` if unusable)."""
+    if not isinstance(entry, dict):
+        return None
+    digest = entry.get("d")
+    if not isinstance(digest, str) or not digest:
+        return None
+    counts = entry.get("c")
+    c = [_int(x) for x in counts[:5]] if isinstance(counts, list) else []
+    c += [0] * (5 - len(c))
+    t = entry.get("t")
+    return {"d": _strip_digest(digest), "t": t if isinstance(t, str) else None, "c": c}
+
+
+def _migrate_v2_images(images: dict) -> dict[str, list[dict]]:
+    """Migrate a legacy v2 ``images`` map to v3 ``{reference: [{d, t, c}, ...]}``.
+
+    ``t`` is taken best-effort from the old ``last_active_at``/``scanned_at`` fields and ``c``
+    from the old per-severity counts, so accumulated history survives the cutover.
+    """
+    result: dict[str, list[dict]] = {}
+    for digest, entry in images.items():
+        if not isinstance(digest, str) or not isinstance(entry, dict):
+            continue
+        reference = entry.get("reference")
+        if not isinstance(reference, str) or ":" not in reference:
+            continue
+        c = [_int(entry.get(sev.lower(), 0)) for sev in _SEVERITIES]
+        t = entry.get("last_active_at") or entry.get("scanned_at")
+        result.setdefault(reference, []).append(
+            {"d": _strip_digest(digest), "t": t if isinstance(t, str) else None, "c": c}
+        )
+    return result
+
+
+def _prior_tags(prior: dict | None) -> dict[str, list[dict]]:
+    """Return a normalised ``{reference: [{d, t, c}, ...]}`` view of any report payload.
+
+    Accepts a v3 ``tags`` payload or a legacy v2 ``images`` payload (migrated on the fly);
+    anything else yields an empty mapping.
+    """
+    if not isinstance(prior, dict):
+        return {}
+    tags = prior.get("tags")
+    if isinstance(tags, dict):
+        return _normalize_v3_tags(tags)
+    images = prior.get("images")
+    if isinstance(images, dict):
+        return _migrate_v2_images(images)
+    return {}
+
+
+def _finalize_tags(tags: dict[str, list[dict]]) -> dict[str, dict]:
+    """Wrap each reference's entries into ``{"history": [...]}``, newest-``t``-first."""
+    result: dict[str, dict] = {}
+    for reference, history in tags.items():
+        ordered = sorted(history, key=_entry_sort_key, reverse=True)
+        result[reference] = {"history": ordered}
+    return result
 
 
 def apply_retention(
-    images: dict[str, dict],
+    tags: dict[str, dict],
     *,
     now: datetime | None = None,
     max_age_days: int = RETENTION_MAX_AGE_DAYS,
     max_per_tag: int = RETENTION_MAX_PER_TAG,
 ) -> dict[str, dict]:
-    """Trim history deterministically: drop stale digests and cap each tag.
+    """Trim each tag's history deterministically: drop stale digests and cap depth.
 
-    Grouped by ``reference`` (a moved tag keeps the same ``name:tag``), entries whose
-    ``last_active_at`` is older than ``max_age_days`` are dropped, then each tag keeps only its
-    ``max_per_tag`` most-recently-active digests. Undated entries are never aged out but sort
-    last and still count toward the cap.
+    With history ordered newest-``t``-first, entry ``i``'s successor ``history[i-1]`` is the
+    image that replaced it, so ``history[i-1].t`` is when entry ``i`` was retired. A non-head
+    entry is dropped when that supersession time is older than ``max_age_days``; the head is
+    the live digest and is never aged out. Each tag then keeps at most ``max_per_tag`` newest
+    entries. Undated ``t`` never ages out, sorts last, and still counts toward the cap.
     """
     now = now or datetime.now(UTC)
     cutoff = now - timedelta(days=max_age_days)
-    groups: dict[str, list[tuple[str, dict]]] = {}
-    for digest, entry in images.items():
-        ref = entry.get("reference") if isinstance(entry, dict) else None
-        groups.setdefault(ref if isinstance(ref, str) else "", []).append((digest, entry))
-
-    kept: dict[str, dict] = {}
-    for items in groups.values():
-        items.sort(key=_retention_sort_key, reverse=True)
-        count = 0
-        for digest, entry in items:
-            active = _last_active(entry) if isinstance(entry, dict) else None
-            if active is not None and active < cutoff:
-                continue
-            if count >= max_per_tag:
+    result: dict[str, dict] = {}
+    for reference, tag_data in tags.items():
+        history = tag_data.get("history") if isinstance(tag_data, dict) else None
+        if not isinstance(history, list):
+            continue
+        ordered = sorted(
+            (e for e in history if isinstance(e, dict)), key=_entry_sort_key, reverse=True
+        )
+        kept: list[dict] = []
+        for index, entry in enumerate(ordered):
+            if index > 0:
+                superseded_at = _entry_dt(ordered[index - 1])
+                if superseded_at is not None and superseded_at < cutoff:
+                    continue
+            kept.append(entry)
+            if len(kept) >= max_per_tag:
                 break
-            kept[digest] = entry
-            count += 1
-    return kept
+        if kept:
+            result[reference] = {"history": kept}
+    return result
 
 
 def merge_with_history(fresh: dict, prior: dict | None, *, now: datetime | None = None) -> dict:
-    """Merge this run's ``fresh`` images over the ``prior`` report, then apply retention.
+    """Merge this run's ``fresh`` tags over the ``prior`` report, then apply retention.
 
     Fresh entries win per digest (so re-scored active tags refresh while old digests survive);
     header fields come from ``fresh`` so freshness metadata is never stale.
     """
-    images: dict[str, dict] = {}
-    if prior:
-        images.update(prior.get("images") or {})
-    images.update(fresh.get("images") or {})
+    merged: dict[str, list[dict]] = {
+        reference: [dict(entry) for entry in history]
+        for reference, history in _prior_tags(prior).items()
+    }
+    for reference, history in _prior_tags(fresh).items():
+        bucket = merged.setdefault(reference, [])
+        index_by_digest = {entry["d"]: i for i, entry in enumerate(bucket)}
+        for entry in history:
+            position = index_by_digest.get(entry["d"])
+            if position is None:
+                index_by_digest[entry["d"]] = len(bucket)
+                bucket.append(entry)
+            else:
+                bucket[position] = entry
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": fresh.get("generated_at") or _utcnow_iso(),
         "trivy_version": fresh.get("trivy_version"),
         "trivy_db_updated_at": fresh.get("trivy_db_updated_at"),
-        "images": apply_retention(images, now=now),
+        "tags": apply_retention(_finalize_tags(merged), now=now),
     }
 
 
 def _write_report(report: dict, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(f"Wrote {len(report['images'])} image(s) to {output}", file=sys.stderr)
+    text = json.dumps(report, indent=2, sort_keys=True) + "\n"
+    if output.suffix == ".gz":
+        # mtime=0 keeps the gzip bytes reproducible across runs of identical content.
+        output.write_bytes(gzip.compress(text.encode("utf-8"), mtime=0))
+    else:
+        output.write_text(text, encoding="utf-8")
+    print(f"Wrote {len(report.get('tags') or {})} tag(s) to {output}", file=sys.stderr)
+
+
+def _all_digests(report: dict) -> list[str]:
+    """Return every retained digest in ``report`` as a full ``sha256:<hex>`` reference."""
+    digests: list[str] = []
+    for tag_data in (report.get("tags") or {}).values():
+        history = tag_data.get("history") if isinstance(tag_data, dict) else None
+        if not isinstance(history, list):
+            continue
+        for entry in history:
+            digest = entry.get("d") if isinstance(entry, dict) else None
+            if isinstance(digest, str) and digest:
+                digests.append(digest if digest.startswith("sha256:") else f"sha256:{digest}")
+    return digests
 
 
 def publish_sboms(digests: Iterable[str], src_dir: Path, out_dir: Path) -> int:
@@ -613,11 +783,16 @@ def merge_main(argv: list[str] | None = None) -> int:
         "--output",
         type=Path,
         default=_DEFAULT_OUTPUT,
-        help="Where to write the combined report (default: packaged data/report.json).",
+        help="Where to write the combined report (default: packaged data/report.json.gz).",
+    )
+    parser.add_argument(
+        "--gzip-output",
+        type=Path,
+        help="Also write the same combined report (gzipped) to this path (e.g. report.json.gz).",
     )
     parser.add_argument(
         "--prior-url",
-        help="URL of the previously published report.json to merge history from (optional).",
+        help="URL of the previously published report to merge history from (optional).",
     )
     parser.add_argument(
         "--sbom-src-dir",
@@ -637,8 +812,17 @@ def merge_main(argv: list[str] | None = None) -> int:
     payloads: list[dict] = []
     for path in args.inputs:
         try:
-            payloads.append(json.loads(path.read_text(encoding="utf-8")))
-        except (OSError, json.JSONDecodeError) as exc:
+            raw = path.read_bytes()
+        except OSError as exc:
+            print(f"error: cannot read report {path}: {exc}", file=sys.stderr)
+            return 1
+        body = _decode_report_bytes(raw)
+        if body is None:
+            print(f"error: cannot decode report {path}", file=sys.stderr)
+            return 1
+        try:
+            payloads.append(json.loads(body))
+        except json.JSONDecodeError as exc:
             print(f"error: cannot read report {path}: {exc}", file=sys.stderr)
             return 1
 
@@ -646,8 +830,10 @@ def merge_main(argv: list[str] | None = None) -> int:
     prior = fetch_prior_report(args.prior_url) if args.prior_url else None
     combined = merge_with_history(fresh, prior)
     _write_report(combined, args.output)
+    if args.gzip_output is not None:
+        _write_report(combined, args.gzip_output)
     if args.sbom_src_dir is not None and args.sbom_out_dir is not None:
-        copied = publish_sboms(combined["images"], args.sbom_src_dir, args.sbom_out_dir)
+        copied = publish_sboms(_all_digests(combined), args.sbom_src_dir, args.sbom_out_dir)
         print(f"Published {copied} SBOM(s) to {args.sbom_out_dir}", file=sys.stderr)
     return 0
 

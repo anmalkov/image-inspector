@@ -197,7 +197,7 @@ The critical / high / total counts come from **precomputed nightly [Trivy](https
 data**. Nothing is scanned locally at runtime — image-inspector doesn't run Trivy
 on your machine, pull images, or talk to a scanner. That keeps it fast and means no Docker daemon or
 scanner is required. A GitHub Actions workflow regenerates this data **nightly** and publishes it to
-[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json). At runtime the tool is
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json.gz). At runtime the tool is
 **online-first**: it fetches that live report when online (short timeout, `ETag`-cached) and **falls
 back to the copy bundled with the package when offline** or if the fetch fails. The **SECURITY**
 panel's `Source` row shows which you're seeing (`online (latest)` vs `offline (bundled copy)`). Set

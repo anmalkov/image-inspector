@@ -59,9 +59,13 @@ jobs:
         # parseable JSON, the release fails rather than shipping a stale or empty copy.
         run: |
           url="https://anmalkov.github.io/image-inspector/report.json"
-          dest="src/image_inspector/data/report.json"
-          curl --fail --silent --show-error --location --max-time 30 "$url" -o "$dest"
-          python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$dest"
+          tmp="$(mktemp)"
+          dest="src/image_inspector/data/report.json.gz"
+          mkdir -p "$(dirname "$dest")"
+          curl --fail --silent --show-error --location --max-time 30 "$url" -o "$tmp"
+          python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$tmp"
+          gzip --no-name --stdout "$tmp" > "$dest"
+          rm -f "$tmp"
           echo "Snapshotted the latest report from Pages into ${dest}."
 
       - name: Verify the tool accepts the bundled report

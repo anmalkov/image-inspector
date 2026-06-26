@@ -173,7 +173,7 @@ After a result is shown, pressing `Ctrl+C`/`EOF` at the action menu exits with `
   - Retry after checking network access and image/tags; this is often transient.
 
 - **Do I need Trivy or Docker locally?**
-  - No. When online, the interactive panel **fetches the latest report from GitHub Pages**; when offline (or if the fetch fails) it falls back to the `report.json` **bundled** with the installed release. Either way the counts come from precomputed Trivy data — fresh data no longer requires a new package release. The **SECURITY** panel's `Source` row tells you which copy you're seeing (`online (latest)` vs `offline (bundled copy)`).
+  - No. When online, the interactive panel **fetches the latest report from GitHub Pages**; when offline (or if the fetch fails) it falls back to the `report.json.gz` **bundled** with the installed release. Either way the counts come from precomputed Trivy data — fresh data no longer requires a new package release. The **SECURITY** panel's `Source` row tells you which copy you're seeing (`online (latest)` vs `offline (bundled copy)`).
   - If the published report uses a **newer schema than your installed tool understands**, the panel shows `bundled (tool outdated)` and prints a warning that you're seeing stale data — with the right upgrade command for how you installed it (`uv tool upgrade`, `pipx upgrade`, or `pip install --upgrade base-image-inspector`), or a "new version coming soon" note when the matching release isn't on PyPI yet. The tool also notifies you whenever a newer version is published on PyPI, even when the report itself is current.
   - You do **not** need Docker or Trivy installed to run image resolution locally.
 
@@ -201,11 +201,11 @@ the counts (`Scanner`, the Trivy version plus the vulnerability-DB update date, 
 `Trivy v0.71.1 · DB Jun 14, 2026`), and where the data came from (`Source`: `online (latest)`,
 `offline (bundled copy)`, or `not found`).
 
-By default the picker is **online-first**: it fetches the latest report from **GitHub Pages**
-(`https://anmalkov.github.io/image-inspector/report.json`) — the live source of truth, refreshed
+By default the picker is **online-first**: it fetches the latest gzipped report from **GitHub Pages**
+(`https://anmalkov.github.io/image-inspector/report.json.gz`) — the live source of truth, refreshed
 **nightly** by a GitHub Actions workflow that runs [Trivy](https://trivy.dev/) against every
 selectable image (all versions and variants). The fetch uses a short timeout and conditional
-(`ETag`) requests so it never slows the picker down, and **falls back to the `report.json` bundled
+(`ETag`) requests so it never slows the picker down, and **falls back to the `report.json.gz` bundled
 with the package** whenever you're offline or the fetch fails. The bundled copy is a snapshot pinned
 at release time, so it works without any network access. Nothing is pulled or scanned on your
 machine, so no Docker or Trivy is required.
@@ -225,23 +225,25 @@ The scanner is a separate entry point. You need [Trivy](https://trivy.dev/) inst
 `PATH`:
 
 ```bash
-image-inspector-scan                # scan every image, writes the packaged data/report.json
+image-inspector-scan                # scan every image, writes the packaged data/report.json.gz
 image-inspector-scan -l alpine      # only scan Alpine (repeatable: -l python -l go)
-image-inspector-scan -o report.json # write somewhere else
+image-inspector-scan -o report.json # write somewhere else (a .gz suffix gzips, otherwise plain JSON)
 ```
 
 `--language`/`-l` accepts an image key (`python`, `dotnet`, `java`, `go`, `node`, `rust`, `cpp`,
 `ubuntu`, `debian`, `alpine`) and may be repeated; omit it to scan everything.
 
 The nightly workflow uses this to **fan out one scan per language in a matrix**, then combines the
-per-language reports into a single `report.json` with `image-inspector-merge`:
+per-language reports into a single report with `image-inspector-merge`, publishing both a plain
+`report.json` and a gzipped `report.json.gz` to GitHub Pages:
 
 ```bash
 image-inspector-merge report-python.json report-alpine.json \
-  -o pages-dir/report.json
+  -o pages-dir/report.json \
+  --gzip-output pages-dir/report.json.gz
 ```
 
-`image-inspector-merge` takes any number of partial reports and unions their images by digest, so
+`image-inspector-merge` takes any number of partial reports and unions their tag histories, so
 parallel matrix jobs still produce one combined report. In CI the combined report is **deployed to
 GitHub Pages** rather than committed back to the repository.
 
@@ -301,8 +303,8 @@ src/image_inspector/
   versions.py   # tag parsing, version-scheme selection (semver/major), variants
   ui.py         # theme, banner, prompts, spinners, result panel
   report.py     # loads the Trivy vulnerability report (online-first, bundled offline fallback)
-  scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json
-  data/         # report.json fetched into the wheel at release time (git-ignored; live copy on GitHub Pages)
+  scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json.gz
+  data/         # report.json.gz fetched into the wheel at release time (git-ignored; live copy on GitHub Pages)
 ```
 
 ## See also

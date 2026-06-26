@@ -53,7 +53,7 @@ jobs:
           uv run image-inspector-scan
           -l ${{ matrix.language }}
           -o report-${{ matrix.language }}.json
-          --prior-url https://anmalkov.github.io/image-inspector/report.json
+          --prior-url https://anmalkov.github.io/image-inspector/report.json.gz
           --sbom-base-url https://anmalkov.github.io/image-inspector
           --sbom-out-dir sboms
 
@@ -101,10 +101,11 @@ jobs:
         run: |
           mkdir -p pages-dir
           uv run image-inspector-merge reports/report-*.json \
-            --prior-url https://anmalkov.github.io/image-inspector/report.json \
+            --prior-url https://anmalkov.github.io/image-inspector/report.json.gz \
             --sbom-src-dir reports/sboms \
             --sbom-out-dir pages-dir/sbom \
-            -o pages-dir/report.json
+            -o pages-dir/report.json \
+            --gzip-output pages-dir/report.json.gz
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
