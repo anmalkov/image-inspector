@@ -91,6 +91,51 @@ The file is git-ignored, so it won't show up in `git status`. With it in place y
 offline path with `IMAGE_INSPECTOR_OFFLINE=1 uv run image-inspector`, and run the integration tests
 (see below).
 
+## Database stats (dev-only)
+
+The stats view is a read-only summary of the retained scan database in `report.json` —
+total digests, distinct tags, per-tag depth, active vs. retained history, the age range, how many
+digests are close to aging out of the 180-day retention window, a per-image/per-version breakdown,
+and the published SBOM count. It runs no scans.
+
+It is **intentionally not a console script** (it isn't installed for end users); run it as a module:
+
+```bash
+# Live published report (default) — what's actually stored on GitHub Pages right now
+uv run python -m image_inspector.stats
+
+# The bundled snapshot (needs the offline report downloaded above)
+uv run python -m image_inspector.stats --source local
+
+# A specific report file (handy in a dev checkout) and machine-readable output
+uv run python -m image_inspector.stats --report path/to/report.json --json
+```
+
+Useful flags: `--source {local,url}` (default `url`), `--report PATH` to read a file directly,
+`--aging-within N` to change the near-aging-out warning window (default 14 days), `--json` for
+machine-readable output, and `--plain` for uncolored text.
+
+### Shortcut: `just stats`
+
+Typing `uv run python -m image_inspector.stats` gets old fast. The repo ships a
+[`just`](https://just.systems) task runner (`justfile`) with a `stats` recipe that wraps it and
+passes flags straight through. Install `just` once (it's on PyPI, so `uv` can manage it):
+
+```bash
+uv tool install rust-just
+```
+
+Then:
+
+```bash
+just stats                                   # live report
+just stats --source local                    # bundled snapshot
+just stats --report path/to/report.json --json
+```
+
+Run `just --list` to see every dev task (`just check` runs the full CI gate locally).
+
+
 ## Quality checks
 
 These are the same checks the CI pipeline runs on every pull request and on `main`.
