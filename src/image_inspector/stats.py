@@ -133,11 +133,15 @@ def _version_group(reference: str, scheme: VersionScheme) -> str:
 
 
 def _version_sort_key(version: str) -> tuple[int, Version | None, str]:
-    """Sort versions newest-first; unparseable versions sort last (then lexically)."""
+    """Sort versions newest-first; unparseable versions sort last (then lexically).
+
+    The caller sorts with ``reverse=True``, so parseable versions get the higher leading
+    rank (``1``) to land first and unparseable ones get ``0`` to land last.
+    """
     try:
-        return (0, Version(version), version)
+        return (1, Version(version), version)
     except InvalidVersion:
-        return (1, None, version)
+        return (0, None, version)
 
 
 def _sorted_versions(groups: dict[str, dict[str, set[str]]]) -> list[VersionStats]:
@@ -221,7 +225,6 @@ def compute_stats(
 
     # Group digests by their tag (reference) to derive per-tag depth and active/retained.
     per_tag: dict[str, list[datetime | None]] = {}
-    actives: list[datetime] = []
     warn_threshold = timedelta(days=max(max_age_days - aging_within_days, 0))
     aging_out = 0
     for entry in images.values():
@@ -234,11 +237,6 @@ def compute_stats(
             aging_out += 1
 
     # The newest digest per tag is the current/active pin; the rest are retained history.
-    for actives_in_tag in per_tag.values():
-        dated = [dt for dt in actives_in_tag if dt is not None]
-        if dated:
-            actives.append(max(dated))
-
     total_digests = sum(len(v) for v in per_tag.values())
     distinct_tags = len(per_tag)
     active_digests = distinct_tags if total_digests else 0

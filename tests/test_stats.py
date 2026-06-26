@@ -126,6 +126,19 @@ def test_calver_and_major_versions_use_the_raw_token():
     assert [v.version for v in _image(stats, "dotnet").versions] == ["8.0"]
 
 
+def test_unparseable_versions_sort_after_real_ones():
+    payload = {
+        "images": {
+            "sha256:p1": {"reference": "python:latest", "last_active_at": _at(0)},
+            "sha256:p2": {"reference": "python:3.13.1-slim", "last_active_at": _at(0)},
+            "sha256:p3": {"reference": "python:3.9.1", "last_active_at": _at(0)},
+        }
+    }
+    stats = compute_stats(payload, source="file", now=NOW)
+    # Real versions stay newest-first; the unparseable "latest" token lands last.
+    assert [v.version for v in _image(stats, "python").versions] == ["3.13", "3.9", "latest"]
+
+
 def test_empty_report_is_safe():
     stats = compute_stats({"images": {}}, source="local", now=NOW)
     assert stats.total_digests == 0
