@@ -210,6 +210,30 @@ def test_load_report_uses_cached_body_on_304(isolate_loader):
 
 
 @respx.mock
+def test_load_report_outdated_on_304_with_newer_cached_schema(isolate_loader):
+    # A newer tool version (or a later downgrade) could have populated the shared cache
+    # with a newer-schema body. On a 304 we must re-check the cached body and flag the
+    # tool as OUTDATED rather than silently degrading to OFFLINE.
+    cache_path = report_module._cache_path()
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(
+        json.dumps(
+            {
+                "url": isolate_loader,
+                "etag": '"v3"',
+                "body": json.dumps(_payload(_ONLINE_DIGEST, schema_version=3)),
+            }
+        ),
+        encoding="utf-8",
+    )
+    respx.get(isolate_loader).mock(return_value=httpx.Response(304))
+    report = load_report()
+    assert report.source is ReportSource.OUTDATED
+    assert report.lookup(_PACKAGED_DIGEST) is not None
+    assert report.lookup(_ONLINE_DIGEST) is None
+
+
+@respx.mock
 def test_load_report_offline_env_skips_fetch(isolate_loader, monkeypatch):
     monkeypatch.setenv("IMAGE_INSPECTOR_OFFLINE", "1")
     route = respx.get(isolate_loader).mock(

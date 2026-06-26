@@ -262,10 +262,14 @@ def _fetch_report() -> _FetchOutcome:
     except httpx.HTTPError:
         return _FetchOutcome()
 
-    # A 304 means our cached body is still current; it predates any newer schema, so it is
-    # always safe to reuse and can never be the "too new" case.
+    # A 304 means our cached body is still current. Normally it is a previously validated
+    # v2 body, but a newer tool version (or a later downgrade) could have populated the
+    # shared cache with a newer-schema body, so apply the same schema check as the 200 path.
     if response.status_code == 304 and cached_body is not None:
-        return _FetchOutcome(payload=_validate_payload(cached_body))
+        cached_payload = _validate_payload(cached_body)
+        if cached_payload is not None:
+            return _FetchOutcome(payload=cached_payload)
+        return _FetchOutcome(schema_too_new=_schema_is_newer(cached_body))
     if response.status_code != 200:
         return _FetchOutcome()
 
