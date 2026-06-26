@@ -7,7 +7,7 @@ import argparse
 from . import __version__, ui
 from .models import LANGUAGES, LANGUAGES_BY_KEY, Language, ResolvedImage, ScanSource
 from .registry import RegistryError, RegistryProvider, get_provider, make_client
-from .report import VulnerabilityReport, load_report
+from .report import VulnerabilityReport, latest_pypi_version, load_report
 from .versions import (
     PLAIN_VARIANT,
     is_ubuntu_lts,
@@ -206,6 +206,10 @@ def main(argv: list[str] | None = None) -> int:
     ui.configure(plain=args.plain)
     if not args.no_banner:
         ui.banner()
+
+    # Tell the user when the bundled data is stale (newer online schema) or a newer tool
+    # release is available. Offline-safe: the PyPI lookup is skipped/short-circuits offline.
+    ui.show_version_status(report.source, report.generated_at, __version__, latest_pypi_version())
 
     while True:
         language = ui.select_language(LANGUAGES)

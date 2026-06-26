@@ -9,10 +9,12 @@ import sys
 from collections.abc import Iterator
 from contextlib import contextmanager, suppress
 from datetime import datetime
+from enum import StrEnum
 from typing import Any
 
 import pyfiglet
 import questionary
+from packaging.version import InvalidVersion, Version
 from questionary import Choice, Separator, Style
 from rich.align import Align
 from rich.console import Console, Group, RenderableType
@@ -256,13 +258,135 @@ def format_data_source(source: ReportSource | None) -> str:
     """Render the data-origin line for the SECURITY panel's ``Source`` row.
 
     ``ONLINE`` → fresh data fetched online; ``OFFLINE`` → the packaged snapshot;
-    ``None`` → no report was available at all.
+    ``OUTDATED`` → the packaged snapshot served because the online report is newer than
+    this build understands (the tool is behind); ``None`` → no report was available.
     """
     if source is ReportSource.ONLINE:
         return "online (latest)"
     if source is ReportSource.OFFLINE:
         return "offline (bundled copy)"
+    if source is ReportSource.OUTDATED:
+        return "bundled (tool outdated)"
     return "not found"
+
+
+_DISTRIBUTION_NAME = "base-image-inspector"
+
+
+class Installer(StrEnum):
+    """How the running tool was most likely installed (drives the upgrade hint)."""
+
+    UV_TOOL = "uv-tool"
+    UVX = "uvx"
+    PIPX = "pipx"
+    PIP = "pip"
+
+
+_UPGRADE_COMMANDS: dict[Installer, str] = {
+    Installer.UV_TOOL: f"uv tool upgrade {_DISTRIBUTION_NAME}",
+    Installer.UVX: f"uvx --from {_DISTRIBUTION_NAME}@latest image-inspector",
+    Installer.PIPX: f"pipx upgrade {_DISTRIBUTION_NAME}",
+    Installer.PIP: f"pip install --upgrade {_DISTRIBUTION_NAME}",
+}
+
+
+def detect_installer(path: str | None = None) -> Installer:
+    """Best-effort guess of how the tool was installed, from its on-disk location.
+
+    Inspects the installed package path (this module's own ``__file__`` by default), whose
+    directory layout reveals the installer: ``.../uv/tools/...`` for ``uv tool install``,
+    the uv cache (``.../uv/cache/archive-v0/...``) for an ephemeral ``uvx`` run, and a
+    ``pipx`` segment for pipx. Anything else falls back to plain ``pip``.
+    """
+    parts = (path if path is not None else __file__).replace("\\", "/").lower().split("/")
+    if "uv" in parts and "tools" in parts:
+        return Installer.UV_TOOL
+    if "uv" in parts and ("cache" in parts or "archive-v0" in parts):
+        return Installer.UVX
+    if "pipx" in parts:
+        return Installer.PIPX
+    return Installer.PIP
+
+
+def upgrade_command(path: str | None = None) -> str:
+    """Return the installer-appropriate command to fetch the newest release."""
+    return _UPGRADE_COMMANDS[detect_installer(path)]
+
+
+def _is_newer(latest: str | None, installed: str) -> bool:
+    """Return ``True`` if ``latest`` is a strictly newer version than ``installed``.
+
+    Offline/unknown-safe: a missing ``latest`` or any unparsable version returns ``False``.
+    """
+    if not latest:
+        return False
+    try:
+        return Version(latest) > Version(installed)
+    except InvalidVersion:
+        return False
+
+
+def format_update_notice(installed_version: str, latest_version: str | None) -> Text | None:
+    """Build the light "a new version is available" line, or ``None`` if up to date.
+
+    Used when the report itself is fine but PyPI advertises a newer tool release.
+    """
+    if not _is_newer(latest_version, installed_version):
+        return None
+    notice = Text()
+    notice.append("⬆ ", style="accent")
+    notice.append("A new version ", style="warn")
+    notice.append(f"v{latest_version}", style="accent")
+    notice.append(f" is available (you have v{installed_version}). Update with:\n", style="warn")
+    notice.append(f"  {upgrade_command()}", style="value")
+    return notice
+
+
+def format_outdated_warning(
+    generated_at: datetime | None,
+    installed_version: str,
+    latest_version: str | None,
+) -> Text:
+    """Build the strong warning shown when the report source is ``OUTDATED``.
+
+    The online report is newer than this build supports, so we are serving the bundled,
+    stale copy. When PyPI confirms a newer release exists, point the user at the
+    installer-appropriate upgrade command; otherwise (the matching release isn't published
+    yet, or PyPI is unreachable) tell them a new version is coming soon — never to update.
+    """
+    warning = Text()
+    warning.append("⚠ Using the bundled, outdated vulnerability report", style="warn")
+    warning.append(f" (generated {format_date(generated_at)}).\n", style="warn")
+    warning.append(
+        f"  Your installed {_DISTRIBUTION_NAME} v{installed_version} is older than the "
+        "published vulnerability data.\n",
+        style="warn",
+    )
+    if _is_newer(latest_version, installed_version):
+        warning.append(f"  A newer version (v{latest_version}) is available — update with:\n")
+        warning.append(f"    {upgrade_command()}", style="value")
+    else:
+        warning.append("  A new version will be available soon.")
+    return warning
+
+
+def show_version_status(
+    report_source: ReportSource | None,
+    generated_at: datetime | None,
+    installed_version: str,
+    latest_version: str | None,
+) -> None:
+    """Print the outdated-report warning or the lighter update notice, if either applies.
+
+    An ``OUTDATED`` report always takes precedence (its data is stale); otherwise a newer
+    PyPI release surfaces the light update notice. Prints nothing when fully up to date.
+    """
+    if report_source is ReportSource.OUTDATED:
+        console.print(format_outdated_warning(generated_at, installed_version, latest_version))
+        return
+    notice = format_update_notice(installed_version, latest_version)
+    if notice is not None:
+        console.print(notice)
 
 
 def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, str | Text]]]]:

@@ -145,13 +145,48 @@ def test_load_report_falls_back_on_malformed_payload(isolate_loader):
 
 
 @respx.mock
-def test_load_report_falls_back_on_schema_mismatch(isolate_loader):
+def test_load_report_falls_back_on_older_schema(isolate_loader):
+    # An *older* online schema is a normal quiet offline fallback, not an outdated-tool case.
     respx.get(isolate_loader).mock(
-        return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST, schema_version=99))
+        return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST, schema_version=1))
     )
     report = load_report()
     assert report.source is ReportSource.OFFLINE
     assert report.lookup(_PACKAGED_DIGEST) is not None
+
+
+@respx.mock
+def test_load_report_outdated_on_newer_schema(isolate_loader):
+    # A newer-than-supported online schema means the tool is behind the published data:
+    # fall back to the bundled copy but mark it OUTDATED so the UI can warn the user.
+    respx.get(isolate_loader).mock(
+        return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST, schema_version=3))
+    )
+    report = load_report()
+    assert report.source is ReportSource.OUTDATED
+    assert report.lookup(_PACKAGED_DIGEST) is not None
+    assert report.lookup(_ONLINE_DIGEST) is None
+
+
+@respx.mock
+def test_load_report_outdated_requires_dict_payload(isolate_loader):
+    # A newer schema_version on a non-report body (e.g. a list) is not the outdated signal;
+    # it degrades to the quiet offline fallback.
+    respx.get(isolate_loader).mock(return_value=httpx.Response(200, json=[1, 2, 3]))
+    report = load_report()
+    assert report.source is ReportSource.OFFLINE
+
+
+@respx.mock
+def test_load_report_outdated_empty_when_no_packaged(isolate_loader, monkeypatch):
+    # Newer online schema but no packaged copy: degrade to an empty report (never crash).
+    respx.get(isolate_loader).mock(
+        return_value=httpx.Response(200, json=_payload(_ONLINE_DIGEST, schema_version=3))
+    )
+    monkeypatch.setattr(report_module, "_load_packaged", lambda: None)
+    report = load_report()
+    assert report.source is None
+    assert report.images == {}
 
 
 @respx.mock
@@ -349,3 +384,60 @@ def test_default_cache_dir_uses_localappdata_on_windows(monkeypatch):
     local = r"C:\\Users\\u\\AppData\\Local"
     monkeypatch.setenv("LOCALAPPDATA", local)
     assert report_module._default_cache_dir() == Path(local) / "image-inspector"
+
+
+@pytest.fixture
+def online(monkeypatch):
+    """Drop the offline flag so the PyPI helper actually performs its lookup."""
+    monkeypatch.delenv("IMAGE_INSPECTOR_OFFLINE", raising=False)
+
+
+@respx.mock
+def test_latest_pypi_version_returns_info_version(online):
+    respx.get(report_module._PYPI_URL).mock(
+        return_value=httpx.Response(200, json={"info": {"version": "0.2.1"}})
+    )
+    assert report_module.latest_pypi_version() == "0.2.1"
+
+
+@respx.mock
+def test_latest_pypi_version_none_on_non_200(online):
+    respx.get(report_module._PYPI_URL).mock(return_value=httpx.Response(503))
+    assert report_module.latest_pypi_version() is None
+
+
+@respx.mock
+def test_latest_pypi_version_none_on_network_error(online):
+    respx.get(report_module._PYPI_URL).mock(side_effect=httpx.ConnectError("offline"))
+    assert report_module.latest_pypi_version() is None
+
+
+@respx.mock
+def test_latest_pypi_version_none_on_malformed_json(online):
+    respx.get(report_module._PYPI_URL).mock(return_value=httpx.Response(200, text="not json{"))
+    assert report_module.latest_pypi_version() is None
+
+
+@respx.mock
+def test_latest_pypi_version_none_when_info_missing(online):
+    respx.get(report_module._PYPI_URL).mock(return_value=httpx.Response(200, json={"foo": 1}))
+    assert report_module.latest_pypi_version() is None
+
+
+@respx.mock
+def test_latest_pypi_version_none_when_version_blank(online):
+    respx.get(report_module._PYPI_URL).mock(
+        return_value=httpx.Response(200, json={"info": {"version": ""}})
+    )
+    assert report_module.latest_pypi_version() is None
+
+
+@respx.mock
+def test_latest_pypi_version_skips_when_offline(monkeypatch):
+    # The autouse conftest fixture already sets IMAGE_INSPECTOR_OFFLINE=1; the lookup must
+    # short-circuit before any network call (the mocked route therefore stays uncalled).
+    route = respx.get(report_module._PYPI_URL).mock(
+        return_value=httpx.Response(200, json={"info": {"version": "0.2.1"}})
+    )
+    assert report_module.latest_pypi_version() is None
+    assert not route.called
