@@ -50,10 +50,11 @@ class FromStage:
 def parse_dockerfile_from(text: str) -> list[FromStage]:
     """Parse every ``FROM`` instruction in ``text`` into :class:`FromStage` records.
 
-    Stages are returned in source order. ``ARG`` defaults declared before a
-    ``FROM`` (Dockerfile "global" args) are substituted into that ``FROM``'s
-    image reference; args without a resolvable default are left literal and
-    listed in :attr:`FromStage.unresolved_args`.
+    Stages are returned in source order. Only ``ARG`` defaults declared before
+    the first ``FROM`` (Dockerfile "global" args) are substituted into ``FROM``
+    image references, matching Docker's scoping; stage-scoped ``ARG``s have no
+    effect here. Args without a resolvable default are left literal and listed
+    in :attr:`FromStage.unresolved_args`.
     """
     stages: list[FromStage] = []
     arg_defaults: dict[str, str] = {}
@@ -63,7 +64,9 @@ def parse_dockerfile_from(text: str) -> list[FromStage]:
     for line in _iter_instructions(text):
         arg_match = _ARG_RE.match(line)
         if arg_match:
-            _record_arg(arg_match.group("rest"), arg_defaults)
+            # Only global ARGs (before the first FROM) are usable in FROM lines.
+            if not stages:
+                _record_arg(arg_match.group("rest"), arg_defaults)
             continue
 
         from_match = _FROM_RE.match(line)
@@ -120,7 +123,8 @@ def _record_arg(rest: str, arg_defaults: dict[str, str]) -> None:
     """Record an ``ARG`` declaration's default value, if it has one."""
     # An ARG line may declare a single arg; only ``NAME=value`` form has a
     # default we can resolve. ``ARG NAME`` (no default) stays unresolved.
-    token = rest.split()[0] if rest.split() else ""
+    parts = rest.split()
+    token = parts[0] if parts else ""
     if "=" in token:
         name, _, value = token.partition("=")
         arg_defaults[name] = _strip_quotes(value)

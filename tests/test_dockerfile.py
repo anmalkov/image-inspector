@@ -197,6 +197,19 @@ def test_arg_quoted_default() -> None:
     assert stage.tag == "3.13"
 
 
+def test_stage_scoped_arg_does_not_affect_later_from() -> None:
+    # ARG declared inside a stage (after the first FROM) is stage-scoped and
+    # must not resolve a later FROM's tag, matching Docker semantics.
+    text = """
+    FROM python:3.13 AS base
+    ARG TAG=3.13
+    FROM python:${TAG}
+    """
+    stages = parse_dockerfile_from(text)
+    assert stages[1].tag == "${TAG}"
+    assert stages[1].unresolved_args == ("TAG",)
+
+
 def test_platform_flag_skipped() -> None:
     stage = _only("FROM --platform=linux/amd64 python:3.13 AS build")
     assert stage.image == "python"
