@@ -113,8 +113,7 @@ def test_pinned_but_unknown_falls_back_to_latest() -> None:
     assert inspection.latest_counts.high == 1
     assert inspection.fixed == ()
     assert inspection.still_present == ()
-    assert inspection.note is not None
-    assert "pinned" in inspection.note
+    assert inspection.note is None
 
 
 def test_tag_known_no_digest() -> None:
@@ -215,9 +214,9 @@ def test_cli_dockerfile_end_to_end(monkeypatch, tmp_path, capsys) -> None:
 
     out = capsys.readouterr().out
     assert "FROM python:3.13.14-slim" in out
-    assert "pinned" in out
-    assert "latest" in out
-    assert "fix-diff" in out
+    assert "Vulnerabilities" in out
+    assert "LATEST DIGEST" in out
+    assert "Fix-diff" in out
     assert "CVE-A" in out
     assert "CVE-B" in out
 
@@ -231,7 +230,7 @@ def test_cli_dockerfile_missing_file_errors(monkeypatch, tmp_path) -> None:
 
 def test_render_dockerfile_inspection_no_stages(capsys) -> None:
     ui.configure(plain=True)
-    ui.render_dockerfile_inspection([])
+    ui.render_dockerfile_inspection("Dockerfile", [])
     out = capsys.readouterr().out
-    assert "0 FROM stage(s)" in out
+    assert "0 FROM instruction(s)" in out
     assert "No FROM instructions found." in out

@@ -6,10 +6,17 @@ import argparse
 from pathlib import Path
 
 from . import __version__, ui
-from .inspection import inspect_dockerfile
+from .inspection import inspect_dockerfile, sort_vulnerabilities
 from .models import LANGUAGES, LANGUAGES_BY_KEY, Language, ResolvedImage, ScanSource
 from .registry import RegistryError, RegistryProvider, get_provider, make_client
-from .report import VulnerabilityReport, latest_pypi_version, load_details, load_report
+from .report import (
+    ImageVulnerabilities,
+    Vulnerability,
+    VulnerabilityReport,
+    latest_pypi_version,
+    load_details,
+    load_report,
+)
 from .versions import (
     PLAIN_VARIANT,
     is_ubuntu_lts,
@@ -19,6 +26,20 @@ from .versions import (
 )
 
 MINOR_VERSION_COUNT = 5
+
+
+def _critical_high_cves(
+    vulns: ImageVulnerabilities | None, digest: str | None
+) -> tuple[Vulnerability, ...]:
+    """Return the image's critical/high CVEs, loading the details sidecar only when needed.
+
+    The lookup is skipped entirely (returning no CVEs) when the image has zero critical and
+    zero high findings, so the always-on selection path never fetches the details sidecar for
+    a clean image. CVEs are ordered critical-first, then by id, to match the fix-diff lists.
+    """
+    if vulns is None or (vulns.critical == 0 and vulns.high == 0):
+        return ()
+    return sort_vulnerabilities(load_details().cve_set(digest))
 
 
 def _lts_versions(language: Language, versions: list[str]) -> frozenset[str]:
@@ -66,13 +87,15 @@ def _resolve(
     with ui.working(f"Resolving {language.image_name}:{tag}…"):
         image_tag = provider.resolve(tag)
 
+    vulns = report.lookup_digest(image_tag.digest)
     return ResolvedImage(
         language=language,
         tag=tag,
         digest=image_tag.digest,
         created=image_tag.last_updated,
         size=image_tag.size,
-        vulnerabilities=report.lookup_digest(image_tag.digest),
+        vulnerabilities=vulns,
+        cve_details=_critical_high_cves(vulns, image_tag.digest),
         version=version,
         variant=_display_variant(variant),
         is_lts=bool(_lts_versions(language, [version])),
@@ -92,6 +115,7 @@ def _build_parser() -> argparse.ArgumentParser:
             "  image-inspector --no-banner     # skip the launch banner\n"
             "  image-inspector --plain         # uncolored, automation-friendly output\n"
             "  image-inspector --dockerfile ./Dockerfile   # compare FROM images vs. latest\n"
+            "  image-inspector --dockerfile ./Dockerfile --json   # machine-readable diff\n"
             "  image-inspector --json -l ubuntu --version 24.04 --variant '(none)'\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -115,7 +139,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--json",
         action="store_true",
-        help="non-interactive JSON output; requires --language and --version",
+        help=(
+            "non-interactive JSON output; with --language/--version for a single image, "
+            "or with --dockerfile for the per-stage comparison"
+        ),
     )
     parser.add_argument(
         "-l",
@@ -186,13 +213,15 @@ def _run_json(args: argparse.Namespace, report: VulnerabilityReport) -> int:
         ui.error(str(exc))
         return 1
 
+    vulns = report.lookup_digest(image_tag.digest)
     image = ResolvedImage(
         language=language,
         tag=tag,
         digest=image_tag.digest,
         created=image_tag.last_updated,
         size=image_tag.size,
-        vulnerabilities=report.lookup_digest(image_tag.digest),
+        vulnerabilities=vulns,
+        cve_details=_critical_high_cves(vulns, image_tag.digest),
         version=version,
         variant=_display_variant(variant),
         is_lts=bool(_lts_versions(language, [version])),
@@ -216,9 +245,20 @@ def _run_dockerfile(args: argparse.Namespace) -> int:
     # fix-diff) once the Dockerfile is in hand, so an unreadable path never pays the cost
     # of fetching/decompressing the data.
     report = load_report()
+
+    if args.json:
+        details = load_details()
+        inspections = inspect_dockerfile(text, report, details)
+        ui.show_dockerfile_inspection_json(args.dockerfile, inspections, report)
+        return 0
+
+    if not args.no_banner:
+        ui.banner()
+    ui.show_version_status(report.source, report.generated_at, __version__, latest_pypi_version())
+
     details = load_details()
     inspections = inspect_dockerfile(text, report, details)
-    ui.render_dockerfile_inspection(inspections)
+    ui.render_dockerfile_inspection(args.dockerfile, inspections)
     return 0
 
 

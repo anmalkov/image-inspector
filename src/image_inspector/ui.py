@@ -28,7 +28,7 @@ from rich.theme import Theme
 from . import __version__
 from .inspection import StageInspection, StageStatus
 from .models import Category, Language, ResolvedImage, ScanSource
-from .report import ImageVulnerabilities, ReportSource, Vulnerability
+from .report import ImageVulnerabilities, ReportSource, Vulnerability, VulnerabilityReport
 
 _THEME = Theme(
     {
@@ -285,77 +285,378 @@ _STATUS_LABELS: dict[StageStatus, str] = {
 _SEVERITY_WORDS = {"C": "critical", "H": "high"}
 
 
+def _severity_word(sev: str) -> str | None:
+    """Map a compact severity code to its word: ``C``→critical, ``H``→high.
+
+    Any other non-empty code is returned verbatim (so unexpected values surface rather than
+    being silently dropped); an empty code yields ``None``.
+    """
+    return _SEVERITY_WORDS.get(sev) or (sev or None)
+
+
 def _format_cve(vuln: Vulnerability) -> str:
-    """Render a single C/H CVE as ``CVE-… (critical, openssl)`` for the fix-diff lines."""
-    severity = _SEVERITY_WORDS.get(vuln.sev, vuln.sev or "?")
+    """Render a single C/H CVE, e.g. ``CVE-… (critical, openssl → fixed in 3.3.2)``.
+
+    The fixed version is appended when known, so still-present CVEs show the upgrade target.
+    """
+    severity = _severity_word(vuln.sev) or "?"
     package = f", {vuln.pkg}" if vuln.pkg else ""
-    return f"{vuln.id} ({severity}{package})"
+    fix = f" → fixed in {vuln.fix}" if vuln.fix else ""
+    return f"{vuln.id} ({severity}{package}{fix})"
 
 
-def _inspection_row(label: str, value: Text | str) -> None:
+def _cve_style(vuln: Vulnerability) -> str:
+    """Theme style for a CVE line: red for critical, orange for high, muted otherwise."""
+    if vuln.sev == "C":
+        return "err"
+    if vuln.sev == "H":
+        return "orange"
+    return "muted"
+
+
+def _cve_detail_value(cves: tuple[Vulnerability, ...]) -> Text:
+    """Build the aligned critical/high CVE table as a single multi-line value.
+
+    Columns are severity, CVE id, package, and fix status. The first line is a muted column
+    header; each data line is tinted by severity (red critical, orange high). Returned as one
+    ``Text`` so it sits in the value column, aligned with the other SECURITY rows.
+    """
+    headers = ("SEVERITY", "CVE", "PACKAGE", "FIX")
+    cells = [
+        (
+            _severity_word(v.sev) or "?",
+            v.id,
+            v.pkg or "-",
+            f"upgrade to {v.fix}" if v.fix else "no fix yet",
+        )
+        for v in cves
+    ]
+    widths = [max(len(headers[i]), *(len(row[i]) for row in cells)) for i in range(len(headers))]
+
+    def _line(parts: tuple[str, ...]) -> str:
+        return "  ".join(p.ljust(widths[i]) for i, p in enumerate(parts)).rstrip()
+
+    value = Text(_line(headers), style="muted")
+    for v, cell in zip(cves, cells, strict=True):
+        value.append("\n")
+        value.append(_line(cell), style=_cve_style(v))
+    return value
+
+
+def _cve_payload(vuln: Vulnerability) -> dict:
+    """Serialise a critical/high CVE for the machine-readable ``--json`` output."""
+    return {
+        "id": vuln.id,
+        "package": vuln.pkg or None,
+        "severity": _severity_word(vuln.sev),
+        "fixed_version": vuln.fix,
+    }
+
+
+def _inspection_row(label: str, value: Text | str, *, width: int = 8) -> None:
     """Print one indented ``label  value`` line of a stage report."""
-    line = Text(f"    {label.ljust(8)}  ", style="muted")
+    line = Text(f"    {label.ljust(width)}  ", style="muted")
     line.append(value if isinstance(value, Text) else Text(str(value), style="value"))
     console.print(line)
 
 
-def _render_fix_diff(inspection: StageInspection) -> None:
-    """Print the critical/high fix-diff summary and CVE lists for a tracked pinned image."""
+def _full_digest(digest: str | None) -> str | None:
+    """Normalise a digest to the full ``sha256:<hex>`` form for ``--json``; ``None`` if absent."""
+    if not digest:
+        return None
+    body = digest.split(":", 1)[1] if ":" in digest else digest
+    return f"sha256:{body}"
+
+
+def _stage_has_data(inspection: StageInspection) -> bool:
+    """Whether the stage has any tracked counts (pinned or latest) to compare."""
+    return inspection.pinned_counts is not None or inspection.latest_counts is not None
+
+
+def _pinned_vulnerable(inspection: StageInspection) -> bool:
+    """Whether the pinned digest carries any critical/high findings."""
+    counts = inspection.pinned_counts
+    return counts is not None and (counts.critical > 0 or counts.high > 0)
+
+
+def _latest_is_cleaner(inspection: StageInspection) -> bool:
+    """Whether the latest digest has fewer critical+high findings than the pinned one."""
+    pinned, latest = inspection.pinned_counts, inspection.latest_counts
+    if pinned is None or latest is None:
+        return False
+    return (latest.critical + latest.high) < (pinned.critical + pinned.high)
+
+
+def _status_style(inspection: StageInspection) -> str:
+    """Theme style for a stage's status line."""
+    if inspection.status is StageStatus.SKIPPED:
+        return "muted"
+    if inspection.status in (StageStatus.UNTRACKED, StageStatus.PINNED_UNKNOWN):
+        return "warn"
+    if _pinned_vulnerable(inspection):
+        return "warn"
+    return "ok"
+
+
+def _stage_title(inspection: StageInspection) -> Text:
+    """Build the ``[n] FROM … [AS alias]`` header for a stage."""
+    stage = inspection.stage
+    title = Text()
+    title.append(f"[{stage.index + 1}] ", style="muted")
+    title.append(f"FROM {stage.raw}", style="label")
+    if stage.alias:
+        title.append(f" AS {stage.alias}", style="muted")
+    return title
+
+
+def _cve_list_text(vulns: tuple[Vulnerability, ...]) -> Text:
+    """Render a comma-separated, per-severity-coloured list of CVEs."""
+    text = Text()
+    for index, vuln in enumerate(vulns):
+        if index:
+            text.append(", ")
+        text.append(_format_cve(vuln), style=_cve_style(vuln))
+    return text
+
+
+def _movement_text(pinned: ImageVulnerabilities, latest: ImageVulnerabilities | None) -> Text:
+    """Render the medium/low/unknown count movement (counts only, no per-CVE detail)."""
+    before = pinned.medium + pinned.low + pinned.unknown
+    text = Text()
+    if latest is None:
+        text.append(str(before), style="muted")
+    else:
+        after = latest.medium + latest.low + latest.unknown
+        text.append(f"{before} → {after}", style="ok" if after < before else "muted")
+    text.append("  (count only — no CVE detail)", style="muted")
+    return text
+
+
+def _fix_diff_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
+    """Build the critical/high fix-diff + medium/low movement rows for a tracked pinned image."""
+    if inspection.status is not StageStatus.PINNED_KNOWN or inspection.latest_counts is None:
+        return []
+    rows: list[tuple[str, Text]] = []
     fixed, still = inspection.fixed, inspection.still_present
     if not fixed and not still:
-        _inspection_row("fix-diff", Text("no critical/high CVEs to compare", style="ok"))
-        return
-    summary = Text()
-    summary.append(
-        f"upgrading to latest fixes {len(fixed)} critical/high CVE(s)",
-        style="ok" if fixed else "muted",
-    )
-    summary.append(", ")
-    summary.append(f"{len(still)} still present", style="warn" if still else "ok")
-    _inspection_row("fix-diff", summary)
-    if fixed:
-        _inspection_row("fixed", ", ".join(_format_cve(v) for v in fixed))
-    if still:
-        _inspection_row("still", ", ".join(_format_cve(v) for v in still))
+        rows.append(("Fix-diff", Text("no critical/high CVEs to compare", style="ok")))
+    else:
+        summary = Text()
+        summary.append(
+            f"latest fixes {len(fixed)} of your critical/high CVE(s)",
+            style="ok" if fixed else "muted",
+        )
+        summary.append(", ")
+        summary.append(f"{len(still)} still present", style="warn" if still else "ok")
+        rows.append(("Fix-diff", summary))
+        if fixed:
+            rows.append(("Fixed", _cve_list_text(fixed)))
+        if still:
+            rows.append(("Still", _cve_list_text(still)))
+    if inspection.pinned_counts is not None:
+        rows.append(("Med/low", _movement_text(inspection.pinned_counts, inspection.latest_counts)))
+    rows.append(("Detail", Text("per-CVE detail: critical/high only", style="muted")))
+    return rows
 
 
-def _render_stage(inspection: StageInspection) -> None:
-    """Print one ``FROM`` stage's comparison block in plain, sectioned text."""
-    stage = inspection.stage
-    header = Text()
-    header.append(f"[{stage.index + 1}] ", style="muted")
-    header.append(f"FROM {stage.raw}", style="label")
-    if stage.alias:
-        header.append(f" AS {stage.alias}", style="muted")
-    console.print(header)
-
+def _stage_head_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
+    """Build the status (+ pinned-digest vulnerability count) rows for a stage."""
+    rows: list[tuple[str, Text]] = []
     status = _STATUS_LABELS[inspection.status]
     if inspection.note:
         status = f"{status} — {inspection.note}"
-    _inspection_row("status", status)
-
-    if inspection.pinned_counts is not None:
-        _inspection_row("pinned", format_vulnerabilities(inspection.pinned_counts))
-    if inspection.latest_counts is not None:
-        _inspection_row("latest", format_vulnerabilities(inspection.latest_counts))
-    if inspection.status is StageStatus.PINNED_KNOWN and inspection.latest_counts is not None:
-        _render_fix_diff(inspection)
+    rows.append(("Status", Text(status, style=_status_style(inspection))))
+    if inspection.pinned_digest:
+        rows.append(("Vulnerabilities", format_vulnerabilities(inspection.pinned_counts)))
+    return rows
 
 
-def render_dockerfile_inspection(inspections: list[StageInspection]) -> None:
-    """Render a Dockerfile's per-``FROM`` pinned-vs-latest comparison as plain text.
+def _latest_section_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
+    """Build the ``latest digest`` section: full FROM line, created date, vulnerability count."""
+    if inspection.latest_counts is None and not inspection.latest_digest:
+        return []
+    vulns = format_vulnerabilities(inspection.latest_counts)
+    if _latest_is_cleaner(inspection):
+        vulns = vulns.copy()
+        vulns.append("  ✓ cleaner", style="ok")
+    rows: list[tuple[str, Text]] = []
+    full = _full_digest(inspection.latest_digest)
+    if full and inspection.reference:
+        rows.append(("FROM", Text(f"{inspection.reference}@{full}", style="value")))
+    rows.append(("Created", Text(format_datetime(inspection.latest_created), style="value")))
+    rows.append(("Vulnerabilities", vulns))
+    return rows
 
-    Functional output only — rich formatting and the final ``--json`` shape are deferred to
-    a separate UI issue.
+
+def _stage_sections(inspection: StageInspection) -> list[tuple[str | None, list[tuple[str, Text]]]]:
+    """Build a stage's ``(section title, rows)`` groups, dropping empty sections.
+
+    The leading group (status + pinned count) has no title; the ``latest digest`` and
+    ``differences`` groups are titled. Shared by the rich and plain renderers.
     """
-    console.print(Text(f"Dockerfile · {len(inspections)} FROM stage(s)", style="accent"))
-    console.print()
+    sections: list[tuple[str | None, list[tuple[str, Text]]]] = [
+        (None, _stage_head_rows(inspection)),
+        ("LATEST DIGEST", _latest_section_rows(inspection)),
+        ("DIFFERENCES", _fix_diff_rows(inspection)),
+    ]
+    return [(title, rows) for title, rows in sections if rows]
+
+
+def _rows_grid(rows: list[tuple[str, Text]], width: int) -> Table:
+    """Build a two-column ``label  value`` grid for a stage section, labels padded to ``width``."""
+    grid = Table.grid(padding=(0, 2))
+    grid.add_column(style="label", justify="left")
+    grid.add_column()
+    for label, value in rows:
+        grid.add_row(label.ljust(width), value)
+    return grid
+
+
+def _stage_label_width(sections: list[tuple[str | None, list[tuple[str, Text]]]]) -> int:
+    """Widest row label across all of a stage's sections, so every label column lines up."""
+    return max((len(label) for _, rows in sections for label, _ in rows), default=0)
+
+
+def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> None:
+    """Print the Dockerfile inspection as plain, sectioned text (no borders)."""
+    console.print("DOCKERFILE")
+    _inspection_row("Path", path)
+    _inspection_row("Stages", f"{len(inspections)} FROM instruction(s)")
     if not inspections:
-        console.print(Text("No FROM instructions found.", style="muted"))
+        _inspection_row("", "No FROM instructions found.")
         return
     for inspection in inspections:
-        _render_stage(inspection)
         console.print()
+        console.print(_stage_title(inspection))
+        sections = _stage_sections(inspection)
+        width = _stage_label_width(sections)
+        for title, rows in sections:
+            if title:
+                console.print(f"    {title}")
+            for label, value in rows:
+                _inspection_row(label, value, width=width)
+
+
+def render_dockerfile_inspection(path: str, inspections: list[StageInspection]) -> None:
+    """Render a Dockerfile's per-``FROM`` pinned-vs-latest comparison.
+
+    All stages live in a single ``✓ dockerfile`` panel that opens with a ``DOCKERFILE``
+    section (path + stage count), then one block per ``FROM`` image. Each stage shows its
+    status and pinned-digest vulnerability count, a ``latest digest`` section (vulnerability
+    count, when it was published, and the full copy-paste ``FROM`` line), and a
+    ``differences`` section. Falls back to plain, sectioned text for ``--plain`` /
+    ``NO_COLOR``. Per-CVE detail is critical/high only; medium/low/unknown findings are
+    shown as count movement.
+    """
+    if _PLAIN:
+        _render_dockerfile_plain(path, inspections)
+        return
+
+    blocks: list[RenderableType] = [Text("DOCKERFILE", style="muted")]
+    header = Table.grid(padding=(0, 2))
+    header.add_column(style="label", justify="left")
+    header.add_column(style="value")
+    header.add_row("Path", path)
+    header.add_row("Stages", f"{len(inspections)} FROM instruction(s)")
+    blocks.append(Padding(header, (0, 0, 1, 2)))
+
+    if not inspections:
+        blocks.append(Padding(Text("No FROM instructions found.", style="muted"), (0, 0, 0, 2)))
+    for inspection in inspections:
+        blocks.append(_stage_title(inspection))
+        sections = _stage_sections(inspection)
+        width = _stage_label_width(sections)
+        for title, rows in sections:
+            if title:
+                blocks.append(Padding(Text(title, style="muted"), (0, 0, 0, 2)))
+            blocks.append(Padding(_rows_grid(rows, width), (0, 0, 1, 2)))
+
+    console.print(
+        Panel(
+            Group(*blocks),
+            title="[ok]✓ dockerfile",
+            border_style="ok",
+            padding=(1, 2),
+        )
+    )
+
+
+def _counts_payload(counts: ImageVulnerabilities | None) -> dict | None:
+    """Serialise vulnerability counts for ``--json``; ``None`` when unscanned."""
+    if counts is None:
+        return None
+    return {
+        "critical": counts.critical,
+        "high": counts.high,
+        "medium": counts.medium,
+        "low": counts.low,
+        "unknown": counts.unknown,
+        "total": counts.total,
+        "scanned_at": counts.scanned_at.isoformat() if counts.scanned_at else None,
+    }
+
+
+def _stage_payload(inspection: StageInspection) -> dict:
+    """Serialise one stage's pinned-vs-latest comparison for ``--dockerfile --json``."""
+    stage = inspection.stage
+    return {
+        "index": stage.index,
+        "from": f"FROM {stage.raw}",
+        "raw": stage.raw,
+        "image": stage.image,
+        "tag": stage.tag,
+        "alias": stage.alias,
+        "reference": inspection.reference,
+        "references_stage": stage.references_stage,
+        "status": inspection.status.value,
+        "note": inspection.note,
+        "pinned": {
+            "digest": _full_digest(inspection.pinned_digest),
+            "vulnerabilities": _counts_payload(inspection.pinned_counts),
+        },
+        "latest": {
+            "digest": _full_digest(inspection.latest_digest),
+            "created": inspection.latest_created.isoformat() if inspection.latest_created else None,
+            "vulnerabilities": _counts_payload(inspection.latest_counts),
+        },
+        "critical_high": {
+            "detail_scope": "critical_high_only",
+            "fixed": [_cve_payload(v) for v in inspection.fixed],
+            "still_present": [_cve_payload(v) for v in inspection.still_present],
+        },
+        "flags": {
+            "has_data": _stage_has_data(inspection),
+            "pinned_vulnerable": _pinned_vulnerable(inspection),
+            "latest_is_cleaner": _latest_is_cleaner(inspection),
+        },
+    }
+
+
+def dockerfile_payload(
+    path: str, inspections: list[StageInspection], report: VulnerabilityReport
+) -> dict:
+    """Build the stable machine-readable payload for the ``--dockerfile --json`` flow."""
+    return {
+        "dockerfile": path,
+        "generated_at": report.generated_at.isoformat() if report.generated_at else None,
+        "data_source": report.source.value if report.source else None,
+        "scanner": {
+            "name": "trivy",
+            "version": report.trivy_version,
+            "db_updated_at": report.trivy_db_updated_at.isoformat()
+            if report.trivy_db_updated_at
+            else None,
+        },
+        "stage_count": len(inspections),
+        "stages": [_stage_payload(inspection) for inspection in inspections],
+    }
+
+
+def show_dockerfile_inspection_json(
+    path: str, inspections: list[StageInspection], report: VulnerabilityReport
+) -> None:
+    """Emit the Dockerfile inspection as a single JSON object on stdout."""
+    print(json.dumps(dockerfile_payload(path, inspections, report), indent=2))
 
 
 class Installer(StrEnum):
@@ -512,6 +813,8 @@ def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, st
     if scanner is not None:
         security.append(("Scanner", scanner))
     security.append(("Source", format_data_source(image.report_source)))
+    if image.cve_details:
+        security.append(("CVEs", _cve_detail_value(image.cve_details)))
 
     return [
         ("SELECTED", [("", image.source_label)]),
@@ -544,17 +847,8 @@ def result_payload(image: ResolvedImage) -> dict:
         "created": image.created.isoformat() if image.created else None,
         "size_bytes": image.size,
         "from_line": f"FROM {image.pinned_reference}",
-        "vulnerabilities": None
-        if vulns is None
-        else {
-            "critical": vulns.critical,
-            "high": vulns.high,
-            "medium": vulns.medium,
-            "low": vulns.low,
-            "unknown": vulns.unknown,
-            "total": vulns.total,
-            "scanned_at": vulns.scanned_at.isoformat() if vulns.scanned_at else None,
-        },
+        "vulnerabilities": _counts_payload(vulns),
+        "critical_high_cves": [_cve_payload(v) for v in image.cve_details],
         "scanner": {
             "name": "trivy",
             "version": source.version if source else None,
@@ -578,10 +872,15 @@ def _show_result_plain(image: ResolvedImage) -> None:
         width = max((len(label) for label, _ in rows if label), default=0)
         for label, value in rows:
             text = value.plain if isinstance(value, Text) else str(value)
+            lines = text.split("\n")
             if label:
-                console.print(f"  {label.ljust(width)}  {text}")
+                console.print(f"  {label.ljust(width)}  {lines[0]}")
+                indent = " " * (2 + width + 2)
+                for cont in lines[1:]:
+                    console.print(f"{indent}{cont}")
             else:
-                console.print(f"  {text}")
+                for line in lines:
+                    console.print(f"  {line}")
         console.print()
     console.print("DOCKERFILE")
     console.print(f"  FROM {image.pinned_reference}")

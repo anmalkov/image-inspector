@@ -167,6 +167,7 @@ class VulnerabilityReport:
     images: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
     latest: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
     latest_digests: dict[str, str] = None  # type: ignore[assignment]
+    latest_created: dict[str, datetime] = None  # type: ignore[assignment]
     source: ReportSource | None = None
 
     def __post_init__(self) -> None:
@@ -176,6 +177,8 @@ class VulnerabilityReport:
             object.__setattr__(self, "latest", {})
         if self.latest_digests is None:
             object.__setattr__(self, "latest_digests", {})
+        if self.latest_created is None:
+            object.__setattr__(self, "latest_created", {})
 
     def lookup_digest(self, digest: str | None) -> ImageVulnerabilities | None:
         """Return counts for an image ``digest``, or ``None`` if not scanned.
@@ -203,6 +206,12 @@ class VulnerabilityReport:
             return None
         return self.latest_digests.get(reference)
 
+    def latest_created_for_tag(self, reference: str | None) -> datetime | None:
+        """Return when a tag's current (head) digest was published, or ``None`` if unknown."""
+        if not reference:
+            return None
+        return self.latest_created.get(reference)
+
     @classmethod
     def empty(cls) -> VulnerabilityReport:
         return cls()
@@ -220,6 +229,7 @@ class VulnerabilityReport:
         images: dict[str, ImageVulnerabilities] = {}
         latest: dict[str, ImageVulnerabilities] = {}
         latest_digests: dict[str, str] = {}
+        latest_created: dict[str, datetime] = {}
         tags = data.get("tags")
         if isinstance(tags, dict):
             for reference, tag_data in tags.items():
@@ -239,6 +249,9 @@ class VulnerabilityReport:
                     if index == 0 and isinstance(reference, str):
                         latest[reference] = vuln
                         latest_digests[reference] = _strip_digest(digest)
+                        created = _parse_dt(entry.get("t"))
+                        if created is not None:
+                            latest_created[reference] = created
         return cls(
             generated_at=generated_at,
             trivy_version=data.get("trivy_version"),
@@ -246,6 +259,7 @@ class VulnerabilityReport:
             images=images,
             latest=latest,
             latest_digests=latest_digests,
+            latest_created=latest_created,
         )
 
 
@@ -494,10 +508,12 @@ def latest_pypi_version() -> str | None:
 
 # --- Lazy critical/high details sidecar -----------------------------------------------------
 #
-# The details sidecar is loaded only when the --dockerfile flow computes the "upgrading fixes
-# these" diff, so the always-loaded counts report stays small. It stores critical+high CVEs
-# only; medium/low/unknown remain counts-only. The format is a deduped ``vulns`` table plus a
-# ``digests`` map of stripped digest -> integer indices into that table.
+# The details sidecar is loaded on demand, never as part of the always-loaded counts report,
+# so the common path stays small. Two flows trigger it: the --dockerfile fix-diff ("upgrading
+# fixes these"), and the selected-image critical/high CVE list (only when the chosen image
+# actually has critical or high findings). It stores critical+high CVEs only; medium/low/unknown
+# remain counts-only. The format is a deduped ``vulns`` table plus a ``digests`` map of stripped
+# digest -> integer indices into that table.
 
 _DETAILS_SCHEMA_VERSION = SCHEMA_VERSION
 
@@ -625,10 +641,12 @@ def _load_packaged_details() -> dict | None:
 def load_details() -> DetailsReport:
     """Lazily load the critical/high details sidecar: online-first, packaged fallback, empty.
 
-    Only the ``--dockerfile`` fix-diff needs this, so it is loaded on demand — never on the
-    always-on interactive path. Like :func:`load_report` it prefers the GitHub Pages copy and
-    falls back to the packaged snapshot (skipping the network when ``IMAGE_INSPECTOR_OFFLINE``
-    is set), returning an empty report so callers can always degrade gracefully.
+    Loaded on demand by the two flows that need per-CVE detail — the ``--dockerfile`` fix-diff
+    and the selected-image critical/high CVE list — so the always-on counts path never pays for
+    it (and clean images, which skip the call, never fetch it). Like :func:`load_report` it
+    prefers the GitHub Pages copy and falls back to the packaged snapshot (skipping the network
+    when ``IMAGE_INSPECTOR_OFFLINE`` is set), returning an empty report so callers can always
+    degrade gracefully.
     """
     if not _env_truthy("IMAGE_INSPECTOR_OFFLINE"):
         payload = _fetch_details()

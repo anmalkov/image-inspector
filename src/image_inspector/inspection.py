@@ -16,6 +16,7 @@ note. Output formatting lives elsewhere (``ui``); this module is pure logic.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
 
 from .dockerfile import FromStage, parse_dockerfile_from
@@ -71,12 +72,19 @@ class StageInspection:
     reference: str | None = None
     pinned_counts: ImageVulnerabilities | None = None
     latest_counts: ImageVulnerabilities | None = None
+    latest_digest: str | None = None
+    latest_created: datetime | None = None
     fixed: tuple[Vulnerability, ...] = ()
     still_present: tuple[Vulnerability, ...] = ()
     note: str | None = None
 
+    @property
+    def pinned_digest(self) -> str | None:
+        """The digest pinned in the ``FROM`` line, if any (verbatim, ``sha256:`` form)."""
+        return self.stage.digest
 
-def _sorted_vulns(vulns: frozenset[Vulnerability]) -> tuple[Vulnerability, ...]:
+
+def sort_vulnerabilities(vulns: frozenset[Vulnerability]) -> tuple[Vulnerability, ...]:
     """Order CVEs deterministically: critical before high, then by id."""
     return tuple(sorted(vulns, key=lambda v: (v.sev != "C", v.id)))
 
@@ -119,6 +127,7 @@ def inspect_stage(
 
     latest_counts = report.latest_for_tag(reference)
     latest_digest = report.latest_digest_for_tag(reference)
+    latest_created = report.latest_created_for_tag(reference)
 
     if stage.digest:
         pinned_counts = report.lookup_digest(stage.digest)
@@ -130,17 +139,18 @@ def inspect_stage(
                 reference=reference,
                 pinned_counts=pinned_counts,
                 latest_counts=latest_counts,
+                latest_digest=latest_digest,
+                latest_created=latest_created,
                 fixed=fixed,
                 still_present=still,
             )
-        note = "no data for the pinned digest"
-        note += "; showing the latest tracked digest" if latest_counts is not None else ""
         return StageInspection(
             stage=stage,
             status=StageStatus.PINNED_UNKNOWN,
             reference=reference,
             latest_counts=latest_counts,
-            note=note,
+            latest_digest=latest_digest,
+            latest_created=latest_created,
         )
 
     if latest_counts is not None:
@@ -149,6 +159,8 @@ def inspect_stage(
             status=StageStatus.TAG_KNOWN,
             reference=reference,
             latest_counts=latest_counts,
+            latest_digest=latest_digest,
+            latest_created=latest_created,
         )
 
     return StageInspection(
@@ -166,7 +178,7 @@ def _fix_diff(
     if not latest:
         return (), ()
     fixed_set, still_set = details.fix_diff(pinned, latest)
-    return _sorted_vulns(fixed_set), _sorted_vulns(still_set)
+    return sort_vulnerabilities(fixed_set), sort_vulnerabilities(still_set)
 
 
 def inspect_dockerfile(

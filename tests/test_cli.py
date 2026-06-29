@@ -187,3 +187,109 @@ def test_main_json_non_interactive(monkeypatch, capsys):
 def test_main_json_requires_version(monkeypatch):
     rc = cli.main(["--json", "-l", "python"])
     assert rc == 2
+
+
+def test_main_json_includes_critical_high_cves(monkeypatch, capsys):
+    from image_inspector.report import DetailsReport
+
+    fake = FakeProvider()
+    report = VulnerabilityReport(
+        images={"deadbeef": ImageVulnerabilities(critical=1, high=1, total=5)},
+    )
+    details = DetailsReport.from_dict(
+        {
+            "schema_version": 3,
+            "vulns": [
+                {"id": "CVE-A", "pkg": "openssl", "sev": "C", "fix": "3.3.2"},
+                {"id": "CVE-B", "pkg": "zlib", "sev": "H", "fix": None},
+            ],
+            "digests": {"deadbeef": [0, 1]},
+        }
+    )
+
+    monkeypatch.setattr(cli, "make_client", _fake_client)
+    monkeypatch.setattr(cli, "get_provider", lambda lang, client: fake)
+    monkeypatch.setattr(cli, "load_report", lambda: report)
+    monkeypatch.setattr(cli, "load_details", lambda: details)
+
+    rc = cli.main(["--json", "-l", "python", "--version", "3.13.14", "--variant", "slim"])
+    assert rc == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["critical_high_cves"] == [
+        {"id": "CVE-A", "package": "openssl", "severity": "critical", "fixed_version": "3.3.2"},
+        {"id": "CVE-B", "package": "zlib", "severity": "high", "fixed_version": None},
+    ]
+
+
+def test_main_json_skips_details_for_clean_image(monkeypatch, capsys):
+    fake = FakeProvider()
+    report = VulnerabilityReport(
+        images={"deadbeef": ImageVulnerabilities(critical=0, high=0, medium=3, total=3)},
+    )
+
+    def _boom() -> object:
+        raise AssertionError("load_details must not be called for a clean image")
+
+    monkeypatch.setattr(cli, "make_client", _fake_client)
+    monkeypatch.setattr(cli, "get_provider", lambda lang, client: fake)
+    monkeypatch.setattr(cli, "load_report", lambda: report)
+    monkeypatch.setattr(cli, "load_details", _boom)
+
+    rc = cli.main(["--json", "-l", "python", "--version", "3.13.14", "--variant", "slim"])
+    assert rc == 0
+    assert json.loads(capsys.readouterr().out)["critical_high_cves"] == []
+
+
+def test_main_dockerfile_json(monkeypatch, capsys, tmp_path):
+    from image_inspector.report import DetailsReport
+
+    pinned, latest = "pinneddigest", "latestdigest"
+    report = VulnerabilityReport.from_dict(
+        {
+            "schema_version": 3,
+            "generated_at": "2026-06-15T02:00:00Z",
+            "trivy_version": "0.71.1",
+            "tags": {
+                "python:3.13-slim": {
+                    "history": [
+                        {"d": latest, "t": "2026-06-14T07:00:00Z", "c": [0, 1, 2, 3, 0]},
+                        {"d": pinned, "t": "2026-06-01T07:00:00Z", "c": [2, 5, 10, 20, 3]},
+                    ]
+                }
+            },
+        }
+    )
+    details = DetailsReport.from_dict(
+        {
+            "schema_version": 3,
+            "vulns": [
+                {"id": "CVE-A", "pkg": "openssl", "sev": "C", "fix": "3.3.2"},
+                {"id": "CVE-B", "pkg": "zlib", "sev": "H", "fix": None},
+            ],
+            "digests": {pinned: [0, 1], latest: [1]},
+        }
+    )
+    dockerfile = tmp_path / "Dockerfile"
+    dockerfile.write_text(f"FROM python:3.13-slim@sha256:{pinned}\n", encoding="utf-8")
+
+    monkeypatch.setattr(cli, "load_report", lambda: report)
+    monkeypatch.setattr(cli, "load_details", lambda: details)
+
+    rc = cli.main(["--dockerfile", str(dockerfile), "--json"])
+    assert rc == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["stage_count"] == 1
+    assert payload["scanner"]["version"] == "0.71.1"
+    stage = payload["stages"][0]
+    assert stage["status"] == "pinned_known"
+    assert stage["pinned"]["digest"] == f"sha256:{pinned}"
+    assert stage["latest"]["digest"] == f"sha256:{latest}"
+    assert [c["id"] for c in stage["critical_high"]["fixed"]] == ["CVE-A"]
+    assert [c["id"] for c in stage["critical_high"]["still_present"]] == ["CVE-B"]
+    assert stage["flags"]["latest_is_cleaner"] is True
+
+
+def test_main_dockerfile_unreadable_path():
+    rc = cli.main(["--dockerfile", "does-not-exist.Dockerfile", "--json"])
+    assert rc == 2
