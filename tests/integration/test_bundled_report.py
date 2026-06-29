@@ -11,7 +11,7 @@ itself is a separate post-build step in the release workflow.)
 
 import pytest
 
-from image_inspector.report import ReportSource, load_report
+from image_inspector.report import ReportSource, load_details, load_report
 
 pytestmark = pytest.mark.integration
 
@@ -22,3 +22,10 @@ def test_bundled_report_is_loadable():
     report = load_report()
     assert report.source is ReportSource.OFFLINE
     assert report.images, "bundled report loaded but contains no images"
+
+
+def test_bundled_details_sidecar_is_loadable():
+    # Loads the packaged details.json.gz (offline) snapshotted at release time.
+    details = load_details()
+    assert details.vulns, "bundled details sidecar loaded but contains no vulns"
+    assert details.digests, "bundled details sidecar loaded but maps no digests"

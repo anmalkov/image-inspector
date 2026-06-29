@@ -53,7 +53,9 @@ jobs:
           uv run image-inspector-scan
           -l ${{ matrix.language }}
           -o report-${{ matrix.language }}.json
+          --details-output details-${{ matrix.language }}.json
           --prior-url https://anmalkov.github.io/image-inspector/report.json.gz
+          --details-prior-url https://anmalkov.github.io/image-inspector/details.json.gz
           --sbom-base-url https://anmalkov.github.io/image-inspector
           --sbom-out-dir sboms
 
@@ -63,6 +65,7 @@ jobs:
           name: partial-${{ matrix.language }}
           path: |
             report-${{ matrix.language }}.json
+            details-${{ matrix.language }}.json
             sboms/
           retention-days: 1
           if-no-files-found: ignore
@@ -104,6 +107,10 @@ jobs:
             --prior-url https://anmalkov.github.io/image-inspector/report.json.gz \
             --sbom-src-dir reports/sboms \
             --sbom-out-dir pages-dir/sbom \
+            --details-inputs reports/details-*.json \
+            --details-prior-url https://anmalkov.github.io/image-inspector/details.json.gz \
+            --details-output pages-dir/details.json \
+            --details-gzip-output pages-dir/details.json.gz \
             -o pages-dir/report.json \
             --gzip-output pages-dir/report.json.gz
 

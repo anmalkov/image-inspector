@@ -36,7 +36,10 @@ RETENTION_MAX_AGE_DAYS = 180
 RETENTION_MAX_PER_TAG = 30
 
 _DEFAULT_OUTPUT = Path(__file__).parent / "data" / "report.json.gz"
+_DEFAULT_DETAILS_OUTPUT = Path(__file__).parent / "data" / "details.json.gz"
 _SEVERITIES = ("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN")
+# Details sidecar stores critical+high only, mapped to single-letter codes.
+_DETAIL_SEVERITIES = {"CRITICAL": "C", "HIGH": "H"}
 # Generous timeout: CI fetches of the prior report / cached SBOMs should not hang a job.
 _FETCH_TIMEOUT = httpx.Timeout(10.0, connect=5.0)
 
@@ -154,8 +157,52 @@ def parse_trivy_counts(payload: dict) -> dict[str, int]:
     return counts
 
 
+def parse_trivy_details(payload: dict) -> list[dict]:
+    """Extract deduped critical+high CVE detail records from Trivy JSON output.
+
+    Each record is trimmed to ``{id, pkg, sev, fix}`` where ``sev`` is ``C``/``H`` and
+    ``fix`` is the fixed version (or ``None`` when there is no fix yet). Medium/low/unknown
+    are intentionally dropped — the fix-diff is critical+high only. Records are deduped on
+    all four fields so a digest's index list never points at duplicate CVE/pkg pairs.
+    """
+    seen: set[tuple[str, str, str, str | None]] = set()
+    records: list[dict] = []
+    for result in payload.get("Results") or []:
+        for vuln in result.get("Vulnerabilities") or []:
+            sev = _DETAIL_SEVERITIES.get(str(vuln.get("Severity", "")).upper())
+            if sev is None:
+                continue
+            cve_id = vuln.get("VulnerabilityID")
+            if not isinstance(cve_id, str) or not cve_id:
+                continue
+            pkg = vuln.get("PkgName")
+            fixed = vuln.get("FixedVersion")
+            pkg = pkg if isinstance(pkg, str) else ""
+            fix = fixed if isinstance(fixed, str) and fixed else None
+            key = (cve_id, pkg, sev, fix)
+            if key in seen:
+                continue
+            seen.add(key)
+            records.append({"id": cve_id, "pkg": pkg, "sev": sev, "fix": fix})
+    return records
+
+
 def scan_image(image_ref: str) -> dict[str, int] | None:
     """Run Trivy on ``image_ref`` and return severity counts, or ``None`` on error."""
+    payload = _scan_image_payload(image_ref)
+    return None if payload is None else parse_trivy_counts(payload)
+
+
+def scan_image_full(image_ref: str) -> tuple[dict[str, int], list[dict]] | None:
+    """Scan ``image_ref`` once, returning ``(counts, C/H details)`` or ``None`` on error."""
+    payload = _scan_image_payload(image_ref)
+    if payload is None:
+        return None
+    return parse_trivy_counts(payload), parse_trivy_details(payload)
+
+
+def _scan_image_payload(image_ref: str) -> dict | None:
+    """Run Trivy on ``image_ref`` and return the parsed JSON payload, or ``None`` on error."""
     try:
         proc = subprocess.run(
             [
@@ -172,7 +219,7 @@ def scan_image(image_ref: str) -> dict[str, int] | None:
             text=True,
             check=True,
         )
-        return parse_trivy_counts(json.loads(proc.stdout))
+        return json.loads(proc.stdout)
     except subprocess.CalledProcessError as exc:
         print(f"  ! trivy failed for {image_ref}: {exc.stderr.strip()}", file=sys.stderr)
         return None
@@ -219,6 +266,20 @@ def generate_sbom(image_ref: str, out_path: Path) -> bool:
 
 def score_sbom(sbom_path: Path) -> dict[str, int] | None:
     """Score a cached SBOM against the current Trivy DB (no image pull); counts or ``None``."""
+    payload = _score_sbom_payload(sbom_path)
+    return None if payload is None else parse_trivy_counts(payload)
+
+
+def score_sbom_full(sbom_path: Path) -> tuple[dict[str, int], list[dict]] | None:
+    """Score a cached SBOM, returning ``(counts, C/H details)`` or ``None`` on error."""
+    payload = _score_sbom_payload(sbom_path)
+    if payload is None:
+        return None
+    return parse_trivy_counts(payload), parse_trivy_details(payload)
+
+
+def _score_sbom_payload(sbom_path: Path) -> dict | None:
+    """Score a cached SBOM and return the parsed JSON payload, or ``None`` on error."""
     try:
         proc = subprocess.run(
             [
@@ -235,7 +296,7 @@ def score_sbom(sbom_path: Path) -> dict[str, int] | None:
             text=True,
             check=True,
         )
-        return parse_trivy_counts(json.loads(proc.stdout))
+        return json.loads(proc.stdout)
     except subprocess.CalledProcessError as exc:
         print(f"  ! trivy sbom failed for {sbom_path}: {exc.stderr.strip()}", file=sys.stderr)
         return None
@@ -311,11 +372,25 @@ def _score_target(target: ScanTarget, sbom_store: SbomStore | None) -> dict[str,
     return score_sbom(sbom)
 
 
+def _score_target_full(
+    target: ScanTarget, sbom_store: SbomStore | None
+) -> tuple[dict[str, int], list[dict]] | None:
+    """Counts + C/H details for a target (cached SBOM when available, else image scan)."""
+    if sbom_store is None:
+        return scan_image_full(target.image_ref)
+    sbom = sbom_store.ensure(target.digest, target.image_ref)
+    if sbom is None:
+        return None
+    return score_sbom_full(sbom)
+
+
 def build_report(
     languages: tuple[Language, ...] = LANGUAGES,
     *,
     prior: dict | None = None,
     sbom_store: SbomStore | None = None,
+    details_out: dict[str, list[dict]] | None = None,
+    prior_details: dict | None = None,
 ) -> dict:
     """Scan the current images and return the full v3 report payload.
 
@@ -326,6 +401,12 @@ def build_report(
 
     Each tag's ``history`` holds ``{d, t, c}`` entries newest-``t``-first: ``d`` is the digest
     without the ``sha256:`` prefix, ``t`` the image created-at, ``c`` the severity counts.
+
+    When ``details_out`` is provided, the deduped critical+high CVE records for each scanned
+    digest are collected into it (stripped digest -> list of ``{id, pkg, sev, fix}``) so the
+    caller can write the lazy details sidecar; ``prior_details`` lets a failed re-score carry a
+    digest's known C/H records forward. Without ``details_out`` the cheaper counts-only path
+    runs unchanged.
     """
     now = _utcnow_iso()
     # reference -> list of {d, t, c} entries (fresh wins per digest).
@@ -334,7 +415,7 @@ def build_report(
     for target in enumerate_targets(languages):
         current.add(target.digest)
         print(f"  scanning {target.reference} ({target.digest[:19]}…)", file=sys.stderr)
-        counts = _score_target(target, sbom_store)
+        counts = _score_one(target, sbom_store, details_out)
         if counts is None:
             continue
         _set_entry(tags, target.reference, _make_entry(target.digest, target.created, counts))
@@ -343,12 +424,13 @@ def build_report(
         prior_tags = _prior_tags(prior)
         for target in retained_targets(prior, languages, exclude=current):
             print(f"  re-scoring {target.reference} ({target.digest[:19]}…)", file=sys.stderr)
-            counts = _score_target(target, sbom_store)
+            counts = _score_one(target, sbom_store, details_out)
             if counts is None:
                 # Carry the last-known entry forward (e.g. the image was GC'd from the registry).
                 entry = _prior_entry(prior_tags, target.reference, target.digest)
                 if entry is not None:
                     _set_entry(tags, target.reference, dict(entry))
+                _carry_details(details_out, prior_details, target.digest)
                 continue
             _set_entry(tags, target.reference, _make_entry(target.digest, target.created, counts))
 
@@ -364,6 +446,35 @@ def build_report(
 def _make_entry(digest: str, created: str | None, counts: dict) -> dict:
     """Build a compact ``{d, t, c}`` history entry."""
     return {"d": _strip_digest(digest), "t": created, "c": _counts_to_c(counts)}
+
+
+def _score_one(
+    target: ScanTarget,
+    sbom_store: SbomStore | None,
+    details_out: dict[str, list[dict]] | None,
+) -> dict[str, int] | None:
+    """Score one target, recording its C/H details into ``details_out`` when requested."""
+    if details_out is None:
+        return _score_target(target, sbom_store)
+    scored = _score_target_full(target, sbom_store)
+    if scored is None:
+        return None
+    counts, details = scored
+    details_out[_strip_digest(target.digest)] = details
+    return counts
+
+
+def _carry_details(
+    details_out: dict[str, list[dict]] | None,
+    prior_details: dict | None,
+    digest: str,
+) -> None:
+    """Carry a digest's prior C/H records forward when a re-score fails (best-effort)."""
+    if details_out is None:
+        return
+    records = _prior_digest_records(prior_details, digest)
+    if records:
+        details_out[_strip_digest(digest)] = records
 
 
 def _set_entry(tags: dict[str, list[dict]], reference: str, entry: dict) -> None:
@@ -429,6 +540,18 @@ def main(argv: list[str] | None = None) -> int:
         help="URL of the previously published report; its history is re-scored and merged.",
     )
     parser.add_argument(
+        "--details-output",
+        type=Path,
+        default=_DEFAULT_DETAILS_OUTPUT,
+        help="Where to write the critical+high CVE details sidecar (default: packaged "
+        "data/details.json.gz; a .gz path is gzipped, otherwise plain JSON).",
+    )
+    parser.add_argument(
+        "--details-prior-url",
+        help="URL of the previously published details sidecar; carried forward when a "
+        "retained digest can no longer be re-scored.",
+    )
+    parser.add_argument(
         "--sbom-cache-dir",
         type=Path,
         help="Directory of cached SBOMs to reuse (defaults to --sbom-out-dir when omitted).",
@@ -466,8 +589,15 @@ def main(argv: list[str] | None = None) -> int:
             cache_dir, args.sbom_out_dir, base_url=args.sbom_base_url
         )
 
+    details_out: dict[str, list[dict]] = {}
+    build_kwargs["details_out"] = details_out
+    if args.details_prior_url:
+        build_kwargs["prior_details"] = fetch_prior_details(args.details_prior_url)
+
     report = build_report(selected, **build_kwargs)
     _write_report(report, args.output)
+    sidecar = build_details_sidecar(details_out, keep_digests=_retained_digests(report))
+    _write_report(sidecar, args.details_output)
     return 0
 
 
@@ -721,6 +851,117 @@ def merge_with_history(fresh: dict, prior: dict | None, *, now: datetime | None 
     }
 
 
+DETAILS_SCHEMA_VERSION = SCHEMA_VERSION
+
+
+def _detail_key(record: dict) -> tuple[str, str, str, str | None]:
+    """Identity of a C/H detail record for dedup: ``(id, pkg, sev, fix)``."""
+    fix = record.get("fix")
+    return (
+        str(record.get("id") or ""),
+        str(record.get("pkg") or ""),
+        str(record.get("sev") or ""),
+        fix if isinstance(fix, str) and fix else None,
+    )
+
+
+def build_details_sidecar(
+    details: dict[str, list[dict]], *, keep_digests: set[str] | None = None
+) -> dict:
+    """Pack a ``{digest: [C/H records]}`` map into the deduped sidecar payload.
+
+    Produces ``{schema_version, vulns, digests}``: ``vulns`` is the deduped C/H record table
+    and ``digests`` maps each stripped digest to sorted integer indices into ``vulns``. When
+    ``keep_digests`` is given (stripped digests), only those digests are kept so the table
+    stays bounded by the report's retention; CVE records no longer referenced are dropped.
+    """
+    vulns: list[dict] = []
+    index_by_key: dict[tuple[str, str, str, str | None], int] = {}
+    digests: dict[str, list[int]] = {}
+    for digest, records in details.items():
+        stripped = _strip_digest(digest)
+        if keep_digests is not None and stripped not in keep_digests:
+            continue
+        indices: set[int] = set()
+        for record in records:
+            if not isinstance(record, dict) or not record.get("id"):
+                continue
+            key = _detail_key(record)
+            position = index_by_key.get(key)
+            if position is None:
+                position = len(vulns)
+                index_by_key[key] = position
+                vulns.append({"id": key[0], "pkg": key[1], "sev": key[2], "fix": key[3]})
+            indices.add(position)
+        if indices:
+            digests[stripped] = sorted(indices)
+    return {"schema_version": DETAILS_SCHEMA_VERSION, "vulns": vulns, "digests": digests}
+
+
+def details_from_sidecar(payload: dict | None) -> dict[str, list[dict]]:
+    """Reconstruct a ``{digest: [C/H records]}`` map from a sidecar payload (best-effort).
+
+    Out-of-range indices and malformed entries are skipped so a corrupt sidecar degrades to
+    partial/empty details rather than raising.
+    """
+    if not isinstance(payload, dict):
+        return {}
+    vulns = payload.get("vulns")
+    digests = payload.get("digests")
+    if not isinstance(vulns, list) or not isinstance(digests, dict):
+        return {}
+    result: dict[str, list[dict]] = {}
+    for digest, indices in digests.items():
+        if not isinstance(digest, str) or not isinstance(indices, list):
+            continue
+        records: list[dict] = []
+        for i in indices:
+            if isinstance(i, int) and 0 <= i < len(vulns) and isinstance(vulns[i], dict):
+                records.append(vulns[i])
+        if records:
+            result[_strip_digest(digest)] = records
+    return result
+
+
+def _prior_digest_records(prior_details: dict | None, digest: str) -> list[dict]:
+    """Return one digest's C/H records from a prior sidecar payload (empty if absent)."""
+    return details_from_sidecar(prior_details).get(_strip_digest(digest), [])
+
+
+def merge_details(maps: Iterable[dict[str, list[dict]]]) -> dict[str, list[dict]]:
+    """Union per-digest detail maps; first writer wins for a digest already present."""
+    merged: dict[str, list[dict]] = {}
+    for details in maps:
+        for digest, records in details.items():
+            merged.setdefault(_strip_digest(digest), records)
+    return merged
+
+
+def fetch_prior_details(url: str) -> dict | None:
+    """Fetch + light-validate the previously published details sidecar; ``None`` on failure."""
+    try:
+        resp = httpx.get(url, timeout=_FETCH_TIMEOUT, follow_redirects=True)
+    except httpx.HTTPError:
+        return None
+    if resp.status_code != 200:
+        return None
+    body = _decode_report_bytes(resp.content)
+    if body is None:
+        return None
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return None
+    if isinstance(data, dict) and isinstance(data.get("vulns"), list):
+        return data
+    return None
+
+
+def _retained_digests(report: dict) -> set[str]:
+    """Stripped digests retained in ``report``'s tag histories."""
+    return {_strip_digest(d) for d in _all_digests(report)}
+
+
 def _write_report(report: dict, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"
@@ -804,6 +1045,27 @@ def merge_main(argv: list[str] | None = None) -> int:
         type=Path,
         help="Directory to copy retained digests' SBOMs into (requires --sbom-src-dir).",
     )
+    parser.add_argument(
+        "--details-inputs",
+        nargs="+",
+        type=Path,
+        default=[],
+        help="Per-language details sidecar files to merge into the combined sidecar.",
+    )
+    parser.add_argument(
+        "--details-output",
+        type=Path,
+        help="Where to write the combined critical+high CVE details sidecar.",
+    )
+    parser.add_argument(
+        "--details-gzip-output",
+        type=Path,
+        help="Also write the combined details sidecar (gzipped) to this path.",
+    )
+    parser.add_argument(
+        "--details-prior-url",
+        help="URL of the previously published details sidecar to merge from (optional).",
+    )
     args = parser.parse_args(argv)
 
     if (args.sbom_src_dir is None) != (args.sbom_out_dir is None):
@@ -835,7 +1097,33 @@ def merge_main(argv: list[str] | None = None) -> int:
     if args.sbom_src_dir is not None and args.sbom_out_dir is not None:
         copied = publish_sboms(_all_digests(combined), args.sbom_src_dir, args.sbom_out_dir)
         print(f"Published {copied} SBOM(s) to {args.sbom_out_dir}", file=sys.stderr)
+    if args.details_output is not None:
+        maps = [details_from_sidecar(_read_sidecar(p)) for p in args.details_inputs]
+        if args.details_prior_url:
+            maps.append(details_from_sidecar(fetch_prior_details(args.details_prior_url)))
+        sidecar = build_details_sidecar(
+            merge_details(maps), keep_digests=_retained_digests(combined)
+        )
+        _write_report(sidecar, args.details_output)
+        if args.details_gzip_output is not None:
+            _write_report(sidecar, args.details_gzip_output)
+        print(f"Wrote {len(sidecar['digests'])} digest(s) of details", file=sys.stderr)
     return 0
+
+
+def _read_sidecar(path: Path) -> dict | None:
+    """Read a details sidecar JSON/gz file into a payload dict (``None`` on any failure)."""
+    try:
+        body = _decode_report_bytes(path.read_bytes())
+    except OSError:
+        return None
+    if body is None:
+        return None
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return None
+    return data if isinstance(data, dict) else None
 
 
 if __name__ == "__main__":

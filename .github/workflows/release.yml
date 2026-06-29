@@ -68,6 +68,21 @@ jobs:
           rm -f "$tmp"
           echo "Snapshotted the latest report from Pages into ${dest}."
 
+      - name: Snapshot the latest Pages details sidecar into the package
+        # Bundle the lazy critical/high details sidecar so the --dockerfile fix-diff works
+        # offline. Same hard requirement as the counts report: a missing/unparseable sidecar
+        # fails the release rather than shipping a stale or empty fallback.
+        run: |
+          url="https://anmalkov.github.io/image-inspector/details.json"
+          tmp="$(mktemp)"
+          dest="src/image_inspector/data/details.json.gz"
+          mkdir -p "$(dirname "$dest")"
+          curl --fail --silent --show-error --location --max-time 30 "$url" -o "$tmp"
+          python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$tmp"
+          gzip --no-name --stdout "$tmp" > "$dest"
+          rm -f "$tmp"
+          echo "Snapshotted the latest details sidecar from Pages into ${dest}."
+
       - name: Verify the tool accepts the bundled report
         # Release gate: run the integration test (deselected from the default unit run)
         # that loads the freshly snapshotted report through the tool itself. The
@@ -88,11 +103,14 @@ jobs:
           uv pip install --python /tmp/smoke/bin/python --quiet dist/*.whl
           IMAGE_INSPECTOR_OFFLINE=1 /tmp/smoke/bin/python -c "
           import sys
-          from image_inspector.report import load_report, ReportSource
+          from image_inspector.report import load_report, load_details, ReportSource
           report = load_report()
           if report.source is not ReportSource.OFFLINE or not report.images:
               sys.exit('Built wheel does not ship a usable offline report (source=%r, images=%d); refusing to release.' % (report.source, len(report.images)))
-          print('Built wheel ships a usable offline report: %d image(s).' % len(report.images))
+          details = load_details()
+          if not details.digests:
+              sys.exit('Built wheel does not ship a usable offline details sidecar (%d digests); refusing to release.' % len(details.digests))
+          print('Built wheel ships a usable offline report: %d image(s), %d detail digest(s).' % (len(report.images), len(details.digests)))
           "
 
       - name: Publish to PyPI

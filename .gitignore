@@ -9,7 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
-# Generated at release time, never committed: the offline report snapshot is
-# fetched from GitHub Pages into the wheel during the release workflow.
+# Generated at release time, never committed: the offline report snapshot and details
+# sidecar are fetched from GitHub Pages into the wheel during the release workflow.
 src/image_inspector/data/report.json
 src/image_inspector/data/report.json.gz
+src/image_inspector/data/details.json
+src/image_inspector/data/details.json.gz
