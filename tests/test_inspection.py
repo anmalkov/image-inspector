@@ -113,8 +113,7 @@ def test_pinned_but_unknown_falls_back_to_latest() -> None:
     assert inspection.latest_counts.high == 1
     assert inspection.fixed == ()
     assert inspection.still_present == ()
-    assert inspection.note is not None
-    assert "pinned" in inspection.note
+    assert inspection.note is None
 
 
 def test_tag_known_no_digest() -> None:

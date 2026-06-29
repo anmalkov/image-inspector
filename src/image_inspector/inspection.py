@@ -140,15 +140,12 @@ def inspect_stage(
                 fixed=fixed,
                 still_present=still,
             )
-        note = "no data for the pinned digest"
-        note += "; showing the latest tracked digest" if latest_counts is not None else ""
         return StageInspection(
             stage=stage,
             status=StageStatus.PINNED_UNKNOWN,
             reference=reference,
             latest_counts=latest_counts,
             latest_digest=latest_digest,
-            note=note,
         )
 
     if latest_counts is not None:
