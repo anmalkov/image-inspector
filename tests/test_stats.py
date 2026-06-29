@@ -59,8 +59,32 @@ def _payload() -> dict:
     }
 
 
+def _details() -> dict:
+    # Three critical/high CVE records; the digests map points known digests at record indices.
+    return {
+        "schema_version": 3,
+        "vulns": [
+            {"id": "CVE-2026-0001", "pkg": "openssl", "sev": "critical", "fix": "3.0.1"},
+            {"id": "CVE-2026-0002", "pkg": "zlib", "sev": "high", "fix": "1.2.13"},
+            {"id": "CVE-2026-0003", "pkg": "curl", "sev": "high", "fix": ""},
+        ],
+        "digests": {
+            "a1": [0, 1],
+            "a2": [1],
+            "a3": [0],
+            "c1": [0, 1, 2],
+            # A digest not present in any tag history is simply ignored.
+            "zz": [2],
+        },
+    }
+
+
 def _stats():
     return compute_stats(_payload(), source="file", now=NOW)
+
+
+def _stats_with_details():
+    return compute_stats(_payload(), source="file", details=_details(), now=NOW)
 
 
 def _image(stats, key):
@@ -190,8 +214,40 @@ def test_stats_payload_shape():
     assert payload["retention"]["aging_out"] == 1
     assert payload["sboms"]["published"] == 9
     assert payload["activity"]["newest_created_at"] == NOW.isoformat()
+    # No sidecar loaded -> the CVE total is reported as unavailable (null).
+    assert payload["cves"] == {"total": None}
     python = next(i for i in payload["by_image"] if i["key"] == "python")
-    assert python["versions"][0] == {"version": "3.13", "tags": 2, "digests": 3}
+    assert python["versions"][0] == {"version": "3.13", "tags": 2, "digests": 3, "cves": 0}
+
+
+def test_compute_stats_counts_cves_from_details():
+    stats = _stats_with_details()
+    # The sidecar stores three critical/high CVE records.
+    assert stats.total_cves == 3
+    python = _image(stats, "python")
+    # python digests a1/a2/a3 cover records {0, 1}; a4/a5 carry none.
+    assert python.cves == 2
+    v313 = next(v for v in python.versions if v.version == "3.13")
+    assert v313.cves == 2
+    v312 = next(v for v in python.versions if v.version == "3.12")
+    assert v312.cves == 0
+    ubuntu = _image(stats, "ubuntu")
+    assert ubuntu.cves == 3
+
+
+def test_compute_stats_without_details_marks_cves_unavailable():
+    stats = _stats()
+    assert stats.total_cves is None
+    assert all(image.cves == 0 for image in stats.by_image)
+
+
+def test_stats_payload_includes_cves_with_details():
+    payload = stats_payload(_stats_with_details())
+    assert payload["cves"] == {"total": 3}
+    python = next(i for i in payload["by_image"] if i["key"] == "python")
+    assert python["cves"] == 2
+    v313 = next(v for v in python["versions"] if v["version"] == "3.13")
+    assert v313["cves"] == 2
 
 
 # --------------------------------------------------------------------------- #
@@ -228,6 +284,33 @@ def test_load_payload_missing_file(tmp_path):
 
 
 # --------------------------------------------------------------------------- #
+# load_details_payload (sidecar sources)
+# --------------------------------------------------------------------------- #
+
+
+def test_load_details_local(monkeypatch):
+    monkeypatch.setattr(report_module, "_load_packaged_details", lambda: _details())
+    loaded = stats_module.load_details_payload(source="local", details_path=None)
+    assert loaded is not None
+    assert len(loaded["vulns"]) == 3
+
+
+def test_load_details_from_file(tmp_path):
+    path = tmp_path / "details.json"
+    path.write_text(json.dumps(_details()), encoding="utf-8")
+    loaded = stats_module.load_details_payload(source="url", details_path=str(path))
+    assert loaded is not None
+    assert loaded["schema_version"] == 3
+
+
+def test_load_details_missing_file(tmp_path):
+    assert (
+        stats_module.load_details_payload(source="url", details_path=str(tmp_path / "nope.json"))
+        is None
+    )
+
+
+# --------------------------------------------------------------------------- #
 # main (CLI)
 # --------------------------------------------------------------------------- #
 
@@ -238,12 +321,44 @@ def _write_report(tmp_path) -> str:
     return str(path)
 
 
+def _write_details(tmp_path) -> str:
+    path = tmp_path / "details.json"
+    path.write_text(json.dumps(_details()), encoding="utf-8")
+    return str(path)
+
+
 def test_main_json_output(tmp_path, capsys):
     code = main(["--report", _write_report(tmp_path), "--json"])
     assert code == 0
     data = json.loads(capsys.readouterr().out)
     assert data["source"] == "file"
     assert data["digests"]["total"] == 9
+
+
+def test_main_json_with_details(tmp_path, capsys):
+    code = main(
+        [
+            "--report",
+            _write_report(tmp_path),
+            "--details",
+            _write_details(tmp_path),
+            "--json",
+        ]
+    )
+    assert code == 0
+    data = json.loads(capsys.readouterr().out)
+    assert data["cves"]["total"] == 3
+    ubuntu = next(i for i in data["by_image"] if i["key"] == "ubuntu")
+    assert ubuntu["cves"] == 3
+
+
+def test_main_plain_with_details_shows_cves(tmp_path, capsys):
+    code = main(
+        ["--report", _write_report(tmp_path), "--details", _write_details(tmp_path), "--plain"]
+    )
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "CVEs" in out
 
 
 def test_main_rich_output(tmp_path, capsys):

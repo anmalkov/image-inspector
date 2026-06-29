@@ -31,7 +31,7 @@ from rich.text import Text
 from . import __version__, ui
 from . import report as report_module
 from .models import LANGUAGES, Category, Language, VersionScheme
-from .report import _decode_report_bytes, _parse_dt
+from .report import _decode_report_bytes, _parse_dt, _strip_digest
 from .scanner import RETENTION_MAX_AGE_DAYS
 
 DEFAULT_AGING_WITHIN_DAYS = 14
@@ -52,6 +52,7 @@ class VersionStats:
     version: str
     tags: int
     digests: int
+    cves: int = 0
 
 
 @dataclass(frozen=True)
@@ -63,6 +64,7 @@ class ImageStats:
     category: str
     tags: int
     digests: int
+    cves: int = 0
     versions: list[VersionStats] = field(default_factory=list)
 
 
@@ -87,6 +89,7 @@ class DatabaseStats:
     max_age_days: int
     aging_out_count: int
     sbom_count: int
+    total_cves: int | None = None
     by_image: list[ImageStats] = field(default_factory=list)
 
 
@@ -144,9 +147,14 @@ def _version_sort_key(version: str) -> tuple[int, Version | None, str]:
         return (0, None, version)
 
 
-def _sorted_versions(groups: dict[str, dict[str, set[str]]]) -> list[VersionStats]:
+def _sorted_versions(groups: dict[str, dict[str, set]]) -> list[VersionStats]:
     versions = [
-        VersionStats(version=version, tags=len(buckets["tags"]), digests=len(buckets["digests"]))
+        VersionStats(
+            version=version,
+            tags=len(buckets["tags"]),
+            digests=len(buckets["digests"]),
+            cves=len(buckets["cves"]),
+        )
         for version, buckets in groups.items()
     ]
     versions.sort(key=lambda v: _version_sort_key(v.version), reverse=True)
@@ -166,9 +174,15 @@ def _image_sort_key(image: ImageStats) -> tuple[int, int, str]:
     )
 
 
-def _build_by_image(tags: dict[str, dict]) -> list[ImageStats]:
-    """Group tags by language/OS and, within each, by version (digests = history depth)."""
-    # key -> {"label", "category", "tags": set, "digests": set, "versions": {version: {...}}}
+def _build_by_image(
+    tags: dict[str, dict], digest_cves: dict[str, frozenset[int]]
+) -> list[ImageStats]:
+    """Group tags by language/OS and, within each, by version (digests = history depth).
+
+    ``digest_cves`` maps a stripped digest to the set of sidecar CVE-record indices affecting
+    it; per-image and per-version CVE counts are the distinct records across the group's digests.
+    """
+    # key -> {"label", "category", "tags": set, "digests": set, "cves": set, "versions": {...}}
     grouped: dict[str, dict] = {}
     for reference, tag_data in tags.items():
         if not isinstance(reference, str) or ":" not in reference:
@@ -177,6 +191,9 @@ def _build_by_image(tags: dict[str, dict]) -> list[ImageStats]:
         if not isinstance(history, list):
             continue
         digests = {entry["d"] for entry in history if isinstance(entry, dict) and entry.get("d")}
+        cves: set[int] = set()
+        for digest in digests:
+            cves |= digest_cves.get(digest, frozenset())
         language = _language_for_reference(reference)
         if language is None:
             key, label, category, version = _OTHER_KEY, _OTHER_LABEL, _OTHER_KEY, reference
@@ -187,13 +204,24 @@ def _build_by_image(tags: dict[str, dict]) -> list[ImageStats]:
 
         bucket = grouped.setdefault(
             key,
-            {"label": label, "category": category, "tags": set(), "digests": set(), "versions": {}},
+            {
+                "label": label,
+                "category": category,
+                "tags": set(),
+                "digests": set(),
+                "cves": set(),
+                "versions": {},
+            },
         )
         bucket["tags"].add(reference)
         bucket["digests"].update(digests)
-        vbucket = bucket["versions"].setdefault(version, {"tags": set(), "digests": set()})
+        bucket["cves"].update(cves)
+        vbucket = bucket["versions"].setdefault(
+            version, {"tags": set(), "digests": set(), "cves": set()}
+        )
         vbucket["tags"].add(reference)
         vbucket["digests"].update(digests)
+        vbucket["cves"].update(cves)
 
     result = [
         ImageStats(
@@ -202,6 +230,7 @@ def _build_by_image(tags: dict[str, dict]) -> list[ImageStats]:
             category=bucket["category"],
             tags=len(bucket["tags"]),
             digests=len(bucket["digests"]),
+            cves=len(bucket["cves"]),
             versions=_sorted_versions(bucket["versions"]),
         )
         for key, bucket in grouped.items()
@@ -210,19 +239,46 @@ def _build_by_image(tags: dict[str, dict]) -> list[ImageStats]:
     return result
 
 
+def _build_digest_cves(details: dict | None) -> tuple[dict[str, frozenset[int]], int | None]:
+    """Map each stripped digest to its sidecar CVE-record indices; return ``(map, total)``.
+
+    ``total`` is the number of critical/high CVE records stored in the sidecar, or ``None``
+    when no sidecar was loaded (so the UI can show the CVE data as unavailable).
+    """
+    if not isinstance(details, dict):
+        return {}, None
+    vulns = details.get("vulns")
+    total = len(vulns) if isinstance(vulns, list) else 0
+    digest_cves: dict[str, frozenset[int]] = {}
+    raw = details.get("digests")
+    if isinstance(raw, dict):
+        for digest, indices in raw.items():
+            if not isinstance(digest, str) or not isinstance(indices, list):
+                continue
+            kept = frozenset(i for i in indices if isinstance(i, int) and 0 <= i < total)
+            digest_cves[_strip_digest(digest)] = kept
+    return digest_cves, total
+
+
 def compute_stats(
     payload: dict,
     *,
     source: str,
+    details: dict | None = None,
     now: datetime | None = None,
     aging_within_days: int = DEFAULT_AGING_WITHIN_DAYS,
     max_age_days: int = RETENTION_MAX_AGE_DAYS,
 ) -> DatabaseStats:
-    """Summarise the retained database described by a raw v3 report ``payload``."""
+    """Summarise the retained database described by a raw v3 report ``payload``.
+
+    ``details`` is the optional raw critical/high CVE sidecar payload; when provided, the
+    total stored CVE count and per-image/per-version CVE counts are computed from it.
+    """
     now = now or datetime.now(UTC)
     tags = payload.get("tags")
     if not isinstance(tags, dict):
         tags = {}
+    digest_cves, total_cves = _build_digest_cves(details)
 
     warn_threshold = timedelta(days=max(max_age_days - aging_within_days, 0))
     aging_out = 0
@@ -274,7 +330,8 @@ def compute_stats(
         max_age_days=max_age_days,
         aging_out_count=aging_out,
         sbom_count=total_digests,
-        by_image=_build_by_image(tags),
+        total_cves=total_cves,
+        by_image=_build_by_image(tags, digest_cves),
     )
 
 
@@ -306,6 +363,7 @@ def stats_payload(stats: DatabaseStats) -> dict:
             "aging_out": stats.aging_out_count,
         },
         "sboms": {"published": stats.sbom_count},
+        "cves": {"total": stats.total_cves},
         "by_image": [
             {
                 "key": image.key,
@@ -313,8 +371,9 @@ def stats_payload(stats: DatabaseStats) -> dict:
                 "category": image.category,
                 "tags": image.tags,
                 "digests": image.digests,
+                "cves": image.cves,
                 "versions": [
-                    {"version": v.version, "tags": v.tags, "digests": v.digests}
+                    {"version": v.version, "tags": v.tags, "digests": v.digests, "cves": v.cves}
                     for v in image.versions
                 ],
             }
@@ -360,6 +419,31 @@ def load_payload(*, source: str, report_path: str | None) -> dict | None:
     return _load_url_payload()
 
 
+def _load_details_file(path: str) -> dict | None:
+    try:
+        raw = Path(path).read_bytes()
+    except OSError:
+        return None
+    body = _decode_report_bytes(raw)
+    if body is None:
+        return None
+    return report_module._validate_details(body)
+
+
+def load_details_payload(*, source: str, details_path: str | None) -> dict | None:
+    """Load the raw critical/high CVE sidecar payload (``None`` when unavailable).
+
+    Mirrors :func:`load_payload`: an explicit ``--details`` file wins, otherwise the bundled
+    sidecar (local) or the live published sidecar (url) is used. A missing sidecar is not an
+    error — the stats view simply shows the CVE data as unavailable.
+    """
+    if details_path is not None:
+        return _load_details_file(details_path)
+    if source == "local":
+        return report_module._load_packaged_details()
+    return report_module._fetch_details()
+
+
 # ---------------------------------------------------------------------------
 # Rendering
 # ---------------------------------------------------------------------------
@@ -385,6 +469,7 @@ def _summary_rows(stats: DatabaseStats, report_path: str | None) -> list[tuple[s
         trivy += f" · DB {ui.format_date(stats.trivy_db_updated_at)}"
     per_tag = f"min {stats.per_tag_min} · max {stats.per_tag_max} · avg {stats.per_tag_avg}"
     aging = f"{stats.aging_out_count} ⚠" if stats.aging_out_count else "0"
+    cve_total = "unavailable" if stats.total_cves is None else str(stats.total_cves)
     return [
         ("REPORT", "Source", _source_label(stats, report_path)),
         ("REPORT", "Generated", _fmt_dt(stats.generated_at)),
@@ -394,6 +479,7 @@ def _summary_rows(stats: DatabaseStats, report_path: str | None) -> list[tuple[s
         ("DIGESTS", "Retained (history)", str(stats.retained_digests)),
         ("TAGS", "Distinct tags", str(stats.distinct_tags)),
         ("TAGS", "Digests per tag", per_tag),
+        ("CVES", "Stored (critical/high)", cve_total),
         ("ACTIVITY", "Oldest created", _fmt_dt(stats.oldest_created_at)),
         ("ACTIVITY", "Newest created", _fmt_dt(stats.newest_created_at)),
         ("RETENTION", "Window", f"{stats.max_age_days} days"),
@@ -424,12 +510,16 @@ def _render_plain(stats: DatabaseStats, report_path: str | None) -> None:
             console.print(f"  {label.ljust(width)}  {value}")
         console.print()
 
+    cves_available = stats.total_cves is not None
     console.print("BY IMAGE")
     for image in stats.by_image:
-        console.print(f"  {image.label}  ({image.tags} tags · {image.digests} digests)")
+        cve = f" · {image.cves} CVEs" if cves_available else ""
+        console.print(f"  {image.label}  ({image.tags} tags · {image.digests} digests{cve})")
         for version in image.versions:
+            vcve = f" · {version.cves} CVEs" if cves_available else ""
             console.print(
-                f"    {version.version.ljust(10)}  {version.tags} tags · {version.digests} digests"
+                f"    {version.version.ljust(10)}  "
+                f"{version.tags} tags · {version.digests} digests{vcve}"
             )
     console.print()
 
@@ -479,10 +569,15 @@ def _by_image_table(stats: DatabaseStats) -> Table:
         pad_edge=False,
         padding=(0, 3, 0, 0),
     )
+    cves_available = stats.total_cves is not None
     table.add_column("Image", style="label")
     table.add_column("Version", style="muted")
     table.add_column("Tags", justify="right", style="value")
     table.add_column("Digests", justify="right", style="value")
+    table.add_column("CVEs", justify="right", style="value")
+
+    def cve_cell(count: int) -> str:
+        return str(count) if cves_available else "—"
 
     last_category: str | None = None
     for image in stats.by_image:
@@ -492,16 +587,23 @@ def _by_image_table(stats: DatabaseStats) -> Table:
                 if image.category == Category.LANGUAGE.value
                 else ("OS" if image.category == Category.OS.value else "Other")
             )
-            table.add_row(Text(heading, style="accent"), "", "", "")
+            table.add_row(Text(heading, style="accent"), "", "", "", "")
             last_category = image.category
         table.add_row(
             Text(f"  {image.label}", style="label"),
             "",
             str(image.tags),
             str(image.digests),
+            cve_cell(image.cves),
         )
         for version in image.versions:
-            table.add_row("", f"  {version.version}", str(version.tags), str(version.digests))
+            table.add_row(
+                "",
+                f"  {version.version}",
+                str(version.tags),
+                str(version.digests),
+                cve_cell(version.cves),
+            )
     return table
 
 
@@ -541,6 +643,11 @@ def _build_parser() -> argparse.ArgumentParser:
         help="read a specific report.json[.gz] file directly (overrides --source)",
     )
     parser.add_argument(
+        "--details",
+        metavar="PATH",
+        help="read a specific details sidecar (critical/high CVEs) file directly",
+    )
+    parser.add_argument(
         "--aging-within",
         type=int,
         default=DEFAULT_AGING_WITHIN_DAYS,
@@ -568,9 +675,12 @@ def main(argv: list[str] | None = None) -> int:
         ui.error(f"Could not load a usable report from {target}.")
         return 1
 
+    details = load_details_payload(source=args.source, details_path=args.details)
+
     stats = compute_stats(
         payload,
         source="file" if args.report else args.source,
+        details=details,
         aging_within_days=args.aging_within,
     )
 
