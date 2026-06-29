@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from . import __version__, ui
+from .inspection import inspect_dockerfile
 from .models import LANGUAGES, LANGUAGES_BY_KEY, Language, ResolvedImage, ScanSource
 from .registry import RegistryError, RegistryProvider, get_provider, make_client
-from .report import VulnerabilityReport, latest_pypi_version, load_report
+from .report import VulnerabilityReport, latest_pypi_version, load_details, load_report
 from .versions import (
     PLAIN_VARIANT,
     is_ubuntu_lts,
@@ -89,6 +91,7 @@ def _build_parser() -> argparse.ArgumentParser:
             "  image-inspector                 # interactive picker\n"
             "  image-inspector --no-banner     # skip the launch banner\n"
             "  image-inspector --plain         # uncolored, automation-friendly output\n"
+            "  image-inspector --dockerfile ./Dockerfile   # compare FROM images vs. latest\n"
             "  image-inspector --json -l ubuntu --version 24.04 --variant '(none)'\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -129,6 +132,11 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--variant",
         help="image variant, e.g. slim or alpine ('(none)' for the plain tag)",
+    )
+    parser.add_argument(
+        "--dockerfile",
+        metavar="PATH",
+        help="inspect a Dockerfile's FROM images: pinned digest vs. latest tracked digest",
     )
     return parser
 
@@ -195,10 +203,31 @@ def _run_json(args: argparse.Namespace, report: VulnerabilityReport) -> int:
     return 0
 
 
+def _run_dockerfile(args: argparse.Namespace, report: VulnerabilityReport) -> int:
+    """Inspect a Dockerfile's ``FROM`` images and print the pinned-vs-latest comparison."""
+    path = Path(args.dockerfile)
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        ui.error(f"Could not read Dockerfile '{args.dockerfile}': {exc.strerror or exc}")
+        return 2
+
+    # The critical/high details sidecar is only needed for the fix-diff, so load it lazily
+    # here rather than on the always-on interactive path.
+    details = load_details()
+    inspections = inspect_dockerfile(text, report, details)
+    ui.render_dockerfile_inspection(inspections)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point. Returns a process exit code."""
     args = _build_parser().parse_args(argv)
     report = load_report()
+
+    if args.dockerfile:
+        ui.configure(plain=args.plain)
+        return _run_dockerfile(args, report)
 
     if args.json:
         return _run_json(args, report)

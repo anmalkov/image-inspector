@@ -26,8 +26,9 @@ from rich.text import Text
 from rich.theme import Theme
 
 from . import __version__
+from .inspection import StageInspection, StageStatus
 from .models import Category, Language, ResolvedImage, ScanSource
-from .report import ImageVulnerabilities, ReportSource
+from .report import ImageVulnerabilities, ReportSource, Vulnerability
 
 _THEME = Theme(
     {
@@ -271,6 +272,90 @@ def format_data_source(source: ReportSource | None) -> str:
 
 
 _DISTRIBUTION_NAME = "base-image-inspector"
+
+
+_STATUS_LABELS: dict[StageStatus, str] = {
+    StageStatus.PINNED_KNOWN: "pinned digest tracked",
+    StageStatus.PINNED_UNKNOWN: "pinned digest not tracked",
+    StageStatus.TAG_KNOWN: "tag tracked (no digest pinned)",
+    StageStatus.UNTRACKED: "not tracked",
+    StageStatus.SKIPPED: "skipped",
+}
+
+_SEVERITY_WORDS = {"C": "critical", "H": "high"}
+
+
+def _format_cve(vuln: Vulnerability) -> str:
+    """Render a single C/H CVE as ``CVE-… (critical, openssl)`` for the fix-diff lines."""
+    severity = _SEVERITY_WORDS.get(vuln.sev, vuln.sev or "?")
+    package = f", {vuln.pkg}" if vuln.pkg else ""
+    return f"{vuln.id} ({severity}{package})"
+
+
+def _inspection_row(label: str, value: Text | str) -> None:
+    """Print one indented ``label  value`` line of a stage report."""
+    line = Text(f"    {label.ljust(8)}  ", style="muted")
+    line.append(value if isinstance(value, Text) else Text(str(value), style="value"))
+    console.print(line)
+
+
+def _render_fix_diff(inspection: StageInspection) -> None:
+    """Print the critical/high fix-diff summary and CVE lists for a tracked pinned image."""
+    fixed, still = inspection.fixed, inspection.still_present
+    if not fixed and not still:
+        _inspection_row("fix-diff", Text("no critical/high CVEs to compare", style="ok"))
+        return
+    summary = Text()
+    summary.append(
+        f"upgrading to latest fixes {len(fixed)} critical/high CVE(s)",
+        style="ok" if fixed else "muted",
+    )
+    summary.append(", ")
+    summary.append(f"{len(still)} still present", style="warn" if still else "ok")
+    _inspection_row("fix-diff", summary)
+    if fixed:
+        _inspection_row("fixed", ", ".join(_format_cve(v) for v in fixed))
+    if still:
+        _inspection_row("still", ", ".join(_format_cve(v) for v in still))
+
+
+def _render_stage(inspection: StageInspection) -> None:
+    """Print one ``FROM`` stage's comparison block in plain, sectioned text."""
+    stage = inspection.stage
+    header = Text()
+    header.append(f"[{stage.index + 1}] ", style="muted")
+    header.append(f"FROM {stage.raw}", style="label")
+    if stage.alias:
+        header.append(f" AS {stage.alias}", style="muted")
+    console.print(header)
+
+    status = _STATUS_LABELS[inspection.status]
+    if inspection.note:
+        status = f"{status} — {inspection.note}"
+    _inspection_row("status", status)
+
+    if inspection.pinned_counts is not None:
+        _inspection_row("pinned", format_vulnerabilities(inspection.pinned_counts))
+    if inspection.latest_counts is not None:
+        _inspection_row("latest", format_vulnerabilities(inspection.latest_counts))
+    if inspection.status is StageStatus.PINNED_KNOWN and inspection.latest_counts is not None:
+        _render_fix_diff(inspection)
+
+
+def render_dockerfile_inspection(inspections: list[StageInspection]) -> None:
+    """Render a Dockerfile's per-``FROM`` pinned-vs-latest comparison as plain text.
+
+    Functional output only — rich formatting and the final ``--json`` shape are deferred to
+    a separate UI issue.
+    """
+    console.print(Text(f"Dockerfile · {len(inspections)} FROM stage(s)", style="accent"))
+    console.print()
+    if not inspections:
+        console.print(Text("No FROM instructions found.", style="muted"))
+        return
+    for inspection in inspections:
+        _render_stage(inspection)
+        console.print()
 
 
 class Installer(StrEnum):
