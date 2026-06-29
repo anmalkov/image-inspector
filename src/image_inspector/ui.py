@@ -286,7 +286,11 @@ _SEVERITY_WORDS = {"C": "critical", "H": "high"}
 
 
 def _severity_word(sev: str) -> str | None:
-    """Map a compact severity code (``C``/``H``) to its word, or ``None`` if unknown."""
+    """Map a compact severity code to its word: ``C``→critical, ``H``→high.
+
+    Any other non-empty code is returned verbatim (so unexpected values surface rather than
+    being silently dropped); an empty code yields ``None``.
+    """
     return _SEVERITY_WORDS.get(sev) or (sev or None)
 
 

@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from . import __version__, ui
-from .inspection import _sorted_vulns, inspect_dockerfile
+from .inspection import inspect_dockerfile, sort_vulnerabilities
 from .models import LANGUAGES, LANGUAGES_BY_KEY, Language, ResolvedImage, ScanSource
 from .registry import RegistryError, RegistryProvider, get_provider, make_client
 from .report import (
@@ -39,7 +39,7 @@ def _critical_high_cves(
     """
     if vulns is None or (vulns.critical == 0 and vulns.high == 0):
         return ()
-    return _sorted_vulns(load_details().cve_set(digest))
+    return sort_vulnerabilities(load_details().cve_set(digest))
 
 
 def _lts_versions(language: Language, versions: list[str]) -> frozenset[str]:

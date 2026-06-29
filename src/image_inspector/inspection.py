@@ -82,7 +82,7 @@ class StageInspection:
         return self.stage.digest
 
 
-def _sorted_vulns(vulns: frozenset[Vulnerability]) -> tuple[Vulnerability, ...]:
+def sort_vulnerabilities(vulns: frozenset[Vulnerability]) -> tuple[Vulnerability, ...]:
     """Order CVEs deterministically: critical before high, then by id."""
     return tuple(sorted(vulns, key=lambda v: (v.sev != "C", v.id)))
 
@@ -175,7 +175,7 @@ def _fix_diff(
     if not latest:
         return (), ()
     fixed_set, still_set = details.fix_diff(pinned, latest)
-    return _sorted_vulns(fixed_set), _sorted_vulns(still_set)
+    return sort_vulnerabilities(fixed_set), sort_vulnerabilities(still_set)
 
 
 def inspect_dockerfile(
