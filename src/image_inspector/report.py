@@ -508,10 +508,12 @@ def latest_pypi_version() -> str | None:
 
 # --- Lazy critical/high details sidecar -----------------------------------------------------
 #
-# The details sidecar is loaded only when the --dockerfile flow computes the "upgrading fixes
-# these" diff, so the always-loaded counts report stays small. It stores critical+high CVEs
-# only; medium/low/unknown remain counts-only. The format is a deduped ``vulns`` table plus a
-# ``digests`` map of stripped digest -> integer indices into that table.
+# The details sidecar is loaded on demand, never as part of the always-loaded counts report,
+# so the common path stays small. Two flows trigger it: the --dockerfile fix-diff ("upgrading
+# fixes these"), and the selected-image critical/high CVE list (only when the chosen image
+# actually has critical or high findings). It stores critical+high CVEs only; medium/low/unknown
+# remain counts-only. The format is a deduped ``vulns`` table plus a ``digests`` map of stripped
+# digest -> integer indices into that table.
 
 _DETAILS_SCHEMA_VERSION = SCHEMA_VERSION
 
@@ -639,10 +641,12 @@ def _load_packaged_details() -> dict | None:
 def load_details() -> DetailsReport:
     """Lazily load the critical/high details sidecar: online-first, packaged fallback, empty.
 
-    Only the ``--dockerfile`` fix-diff needs this, so it is loaded on demand — never on the
-    always-on interactive path. Like :func:`load_report` it prefers the GitHub Pages copy and
-    falls back to the packaged snapshot (skipping the network when ``IMAGE_INSPECTOR_OFFLINE``
-    is set), returning an empty report so callers can always degrade gracefully.
+    Loaded on demand by the two flows that need per-CVE detail — the ``--dockerfile`` fix-diff
+    and the selected-image critical/high CVE list — so the always-on counts path never pays for
+    it (and clean images, which skip the call, never fetch it). Like :func:`load_report` it
+    prefers the GitHub Pages copy and falls back to the packaged snapshot (skipping the network
+    when ``IMAGE_INSPECTOR_OFFLINE`` is set), returning an empty report so callers can always
+    degrade gracefully.
     """
     if not _env_truthy("IMAGE_INSPECTOR_OFFLINE"):
         payload = _fetch_details()
