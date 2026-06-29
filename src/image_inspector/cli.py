@@ -245,12 +245,20 @@ def _run_dockerfile(args: argparse.Namespace) -> int:
     # fix-diff) once the Dockerfile is in hand, so an unreadable path never pays the cost
     # of fetching/decompressing the data.
     report = load_report()
+
+    if args.json:
+        details = load_details()
+        inspections = inspect_dockerfile(text, report, details)
+        ui.show_dockerfile_inspection_json(args.dockerfile, inspections, report)
+        return 0
+
+    if not args.no_banner:
+        ui.banner()
+    ui.show_version_status(report.source, report.generated_at, __version__, latest_pypi_version())
+
     details = load_details()
     inspections = inspect_dockerfile(text, report, details)
-    if args.json:
-        ui.show_dockerfile_inspection_json(args.dockerfile, inspections, report)
-    else:
-        ui.render_dockerfile_inspection(inspections)
+    ui.render_dockerfile_inspection(args.dockerfile, inspections)
     return 0
 
 

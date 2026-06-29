@@ -395,9 +395,11 @@ def _dockerfile_inspections():
 def test_render_dockerfile_inspection_rich(capsys, monkeypatch):
     monkeypatch.setenv("COLUMNS", "200")
     configure(plain=False)
-    render_dockerfile_inspection(_dockerfile_inspections())
+    render_dockerfile_inspection("Dockerfile", _dockerfile_inspections())
     out = capsys.readouterr().out
-    assert "3 FROM stage(s)" in out
+    assert "✓ dockerfile" in out
+    assert "DOCKERFILE" in out
+    assert "3 FROM instruction(s)" in out
     assert "FROM python:3.13-slim" in out
     assert "cleaner" in out
     assert "latest fixes 2 of your critical/high CVE(s)" in out
@@ -411,9 +413,11 @@ def test_render_dockerfile_inspection_rich(capsys, monkeypatch):
 def test_render_dockerfile_inspection_plain(capsys, monkeypatch):
     monkeypatch.setenv("COLUMNS", "200")
     configure(plain=True)
-    render_dockerfile_inspection(_dockerfile_inspections())
+    render_dockerfile_inspection("Dockerfile", _dockerfile_inspections())
     out = capsys.readouterr().out
     configure(plain=False)
+    assert "DOCKERFILE" in out
+    assert "3 FROM instruction(s)" in out
     assert "FROM python:3.13-slim" in out
     assert "fixed in 3.3.2" in out
     assert "33 → 5" in out
@@ -421,8 +425,10 @@ def test_render_dockerfile_inspection_plain(capsys, monkeypatch):
 
 def test_render_dockerfile_inspection_empty(capsys):
     configure(plain=False)
-    render_dockerfile_inspection([])
-    assert "No FROM instructions found." in capsys.readouterr().out
+    render_dockerfile_inspection("Dockerfile", [])
+    out = capsys.readouterr().out
+    assert "0 FROM instruction(s)" in out
+    assert "No FROM instructions found." in out
 
 
 def test_dockerfile_payload_pinned_known_stage():

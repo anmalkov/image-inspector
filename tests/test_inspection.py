@@ -231,7 +231,7 @@ def test_cli_dockerfile_missing_file_errors(monkeypatch, tmp_path) -> None:
 
 def test_render_dockerfile_inspection_no_stages(capsys) -> None:
     ui.configure(plain=True)
-    ui.render_dockerfile_inspection([])
+    ui.render_dockerfile_inspection("Dockerfile", [])
     out = capsys.readouterr().out
-    assert "0 FROM stage(s)" in out
+    assert "0 FROM instruction(s)" in out
     assert "No FROM instructions found." in out

@@ -409,15 +409,6 @@ def _status_style(inspection: StageInspection) -> str:
     return "ok"
 
 
-def _stage_border(inspection: StageInspection) -> str:
-    """Panel border colour: muted with no data, warn when pinned is vulnerable, else ok."""
-    if not _stage_has_data(inspection):
-        return "muted"
-    if _pinned_vulnerable(inspection):
-        return "warn"
-    return "ok"
-
-
 def _stage_title(inspection: StageInspection) -> Text:
     """Build the ``[n] FROM … [AS alias]`` header for a stage."""
     stage = inspection.stage
@@ -521,49 +512,61 @@ def _stage_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
     return rows
 
 
-def _render_stage_plain(inspection: StageInspection) -> None:
-    """Print one stage's comparison as plain, indented ``label  value`` lines."""
-    console.print(_stage_title(inspection))
-    for label, value in _stage_rows(inspection):
-        _inspection_row(label, value)
-
-
-def _render_stage_panel(inspection: StageInspection) -> None:
-    """Render one stage's comparison inside a bordered panel (rich output)."""
-    grid = Table.grid(padding=(0, 2))
-    grid.add_column(style="muted", justify="left")
-    grid.add_column()
-    for label, value in _stage_rows(inspection):
-        grid.add_row(label, value)
-    console.print(
-        Panel(
-            grid,
-            title=_stage_title(inspection),
-            title_align="left",
-            border_style=_stage_border(inspection),
-            padding=(0, 2),
-        )
-    )
-
-
-def render_dockerfile_inspection(inspections: list[StageInspection]) -> None:
-    """Render a Dockerfile's per-``FROM`` pinned-vs-latest comparison.
-
-    Uses bordered panels in the themed UI and falls back to plain, sectioned text for
-    ``--plain`` / ``NO_COLOR``. Per-CVE detail is critical/high only; medium/low/unknown
-    findings are shown as count movement.
-    """
-    console.print(Text(f"Dockerfile · {len(inspections)} FROM stage(s)", style="accent"))
-    console.print()
+def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> None:
+    """Print the Dockerfile inspection as plain, sectioned text (no borders)."""
+    console.print("DOCKERFILE")
+    _inspection_row("Path", path)
+    _inspection_row("Stages", f"{len(inspections)} FROM instruction(s)")
     if not inspections:
-        console.print(Text("No FROM instructions found.", style="muted"))
+        _inspection_row("", "No FROM instructions found.")
         return
     for inspection in inspections:
-        if _PLAIN:
-            _render_stage_plain(inspection)
-        else:
-            _render_stage_panel(inspection)
         console.print()
+        console.print(_stage_title(inspection))
+        for label, value in _stage_rows(inspection):
+            _inspection_row(label, value)
+
+
+def render_dockerfile_inspection(path: str, inspections: list[StageInspection]) -> None:
+    """Render a Dockerfile's per-``FROM`` pinned-vs-latest comparison.
+
+    All stages live in a single ``✓ dockerfile`` panel that opens with a ``DOCKERFILE``
+    section (path + stage count), then one section per ``FROM`` image — mirroring the
+    ``resolved image`` panel. Falls back to plain, sectioned text for ``--plain`` /
+    ``NO_COLOR``. Per-CVE detail is critical/high only; medium/low/unknown findings are
+    shown as count movement.
+    """
+    if _PLAIN:
+        _render_dockerfile_plain(path, inspections)
+        return
+
+    blocks: list[RenderableType] = [Text("DOCKERFILE", style="muted")]
+    header = Table.grid(padding=(0, 2))
+    header.add_column(style="label", justify="left")
+    header.add_column(style="value")
+    header.add_row("Path", path)
+    header.add_row("Stages", f"{len(inspections)} FROM instruction(s)")
+    blocks.append(Padding(header, (0, 0, 1, 2)))
+
+    if not inspections:
+        blocks.append(Padding(Text("No FROM instructions found.", style="muted"), (0, 0, 0, 2)))
+    for inspection in inspections:
+        grid = Table.grid(padding=(0, 2))
+        grid.add_column(style="muted", justify="left")
+        grid.add_column()
+        for label, value in _stage_rows(inspection):
+            grid.add_row(label, value)
+        blocks.append(_stage_title(inspection))
+        blocks.append(Padding(grid, (0, 0, 1, 2)))
+
+    console.print(
+        Panel(
+            Group(*blocks),
+            title="[ok]✓ dockerfile",
+            border_style="ok",
+            padding=(1, 2),
+        )
+    )
 
 
 def _counts_payload(counts: ImageVulnerabilities | None) -> dict | None:
