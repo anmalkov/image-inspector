@@ -203,7 +203,7 @@ def _run_json(args: argparse.Namespace, report: VulnerabilityReport) -> int:
     return 0
 
 
-def _run_dockerfile(args: argparse.Namespace, report: VulnerabilityReport) -> int:
+def _run_dockerfile(args: argparse.Namespace) -> int:
     """Inspect a Dockerfile's ``FROM`` images and print the pinned-vs-latest comparison."""
     path = Path(args.dockerfile)
     try:
@@ -212,8 +212,10 @@ def _run_dockerfile(args: argparse.Namespace, report: VulnerabilityReport) -> in
         ui.error(f"Could not read Dockerfile '{args.dockerfile}': {exc.strerror or exc}")
         return 2
 
-    # The critical/high details sidecar is only needed for the fix-diff, so load it lazily
-    # here rather than on the always-on interactive path.
+    # Only load the report (and the lazy critical/high details sidecar, needed for the
+    # fix-diff) once the Dockerfile is in hand, so an unreadable path never pays the cost
+    # of fetching/decompressing the data.
+    report = load_report()
     details = load_details()
     inspections = inspect_dockerfile(text, report, details)
     ui.render_dockerfile_inspection(inspections)
@@ -223,11 +225,12 @@ def _run_dockerfile(args: argparse.Namespace, report: VulnerabilityReport) -> in
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point. Returns a process exit code."""
     args = _build_parser().parse_args(argv)
-    report = load_report()
 
     if args.dockerfile:
         ui.configure(plain=args.plain)
-        return _run_dockerfile(args, report)
+        return _run_dockerfile(args)
+
+    report = load_report()
 
     if args.json:
         return _run_json(args, report)

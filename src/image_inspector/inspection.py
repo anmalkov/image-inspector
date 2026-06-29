@@ -75,11 +75,6 @@ class StageInspection:
     still_present: tuple[Vulnerability, ...] = ()
     note: str | None = None
 
-    @property
-    def has_fix_diff(self) -> bool:
-        """Whether a critical/high fix-diff was computed for this stage."""
-        return bool(self.fixed or self.still_present)
-
 
 def _sorted_vulns(vulns: frozenset[Vulnerability]) -> tuple[Vulnerability, ...]:
     """Order CVEs deterministically: critical before high, then by id."""
