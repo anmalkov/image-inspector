@@ -16,6 +16,7 @@ note. Output formatting lives elsewhere (``ui``); this module is pure logic.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
 
 from .dockerfile import FromStage, parse_dockerfile_from
@@ -72,6 +73,7 @@ class StageInspection:
     pinned_counts: ImageVulnerabilities | None = None
     latest_counts: ImageVulnerabilities | None = None
     latest_digest: str | None = None
+    latest_created: datetime | None = None
     fixed: tuple[Vulnerability, ...] = ()
     still_present: tuple[Vulnerability, ...] = ()
     note: str | None = None
@@ -125,6 +127,7 @@ def inspect_stage(
 
     latest_counts = report.latest_for_tag(reference)
     latest_digest = report.latest_digest_for_tag(reference)
+    latest_created = report.latest_created_for_tag(reference)
 
     if stage.digest:
         pinned_counts = report.lookup_digest(stage.digest)
@@ -137,6 +140,7 @@ def inspect_stage(
                 pinned_counts=pinned_counts,
                 latest_counts=latest_counts,
                 latest_digest=latest_digest,
+                latest_created=latest_created,
                 fixed=fixed,
                 still_present=still,
             )
@@ -146,6 +150,7 @@ def inspect_stage(
             reference=reference,
             latest_counts=latest_counts,
             latest_digest=latest_digest,
+            latest_created=latest_created,
         )
 
     if latest_counts is not None:
@@ -155,6 +160,7 @@ def inspect_stage(
             reference=reference,
             latest_counts=latest_counts,
             latest_digest=latest_digest,
+            latest_created=latest_created,
         )
 
     return StageInspection(

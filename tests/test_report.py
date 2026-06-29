@@ -106,6 +106,12 @@ def test_from_dict_indexes_latest_per_tag():
     assert report.latest_for_tag(None) is None
     # both digests are still indexed for digest lookups.
     assert report.lookup_digest("sha256:older").high == 9
+    # the head digest's published date (its history ``t``) is captured for the tag.
+    assert report.latest_created_for_tag("python:3.13.14-slim") == datetime(
+        2026, 6, 11, 7, 0, tzinfo=UTC
+    )
+    assert report.latest_created_for_tag("python:does-not-exist") is None
+    assert report.latest_created_for_tag(None) is None
 
 
 def test_from_dict_tolerates_missing_db_date_and_nanoseconds():

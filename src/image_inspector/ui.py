@@ -353,22 +353,11 @@ def _cve_payload(vuln: Vulnerability) -> dict:
     }
 
 
-def _inspection_row(label: str, value: Text | str) -> None:
+def _inspection_row(label: str, value: Text | str, *, width: int = 8) -> None:
     """Print one indented ``label  value`` line of a stage report."""
-    line = Text(f"    {label.ljust(8)}  ", style="muted")
+    line = Text(f"    {label.ljust(width)}  ", style="muted")
     line.append(value if isinstance(value, Text) else Text(str(value), style="value"))
     console.print(line)
-
-
-def _short_digest(digest: str | None) -> str:
-    """Shorten a digest to ``sha256:abcdef123456…`` for compact display.
-
-    Tolerates a bare hex digest or the full ``sha256:<hex>`` form; ``unknown`` when absent.
-    """
-    if not digest:
-        return "unknown"
-    body = digest.split(":", 1)[1] if ":" in digest else digest
-    return f"sha256:{body[:12]}…"
 
 
 def _full_digest(digest: str | None) -> str | None:
@@ -418,19 +407,6 @@ def _stage_title(inspection: StageInspection) -> Text:
     if stage.alias:
         title.append(f" AS {stage.alias}", style="muted")
     return title
-
-
-def _digest_counts_text(
-    digest: str | None, counts: ImageVulnerabilities | None, *, cleaner: bool = False
-) -> Text:
-    """Render a ``<short-digest>  ·  <counts>`` line, flagging a cleaner latest digest."""
-    text = Text()
-    text.append(_short_digest(digest), style="muted")
-    text.append("  ·  ")
-    text.append_text(format_vulnerabilities(counts))
-    if cleaner:
-        text.append("  ✓ cleaner", style="ok")
-    return text
 
 
 def _cve_list_text(vulns: tuple[Vulnerability, ...]) -> Text:
@@ -483,33 +459,58 @@ def _fix_diff_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
     return rows
 
 
-def _stage_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
-    """Build the labelled rows describing one stage's pinned-vs-latest comparison."""
+def _stage_head_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
+    """Build the status (+ pinned-digest vulnerability count) rows for a stage."""
     rows: list[tuple[str, Text]] = []
-
     status = _STATUS_LABELS[inspection.status]
     if inspection.note:
         status = f"{status} — {inspection.note}"
     rows.append(("status", Text(status, style=_status_style(inspection))))
-
-    if inspection.pinned_counts is not None or inspection.pinned_digest:
-        rows.append(
-            ("pinned", _digest_counts_text(inspection.pinned_digest, inspection.pinned_counts))
-        )
-    if inspection.latest_counts is not None or inspection.latest_digest:
-        rows.append(
-            (
-                "latest",
-                _digest_counts_text(
-                    inspection.latest_digest,
-                    inspection.latest_counts,
-                    cleaner=_latest_is_cleaner(inspection),
-                ),
-            )
-        )
-
-    rows.extend(_fix_diff_rows(inspection))
+    if inspection.pinned_digest:
+        rows.append(("pinned", format_vulnerabilities(inspection.pinned_counts)))
     return rows
+
+
+def _latest_section_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
+    """Build the ``latest digest`` section: vulnerability count, created date, full FROM line."""
+    if inspection.latest_counts is None and not inspection.latest_digest:
+        return []
+    vulns = format_vulnerabilities(inspection.latest_counts)
+    if _latest_is_cleaner(inspection):
+        vulns = vulns.copy()
+        vulns.append("  ✓ cleaner", style="ok")
+    rows: list[tuple[str, Text]] = [
+        ("vulnerabilities", vulns),
+        ("created", Text(format_datetime(inspection.latest_created), style="value")),
+    ]
+    full = _full_digest(inspection.latest_digest)
+    if full and inspection.reference:
+        rows.append(("FROM", Text(f"{inspection.reference}@{full}", style="value")))
+    return rows
+
+
+def _stage_sections(inspection: StageInspection) -> list[tuple[str | None, list[tuple[str, Text]]]]:
+    """Build a stage's ``(section title, rows)`` groups, dropping empty sections.
+
+    The leading group (status + pinned count) has no title; the ``latest digest`` and
+    ``differences`` groups are titled. Shared by the rich and plain renderers.
+    """
+    sections: list[tuple[str | None, list[tuple[str, Text]]]] = [
+        (None, _stage_head_rows(inspection)),
+        ("latest digest", _latest_section_rows(inspection)),
+        ("differences", _fix_diff_rows(inspection)),
+    ]
+    return [(title, rows) for title, rows in sections if rows]
+
+
+def _rows_grid(rows: list[tuple[str, Text]]) -> Table:
+    """Build a two-column ``label  value`` grid for one stage section."""
+    grid = Table.grid(padding=(0, 2))
+    grid.add_column(style="label", justify="left")
+    grid.add_column()
+    for label, value in rows:
+        grid.add_row(label, value)
+    return grid
 
 
 def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> None:
@@ -523,16 +524,22 @@ def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> N
     for inspection in inspections:
         console.print()
         console.print(_stage_title(inspection))
-        for label, value in _stage_rows(inspection):
-            _inspection_row(label, value)
+        for title, rows in _stage_sections(inspection):
+            if title:
+                console.print(f"  {title}")
+            width = max(len(label) for label, _ in rows)
+            for label, value in rows:
+                _inspection_row(label, value, width=width)
 
 
 def render_dockerfile_inspection(path: str, inspections: list[StageInspection]) -> None:
     """Render a Dockerfile's per-``FROM`` pinned-vs-latest comparison.
 
     All stages live in a single ``✓ dockerfile`` panel that opens with a ``DOCKERFILE``
-    section (path + stage count), then one section per ``FROM`` image — mirroring the
-    ``resolved image`` panel. Falls back to plain, sectioned text for ``--plain`` /
+    section (path + stage count), then one block per ``FROM`` image. Each stage shows its
+    status and pinned-digest vulnerability count, a ``latest digest`` section (vulnerability
+    count, when it was published, and the full copy-paste ``FROM`` line), and a
+    ``differences`` section. Falls back to plain, sectioned text for ``--plain`` /
     ``NO_COLOR``. Per-CVE detail is critical/high only; medium/low/unknown findings are
     shown as count movement.
     """
@@ -551,13 +558,11 @@ def render_dockerfile_inspection(path: str, inspections: list[StageInspection]) 
     if not inspections:
         blocks.append(Padding(Text("No FROM instructions found.", style="muted"), (0, 0, 0, 2)))
     for inspection in inspections:
-        grid = Table.grid(padding=(0, 2))
-        grid.add_column(style="muted", justify="left")
-        grid.add_column()
-        for label, value in _stage_rows(inspection):
-            grid.add_row(label, value)
         blocks.append(_stage_title(inspection))
-        blocks.append(Padding(grid, (0, 0, 1, 2)))
+        for title, rows in _stage_sections(inspection):
+            if title:
+                blocks.append(Text(title, style="muted"))
+            blocks.append(Padding(_rows_grid(rows), (0, 0, 1, 2)))
 
     console.print(
         Panel(
@@ -604,6 +609,7 @@ def _stage_payload(inspection: StageInspection) -> dict:
         },
         "latest": {
             "digest": _full_digest(inspection.latest_digest),
+            "created": inspection.latest_created.isoformat() if inspection.latest_created else None,
             "vulnerabilities": _counts_payload(inspection.latest_counts),
         },
         "critical_high": {

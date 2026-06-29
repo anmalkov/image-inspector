@@ -401,6 +401,12 @@ def test_render_dockerfile_inspection_rich(capsys, monkeypatch):
     assert "DOCKERFILE" in out
     assert "3 FROM instruction(s)" in out
     assert "FROM python:3.13-slim" in out
+    assert "latest digest" in out
+    assert "differences" in out
+    assert "vulnerabilities" in out
+    assert "created" in out
+    assert "Jun 14, 2026" in out  # the latest digest's published date
+    assert "python:3.13-slim@sha256:latestdigest" in out  # full, copy-paste FROM line
     assert "cleaner" in out
     assert "latest fixes 2 of your critical/high CVE(s)" in out
     assert "CVE-A" in out and "CVE-C" in out  # fixed
@@ -447,6 +453,7 @@ def test_dockerfile_payload_pinned_known_stage():
     assert stage["alias"] == "build"
     assert stage["pinned"]["digest"] == f"sha256:{_PINNED}"
     assert stage["latest"]["digest"] == f"sha256:{_LATEST}"
+    assert stage["latest"]["created"] == "2026-06-14T07:00:00+00:00"
     assert stage["pinned"]["vulnerabilities"]["critical"] == 2
     assert stage["latest"]["vulnerabilities"]["high"] == 1
     assert stage["critical_high"]["detail_scope"] == "critical_high_only"

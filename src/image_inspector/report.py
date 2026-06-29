@@ -167,6 +167,7 @@ class VulnerabilityReport:
     images: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
     latest: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
     latest_digests: dict[str, str] = None  # type: ignore[assignment]
+    latest_created: dict[str, datetime] = None  # type: ignore[assignment]
     source: ReportSource | None = None
 
     def __post_init__(self) -> None:
@@ -176,6 +177,8 @@ class VulnerabilityReport:
             object.__setattr__(self, "latest", {})
         if self.latest_digests is None:
             object.__setattr__(self, "latest_digests", {})
+        if self.latest_created is None:
+            object.__setattr__(self, "latest_created", {})
 
     def lookup_digest(self, digest: str | None) -> ImageVulnerabilities | None:
         """Return counts for an image ``digest``, or ``None`` if not scanned.
@@ -203,6 +206,12 @@ class VulnerabilityReport:
             return None
         return self.latest_digests.get(reference)
 
+    def latest_created_for_tag(self, reference: str | None) -> datetime | None:
+        """Return when a tag's current (head) digest was published, or ``None`` if unknown."""
+        if not reference:
+            return None
+        return self.latest_created.get(reference)
+
     @classmethod
     def empty(cls) -> VulnerabilityReport:
         return cls()
@@ -220,6 +229,7 @@ class VulnerabilityReport:
         images: dict[str, ImageVulnerabilities] = {}
         latest: dict[str, ImageVulnerabilities] = {}
         latest_digests: dict[str, str] = {}
+        latest_created: dict[str, datetime] = {}
         tags = data.get("tags")
         if isinstance(tags, dict):
             for reference, tag_data in tags.items():
@@ -239,6 +249,9 @@ class VulnerabilityReport:
                     if index == 0 and isinstance(reference, str):
                         latest[reference] = vuln
                         latest_digests[reference] = _strip_digest(digest)
+                        created = _parse_dt(entry.get("t"))
+                        if created is not None:
+                            latest_created[reference] = created
         return cls(
             generated_at=generated_at,
             trivy_version=data.get("trivy_version"),
@@ -246,6 +259,7 @@ class VulnerabilityReport:
             images=images,
             latest=latest,
             latest_digests=latest_digests,
+            latest_created=latest_created,
         )
 
 
