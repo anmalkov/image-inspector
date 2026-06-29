@@ -865,6 +865,14 @@ def test_details_sidecar_roundtrip():
     assert scanner.details_from_sidecar(sidecar)["a"] == details["a"]
 
 
+def test_details_from_sidecar_rejects_wrong_schema():
+    sidecar = scanner.build_details_sidecar(
+        {"a": [{"id": "CVE-1", "pkg": "p", "sev": "C", "fix": None}]}
+    )
+    sidecar["schema_version"] = 99
+    assert scanner.details_from_sidecar(sidecar) == {}
+
+
 def test_build_report_collects_details(monkeypatch):
     targets = [scanner.ScanTarget("python:3.13.14", "python@sha256:ok", "sha256:ok", "t")]
     monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(targets))

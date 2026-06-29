@@ -422,6 +422,8 @@ def build_report(
 
     if prior is not None:
         prior_tags = _prior_tags(prior)
+        # Parse the prior sidecar once so many carry-forwards stay O(N), not O(N²).
+        prior_records = details_from_sidecar(prior_details) if details_out is not None else {}
         for target in retained_targets(prior, languages, exclude=current):
             print(f"  re-scoring {target.reference} ({target.digest[:19]}…)", file=sys.stderr)
             counts = _score_one(target, sbom_store, details_out)
@@ -430,7 +432,7 @@ def build_report(
                 entry = _prior_entry(prior_tags, target.reference, target.digest)
                 if entry is not None:
                     _set_entry(tags, target.reference, dict(entry))
-                _carry_details(details_out, prior_details, target.digest)
+                _carry_details(details_out, prior_records, target.digest)
                 continue
             _set_entry(tags, target.reference, _make_entry(target.digest, target.created, counts))
 
@@ -466,13 +468,13 @@ def _score_one(
 
 def _carry_details(
     details_out: dict[str, list[dict]] | None,
-    prior_details: dict | None,
+    prior_records: dict[str, list[dict]],
     digest: str,
 ) -> None:
     """Carry a digest's prior C/H records forward when a re-score fails (best-effort)."""
     if details_out is None:
         return
-    records = _prior_digest_records(prior_details, digest)
+    records = prior_records.get(_strip_digest(digest))
     if records:
         details_out[_strip_digest(digest)] = records
 
@@ -901,10 +903,13 @@ def build_details_sidecar(
 def details_from_sidecar(payload: dict | None) -> dict[str, list[dict]]:
     """Reconstruct a ``{digest: [C/H records]}`` map from a sidecar payload (best-effort).
 
-    Out-of-range indices and malformed entries are skipped so a corrupt sidecar degrades to
-    partial/empty details rather than raising.
+    Fails closed on a missing/mismatched ``schema_version`` so an older/newer sidecar is never
+    silently merged. Out-of-range indices and malformed entries are skipped so a corrupt sidecar
+    degrades to partial/empty details rather than raising.
     """
     if not isinstance(payload, dict):
+        return {}
+    if payload.get("schema_version") != DETAILS_SCHEMA_VERSION:
         return {}
     vulns = payload.get("vulns")
     digests = payload.get("digests")
@@ -921,11 +926,6 @@ def details_from_sidecar(payload: dict | None) -> dict[str, list[dict]]:
         if records:
             result[_strip_digest(digest)] = records
     return result
-
-
-def _prior_digest_records(prior_details: dict | None, digest: str) -> list[dict]:
-    """Return one digest's C/H records from a prior sidecar payload (empty if absent)."""
-    return details_from_sidecar(prior_details).get(_strip_digest(digest), [])
 
 
 def merge_details(maps: Iterable[dict[str, list[dict]]]) -> dict[str, list[dict]]:
