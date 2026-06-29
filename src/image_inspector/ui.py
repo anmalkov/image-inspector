@@ -314,9 +314,33 @@ def _cve_style(vuln: Vulnerability) -> str:
     return "muted"
 
 
-def _format_cve_line(vuln: Vulnerability) -> Text:
-    """Render a CVE as a styled, bulleted line for the result panel's CVE list."""
-    return Text(f"• {_format_cve(vuln)}", style=_cve_style(vuln))
+def _cve_detail_value(cves: tuple[Vulnerability, ...]) -> Text:
+    """Build the aligned critical/high CVE table as a single multi-line value.
+
+    Columns are severity, CVE id, package, and fix status. The first line is a muted column
+    header; each data line is tinted by severity (red critical, orange high). Returned as one
+    ``Text`` so it sits in the value column, aligned with the other SECURITY rows.
+    """
+    headers = ("SEVERITY", "CVE", "PACKAGE", "FIX")
+    cells = [
+        (
+            _severity_word(v.sev) or "?",
+            v.id,
+            v.pkg or "-",
+            f"upgrade to {v.fix}" if v.fix else "no fix yet",
+        )
+        for v in cves
+    ]
+    widths = [max(len(headers[i]), *(len(row[i]) for row in cells)) for i in range(len(headers))]
+
+    def _line(parts: tuple[str, ...]) -> str:
+        return "  ".join(p.ljust(widths[i]) for i, p in enumerate(parts)).rstrip()
+
+    value = Text(_line(headers), style="muted")
+    for v, cell in zip(cves, cells, strict=True):
+        value.append("\n")
+        value.append(_line(cell), style=_cve_style(v))
+    return value
 
 
 def _cve_payload(vuln: Vulnerability) -> dict:
@@ -774,10 +798,7 @@ def _result_sections(image: ResolvedImage) -> list[tuple[str, list[tuple[str, st
         security.append(("Scanner", scanner))
     security.append(("Source", format_data_source(image.report_source)))
     if image.cve_details:
-        count = len(image.cve_details)
-        note = Text(f"{count} critical/high (per-CVE detail: critical/high only)", style="muted")
-        security.append(("CVEs", note))
-        security.extend(("", _format_cve_line(vuln)) for vuln in image.cve_details)
+        security.append(("CVEs", _cve_detail_value(image.cve_details)))
 
     return [
         ("SELECTED", [("", image.source_label)]),
@@ -835,10 +856,15 @@ def _show_result_plain(image: ResolvedImage) -> None:
         width = max((len(label) for label, _ in rows if label), default=0)
         for label, value in rows:
             text = value.plain if isinstance(value, Text) else str(value)
+            lines = text.split("\n")
             if label:
-                console.print(f"  {label.ljust(width)}  {text}")
+                console.print(f"  {label.ljust(width)}  {lines[0]}")
+                indent = " " * (2 + width + 2)
+                for cont in lines[1:]:
+                    console.print(f"{indent}{cont}")
             else:
-                console.print(f"  {text}")
+                for line in lines:
+                    console.print(f"  {line}")
         console.print()
     console.print("DOCKERFILE")
     console.print(f"  FROM {image.pinned_reference}")

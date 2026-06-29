@@ -313,10 +313,11 @@ def test_result_sections_lists_critical_high_cves():
     security = next(
         rows for title, rows in _result_sections(_vulnerable_image()) if title == "SECURITY"
     )
-    rendered = "\n".join(value if isinstance(value, str) else value.plain for _, value in security)
-    assert "critical/high only" in rendered
-    assert "CVE-2025-1 (critical, openssl → fixed in 3.3.2)" in rendered
-    assert "CVE-2025-2 (high, zlib)" in rendered
+    value = next(v for label, v in security if label == "CVEs")
+    rendered = value.plain
+    assert "SEVERITY" in rendered and "PACKAGE" in rendered and "FIX" in rendered
+    assert "critical  CVE-2025-1  openssl  upgrade to 3.3.2" in rendered
+    assert "high      CVE-2025-2  zlib     no fix yet" in rendered
 
 
 def test_result_sections_omit_cves_when_clean():
