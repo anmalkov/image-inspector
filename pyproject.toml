@@ -71,7 +71,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 testpaths = ["tests"]
 addopts = "-m 'not integration'"
 markers = [
-    "integration: checks against real build artifacts (e.g. the bundled report.json); deselected by default, run explicitly in the release workflow",
+    "integration: checks against real build artifacts (e.g. the bundled report.json.gz); deselected by default, run explicitly in the release workflow",
 ]
 
 [tool.mypy]

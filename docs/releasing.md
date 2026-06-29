@@ -51,7 +51,7 @@ The version is derived **from the git tag** at release time:
 4. The **Release** workflow triggers automatically and will:
    - verify the tagged commit is on `main` (the release fails fast otherwise),
    - set the project version from the tag (`uv version`),
-   - **snapshot the latest report from GitHub Pages** into `src/image_inspector/data/report.json`
+   - **snapshot the latest report from GitHub Pages** into `src/image_inspector/data/report.json.gz`
      so the wheel ships an offline fallback — a hard requirement; the release fails if the
      report can't be fetched (see below),
    - **verify the tool can read that bundled report** (`pytest -m integration`) and fail the
@@ -74,11 +74,12 @@ The version is derived **from the git tag** at release time:
 
 ## Offline report snapshot
 
-At runtime the tool is **online-first**: it fetches the latest vulnerability report from
-[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json) and only falls back to the
-copy bundled in the wheel when offline. The bundled `report.json` is **not committed to the repo** —
+At runtime the tool is **online-first**: it fetches the latest gzipped vulnerability report from
+[GitHub Pages](https://anmalkov.github.io/image-inspector/report.json.gz) and only falls back to the
+copy bundled in the wheel when offline. The bundled `report.json.gz` is **not committed to the repo** —
 it is a generated artifact (git-ignored) that the nightly scan job publishes to Pages. The release
-workflow fetches it into `src/image_inspector/data/report.json` *before* `uv build`, so each release
+workflow fetches the plain `report.json` from Pages, validates it, and gzips it into
+`src/image_inspector/data/report.json.gz` *before* `uv build`, so each release
 pins a fresh offline snapshot into the wheel.
 
 The snapshot is a **hard requirement, not fail-soft**: if the download fails, times out, or doesn't
@@ -94,7 +95,7 @@ This integration test is deselected from the default unit run (`-m "not integrat
 it. Because the gate runs the real loader, the definition of "valid" lives entirely in the package
 and the workflow never needs updating when the report format or schema version changes.
 
-For local development you are expected to be **online**, so no bundled `report.json` is needed —
+For local development you are expected to be **online**, so no bundled `report.json.gz` is needed —
 `load_report()` fetches from Pages. Running offline from a source checkout (with no snapshot) simply
 yields an empty report.
 

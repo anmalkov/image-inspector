@@ -1,4 +1,4 @@
-"""Read-only stats over the retained scan database (``report.json``).
+"""Read-only stats over the retained scan database (``report.json.gz``).
 
 A **dev-only** helper, intentionally not registered as a console script: run it with
 ``python -m image_inspector.stats`` (e.g. ``uv run python -m image_inspector.stats``). It
@@ -7,9 +7,10 @@ tags, per-tag depth, active vs. retained history, age range, how many digests ar
 to aging out of the retention window, a per-image/per-version breakdown, and the SBOM
 count — as a pure read (no scanning).
 
-Because the typed :class:`~image_inspector.report.VulnerabilityReport` drops the
-``reference``/``last_active_at`` fields this view needs, the computations here operate on
-the **raw** report payload dict, exactly like :mod:`image_inspector.scanner`.
+Because the typed :class:`~image_inspector.report.VulnerabilityReport` flattens history
+into a digest index (dropping per-tag depth and each digest's created-at), the
+computations here operate on the **raw** report payload dict — the v3 ``tags``/``history``
+shape — exactly like :mod:`image_inspector.scanner`.
 """
 
 from __future__ import annotations
@@ -30,7 +31,7 @@ from rich.text import Text
 from . import __version__, ui
 from . import report as report_module
 from .models import LANGUAGES, Category, Language, VersionScheme
-from .report import _parse_dt
+from .report import _decode_report_bytes, _parse_dt
 from .scanner import RETENTION_MAX_AGE_DAYS
 
 DEFAULT_AGING_WITHIN_DAYS = 14
@@ -80,8 +81,8 @@ class DatabaseStats:
     per_tag_min: int
     per_tag_max: int
     per_tag_avg: float
-    oldest_active_at: datetime | None
-    newest_active_at: datetime | None
+    oldest_created_at: datetime | None
+    newest_created_at: datetime | None
     aging_within_days: int
     max_age_days: int
     aging_out_count: int
@@ -89,23 +90,22 @@ class DatabaseStats:
     by_image: list[ImageStats] = field(default_factory=list)
 
 
-def _entry_last_active(entry: dict) -> datetime | None:
-    """When a digest was last a live tag (``last_active_at`` then ``scanned_at``).
+def _entry_created(entry: dict) -> datetime | None:
+    """A history entry's image created-at (``t``) as an aware UTC datetime, or ``None``.
 
-    Mirrors :func:`image_inspector.scanner._last_active`; naive timestamps are assumed UTC
-    so comparisons against an aware ``now`` never raise.
+    Naive timestamps are assumed UTC so comparisons against an aware ``now`` never raise.
     """
-    for field_name in ("last_active_at", "scanned_at"):
-        value = entry.get(field_name)
-        dt = _parse_dt(value) if isinstance(value, str) else None
-        if dt is not None:
-            return dt.replace(tzinfo=UTC) if dt.tzinfo is None else dt
-    return None
+    value = entry.get("t")
+    dt = _parse_dt(value) if isinstance(value, str) else None
+    if dt is not None and dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
 
 
-def _reference_of(entry: dict) -> str | None:
-    ref = entry.get("reference")
-    return ref if isinstance(ref, str) and ":" in ref else None
+def _entry_created_key(entry: dict) -> tuple[bool, datetime, str]:
+    """Sort key for newest-``t``-first ordering; undated entries sort last (with reverse)."""
+    dt = _entry_created(entry)
+    return (dt is not None, dt or datetime.min.replace(tzinfo=UTC), str(entry.get("d") or ""))
 
 
 def _language_for_reference(reference: str) -> Language | None:
@@ -166,16 +166,17 @@ def _image_sort_key(image: ImageStats) -> tuple[int, int, str]:
     )
 
 
-def _build_by_image(images: dict[str, dict]) -> list[ImageStats]:
-    """Group digests by language/OS and, within each, by version."""
+def _build_by_image(tags: dict[str, dict]) -> list[ImageStats]:
+    """Group tags by language/OS and, within each, by version (digests = history depth)."""
     # key -> {"label", "category", "tags": set, "digests": set, "versions": {version: {...}}}
     grouped: dict[str, dict] = {}
-    for digest, entry in images.items():
-        if not isinstance(entry, dict):
+    for reference, tag_data in tags.items():
+        if not isinstance(reference, str) or ":" not in reference:
             continue
-        reference = _reference_of(entry)
-        if reference is None:
+        history = tag_data.get("history") if isinstance(tag_data, dict) else None
+        if not isinstance(history, list):
             continue
+        digests = {entry["d"] for entry in history if isinstance(entry, dict) and entry.get("d")}
         language = _language_for_reference(reference)
         if language is None:
             key, label, category, version = _OTHER_KEY, _OTHER_LABEL, _OTHER_KEY, reference
@@ -189,10 +190,10 @@ def _build_by_image(images: dict[str, dict]) -> list[ImageStats]:
             {"label": label, "category": category, "tags": set(), "digests": set(), "versions": {}},
         )
         bucket["tags"].add(reference)
-        bucket["digests"].add(digest)
+        bucket["digests"].update(digests)
         vbucket = bucket["versions"].setdefault(version, {"tags": set(), "digests": set()})
         vbucket["tags"].add(reference)
-        vbucket["digests"].add(digest)
+        vbucket["digests"].update(digests)
 
     result = [
         ImageStats(
@@ -217,31 +218,43 @@ def compute_stats(
     aging_within_days: int = DEFAULT_AGING_WITHIN_DAYS,
     max_age_days: int = RETENTION_MAX_AGE_DAYS,
 ) -> DatabaseStats:
-    """Summarise the retained database described by a raw report ``payload``."""
+    """Summarise the retained database described by a raw v3 report ``payload``."""
     now = now or datetime.now(UTC)
-    images = payload.get("images")
-    if not isinstance(images, dict):
-        images = {}
+    tags = payload.get("tags")
+    if not isinstance(tags, dict):
+        tags = {}
 
-    # Group digests by their tag (reference) to derive per-tag depth and active/retained.
-    per_tag: dict[str, list[datetime | None]] = {}
     warn_threshold = timedelta(days=max(max_age_days - aging_within_days, 0))
     aging_out = 0
-    for entry in images.values():
-        if not isinstance(entry, dict):
-            continue
-        reference = _reference_of(entry)
-        last_active = _entry_last_active(entry)
-        per_tag.setdefault(reference or "", []).append(last_active)
-        if last_active is not None and now - last_active >= warn_threshold:
-            aging_out += 1
+    depths: list[int] = []
+    all_dated: list[datetime] = []
+    total_digests = 0
+    distinct_tags = 0
+    active_digests = 0
 
-    # The newest digest per tag is the current/active pin; the rest are retained history.
-    total_digests = sum(len(v) for v in per_tag.values())
-    distinct_tags = len(per_tag)
-    active_digests = distinct_tags if total_digests else 0
-    depths = [len(v) for v in per_tag.values()]
-    all_dated = [dt for dts in per_tag.values() for dt in dts if dt is not None]
+    for tag_data in tags.values():
+        history = tag_data.get("history") if isinstance(tag_data, dict) else None
+        if not isinstance(history, list):
+            continue
+        entries = [entry for entry in history if isinstance(entry, dict)]
+        if not entries:
+            continue
+        # Newest-created-first, mirroring the retention model: the head is the live pin and
+        # a non-head entry's retirement time is its successor's created-at.
+        ordered = sorted(entries, key=_entry_created_key, reverse=True)
+        distinct_tags += 1
+        active_digests += 1
+        total_digests += len(ordered)
+        depths.append(len(ordered))
+        for index, entry in enumerate(ordered):
+            created = _entry_created(entry)
+            if created is not None:
+                all_dated.append(created)
+            if index == 0:
+                continue  # head never ages out
+            superseded_at = _entry_created(ordered[index - 1])
+            if superseded_at is not None and now - superseded_at >= warn_threshold:
+                aging_out += 1
 
     return DatabaseStats(
         source=source,
@@ -255,13 +268,13 @@ def compute_stats(
         per_tag_min=min(depths) if depths else 0,
         per_tag_max=max(depths) if depths else 0,
         per_tag_avg=round(total_digests / distinct_tags, 1) if distinct_tags else 0.0,
-        oldest_active_at=min(all_dated) if all_dated else None,
-        newest_active_at=max(all_dated) if all_dated else None,
+        oldest_created_at=min(all_dated) if all_dated else None,
+        newest_created_at=max(all_dated) if all_dated else None,
         aging_within_days=aging_within_days,
         max_age_days=max_age_days,
         aging_out_count=aging_out,
         sbom_count=total_digests,
-        by_image=_build_by_image(images),
+        by_image=_build_by_image(tags),
     )
 
 
@@ -284,8 +297,8 @@ def stats_payload(stats: DatabaseStats) -> dict:
             "per_tag_avg": stats.per_tag_avg,
         },
         "activity": {
-            "oldest_last_active_at": _iso(stats.oldest_active_at),
-            "newest_last_active_at": _iso(stats.newest_active_at),
+            "oldest_created_at": _iso(stats.oldest_created_at),
+            "newest_created_at": _iso(stats.newest_created_at),
         },
         "retention": {
             "max_age_days": stats.max_age_days,
@@ -329,10 +342,13 @@ def _load_url_payload() -> dict | None:
 
 def _load_file_payload(path: str) -> dict | None:
     try:
-        raw = Path(path).read_text("utf-8")
-    except (OSError, UnicodeDecodeError):
+        raw = Path(path).read_bytes()
+    except OSError:
         return None
-    return report_module._validate_payload(raw)
+    body = _decode_report_bytes(raw)
+    if body is None:
+        return None
+    return report_module._validate_payload(body)
 
 
 def load_payload(*, source: str, report_path: str | None) -> dict | None:
@@ -357,7 +373,7 @@ def _source_label(stats: DatabaseStats, report_path: str | None) -> str:
     if report_path is not None:
         return f"file · {report_path}"
     if stats.source == "local":
-        return "local (bundled report.json)"
+        return "local (bundled report.json.gz)"
     url = report_module._report_url()
     return f"url ({url})"
 
@@ -378,8 +394,8 @@ def _summary_rows(stats: DatabaseStats, report_path: str | None) -> list[tuple[s
         ("DIGESTS", "Retained (history)", str(stats.retained_digests)),
         ("TAGS", "Distinct tags", str(stats.distinct_tags)),
         ("TAGS", "Digests per tag", per_tag),
-        ("ACTIVITY", "Oldest last-active", _fmt_dt(stats.oldest_active_at)),
-        ("ACTIVITY", "Newest last-active", _fmt_dt(stats.newest_active_at)),
+        ("ACTIVITY", "Oldest created", _fmt_dt(stats.oldest_created_at)),
+        ("ACTIVITY", "Newest created", _fmt_dt(stats.newest_created_at)),
         ("RETENTION", "Window", f"{stats.max_age_days} days"),
         ("RETENTION", f"Aging out ≤ {stats.aging_within_days} days", aging),
         ("SBOMS", "Published", str(stats.sbom_count)),
@@ -522,7 +538,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--report",
         metavar="PATH",
-        help="read a specific report.json file directly (overrides --source)",
+        help="read a specific report.json[.gz] file directly (overrides --source)",
     )
     parser.add_argument(
         "--aging-within",

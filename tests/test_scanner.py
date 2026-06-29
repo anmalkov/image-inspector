@@ -1,5 +1,6 @@
-"""Tests for the Trivy scanner: parsing and enumeration (Trivy is stubbed)."""
+"""Tests for the Trivy scanner: parsing, enumeration and v3 report building (Trivy stubbed)."""
 
+import gzip
 import json
 from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
@@ -17,13 +18,17 @@ def _iso(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def _entry(reference, *, total=0, high=0, scanned_at=None, last_active_at=None):
-    entry = {"reference": reference, "total": total, "high": high}
-    if scanned_at is not None:
-        entry["scanned_at"] = scanned_at
-    if last_active_at is not None:
-        entry["last_active_at"] = last_active_at
-    return entry
+def _entry(d: str, *, t: str | None = None, c: list[int] | None = None) -> dict:
+    """Build a compact v3 history entry ``{d, t, c}``."""
+    return {"d": d, "t": t, "c": c if c is not None else [0, 0, 0, 0, 0]}
+
+
+def _tag(*entries: dict) -> dict:
+    return {"history": list(entries)}
+
+
+def _report(tags: dict, **header) -> dict:
+    return {"schema_version": 3, "tags": tags, **header}
 
 
 class _FakeProc:
@@ -97,9 +102,31 @@ def test_enumerate_targets_uses_resolved_digests(monkeypatch):
     assert by_ref["python:3.13.14-slim"].image_ref == "python@sha256:slim"
 
 
+def test_enumerate_targets_carries_created_from_last_updated(monkeypatch):
+    from image_inspector.models import Language, RegistryKind
+
+    python = Language("python", "Python", RegistryKind.DOCKER_HUB, "library/python")
+
+    class _DatedProvider(_FakeProvider):
+        def resolve(self, tag):
+            return ImageTag(
+                name=tag,
+                digest=self._digests[tag],
+                last_updated=datetime(2026, 6, 11, 8, 0, 0, tzinfo=UTC),
+            )
+
+    monkeypatch.setattr(scanner, "make_client", _fake_client)
+    monkeypatch.setattr(scanner, "get_provider", lambda lang, client: _DatedProvider())
+
+    targets = {t.reference: t for t in scanner.enumerate_targets((python,))}
+    assert targets["python:3.13.14"].created == "2026-06-11T08:00:00Z"
+
+
 def test_build_report_skips_failed_scans(monkeypatch):
     targets = [
-        scanner.ScanTarget("python:3.13.14", "python@sha256:ok", "sha256:ok"),
+        scanner.ScanTarget(
+            "python:3.13.14", "python@sha256:ok", "sha256:ok", "2026-06-20T00:00:00Z"
+        ),
         scanner.ScanTarget("python:3.13.14-slim", "python@sha256:bad", "sha256:bad"),
     ]
     monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(targets))
@@ -114,11 +141,15 @@ def test_build_report_skips_failed_scans(monkeypatch):
     monkeypatch.setattr(scanner, "scan_image", _fake_scan)
 
     report = scanner.build_report()
+    assert report["schema_version"] == 3
     assert report["trivy_version"] == "0.58.0"
     assert report["trivy_db_updated_at"] == "2026-06-14T12:00:00Z"
-    assert set(report["images"]) == {"sha256:ok"}
-    assert report["images"]["sha256:ok"]["high"] == 1
-    assert report["images"]["sha256:ok"]["reference"] == "python:3.13.14"
+    assert set(report["tags"]) == {"python:3.13.14"}
+    history = report["tags"]["python:3.13.14"]["history"]
+    assert len(history) == 1
+    assert history[0]["d"] == "ok"
+    assert history[0]["t"] == "2026-06-20T00:00:00Z"
+    assert history[0]["c"] == [0, 1, 0, 0, 0]
 
 
 def test_main_language_filter_selects_subset(monkeypatch):
@@ -126,14 +157,13 @@ def test_main_language_filter_selects_subset(monkeypatch):
 
     monkeypatch.setattr(scanner.shutil, "which", lambda _: "/usr/bin/trivy")
     monkeypatch.setattr(scanner, "_update_db", lambda: None)
-    monkeypatch.setattr(scanner.json, "dumps", lambda *a, **k: "{}")
-    monkeypatch.setattr("pathlib.Path.write_text", lambda self, *a, **k: None)
+    monkeypatch.setattr(scanner, "_write_report", lambda *a, **k: None)
 
     captured = {}
 
     def _fake_build(languages=scanner.LANGUAGES):
         captured["languages"] = languages
-        return {"images": {}}
+        return _report({})
 
     monkeypatch.setattr(scanner, "build_report", _fake_build)
 
@@ -145,14 +175,13 @@ def test_main_language_filter_selects_subset(monkeypatch):
 def test_main_no_filter_scans_all(monkeypatch):
     monkeypatch.setattr(scanner.shutil, "which", lambda _: "/usr/bin/trivy")
     monkeypatch.setattr(scanner, "_update_db", lambda: None)
-    monkeypatch.setattr(scanner.json, "dumps", lambda *a, **k: "{}")
-    monkeypatch.setattr("pathlib.Path.write_text", lambda self, *a, **k: None)
+    monkeypatch.setattr(scanner, "_write_report", lambda *a, **k: None)
 
     captured = {}
 
     def _fake_build(languages=scanner.LANGUAGES):
         captured["languages"] = languages
-        return {"images": {}}
+        return _report({})
 
     monkeypatch.setattr(scanner, "build_report", _fake_build)
 
@@ -160,27 +189,42 @@ def test_main_no_filter_scans_all(monkeypatch):
     assert captured["languages"] is scanner.LANGUAGES
 
 
-def test_merge_reports_unions_images_by_digest():
-    a = {
-        "generated_at": "2026-06-15T02:00:00Z",
-        "trivy_version": "0.71.1",
-        "trivy_db_updated_at": "2026-06-14T12:00:00Z",
-        "images": {"sha256:py": {"reference": "python:3.13.14", "total": 1}},
-    }
-    b = {
-        "generated_at": "2026-06-15T02:05:00Z",
-        "trivy_version": None,
-        "trivy_db_updated_at": None,
-        "images": {"sha256:al": {"reference": "alpine:3.21.0", "total": 0}},
-    }
+def test_merge_reports_unions_tags_by_reference():
+    a = _report(
+        {"python:3.13.14": _tag(_entry("py", t="2026-06-10T00:00:00Z"))},
+        generated_at="2026-06-15T02:00:00Z",
+        trivy_version="0.71.1",
+        trivy_db_updated_at="2026-06-14T12:00:00Z",
+    )
+    b = _report(
+        {"alpine:3.21.0": _tag(_entry("al", t="2026-06-11T00:00:00Z"))},
+        generated_at="2026-06-15T02:05:00Z",
+        trivy_version=None,
+        trivy_db_updated_at=None,
+    )
     merged = scanner.merge_reports([a, b])
-    assert set(merged["images"]) == {"sha256:py", "sha256:al"}
+    assert set(merged["tags"]) == {"python:3.13.14", "alpine:3.21.0"}
     # trivy_version taken from the first input that has one.
     assert merged["trivy_version"] == "0.71.1"
     # DB date likewise collapses to the first non-null value.
     assert merged["trivy_db_updated_at"] == "2026-06-14T12:00:00Z"
     # generated_at is the latest of the inputs.
     assert merged["generated_at"] == "2026-06-15T02:05:00Z"
+
+
+def test_merge_reports_dedupes_histories_per_shared_tag():
+    a = _report({"python:3.13.14": _tag(_entry("d1", t="2026-06-10T00:00:00Z"))})
+    b = _report(
+        {
+            "python:3.13.14": _tag(
+                _entry("d1", t="2026-06-10T00:00:00Z"),
+                _entry("d2", t="2026-06-09T00:00:00Z"),
+            )
+        }
+    )
+    merged = scanner.merge_reports([a, b])
+    digests = {e["d"] for e in merged["tags"]["python:3.13.14"]["history"]}
+    assert digests == {"d1", "d2"}
 
 
 def test_trivy_db_updated_at_reads_payload(monkeypatch):
@@ -196,16 +240,21 @@ def test_trivy_db_updated_at_missing_db(monkeypatch):
 
 
 def test_merge_main_writes_combined_report(tmp_path):
+    now = datetime.now(UTC)
     a = tmp_path / "report-python.json"
     b = tmp_path / "report-alpine.json"
-    a.write_text('{"images": {"sha256:py": {"reference": "python:3.13.14"}}}', encoding="utf-8")
-    b.write_text('{"images": {"sha256:al": {"reference": "alpine:3.21.0"}}}', encoding="utf-8")
+    a.write_text(
+        json.dumps(_report({"python:3.13.14": _tag(_entry("py", t=_iso(now)))})), encoding="utf-8"
+    )
+    b.write_text(
+        json.dumps(_report({"alpine:3.21.0": _tag(_entry("al", t=_iso(now)))})), encoding="utf-8"
+    )
     out = tmp_path / "combined.json"
 
     assert scanner.merge_main([str(a), str(b), "-o", str(out)]) == 0
 
     combined = json.loads(out.read_text(encoding="utf-8"))
-    assert set(combined["images"]) == {"sha256:py", "sha256:al"}
+    assert set(combined["tags"]) == {"python:3.13.14", "alpine:3.21.0"}
 
 
 def test_merge_main_reports_unreadable_input(tmp_path):
@@ -215,55 +264,116 @@ def test_merge_main_reports_unreadable_input(tmp_path):
     assert not out.exists()
 
 
+def test_merge_main_reads_gzip_input(tmp_path):
+    now = datetime.now(UTC)
+    partial = tmp_path / "report-python.json.gz"
+    text = json.dumps(_report({"python:3.13.14": _tag(_entry("py", t=_iso(now)))}))
+    partial.write_bytes(gzip.compress(text.encode("utf-8")))
+    out = tmp_path / "combined.json"
+    assert scanner.merge_main([str(partial), "-o", str(out)]) == 0
+    assert set(json.loads(out.read_text(encoding="utf-8"))["tags"]) == {"python:3.13.14"}
+
+
+# --- Report writing --------------------------------------------------------------------------
+
+
+def test_write_report_gzips_when_gz_suffix(tmp_path):
+    report = _report({"python:3.13.14": _tag(_entry("a", t=None))})
+    out = tmp_path / "report.json.gz"
+    scanner._write_report(report, out)
+    raw = out.read_bytes()
+    assert raw[:2] == b"\x1f\x8b"  # gzip magic bytes
+    loaded = json.loads(gzip.decompress(raw).decode("utf-8"))
+    assert loaded["tags"]["python:3.13.14"]["history"][0]["d"] == "a"
+
+
+def test_write_report_plain_when_no_gz_suffix(tmp_path):
+    report = _report({"python:3.13.14": _tag(_entry("a", t=None))})
+    out = tmp_path / "report.json"
+    scanner._write_report(report, out)
+    assert json.loads(out.read_text(encoding="utf-8"))["schema_version"] == 3
+
+
+def test_write_report_gzip_is_reproducible(tmp_path):
+    report = _report({"python:3.13.14": _tag(_entry("a", t="2026-06-10T00:00:00Z"))})
+    out1 = tmp_path / "a.json.gz"
+    out2 = tmp_path / "b.json.gz"
+    scanner._write_report(report, out1)
+    scanner._write_report(report, out2)
+    # mtime=0 keeps identical content byte-for-byte identical across writes.
+    assert out1.read_bytes() == out2.read_bytes()
+
+
 # --- Retention -------------------------------------------------------------------------------
 
 
-def test_apply_retention_drops_old_and_caps_per_tag():
+def test_apply_retention_caps_per_tag():
     now = datetime(2026, 6, 25, tzinfo=UTC)
-    images = {
-        f"sha256:d{i:02d}": _entry(
-            "python:3.13", total=i, last_active_at=_iso(now - timedelta(days=i))
-        )
-        for i in range(35)
-    }
-    images["sha256:stale"] = _entry("python:3.12", last_active_at=_iso(now - timedelta(days=200)))
-    images["sha256:fresh"] = _entry("python:3.12", last_active_at=_iso(now - timedelta(days=10)))
+    history = [_entry(f"d{i:02d}", t=_iso(now - timedelta(days=i))) for i in range(35)]
+    tags = {"python:3.13": {"history": history}}
 
-    kept = scanner.apply_retention(images, now=now)
+    kept = scanner.apply_retention(tags, now=now)
+    refs = [e["d"] for e in kept["python:3.13"]["history"]]
 
-    py313 = [d for d, e in kept.items() if e["reference"] == "python:3.13"]
-    # Per-tag cap keeps only the 30 most-recently-active digests (i = 0..29).
-    assert len(py313) == scanner.RETENTION_MAX_PER_TAG
-    assert "sha256:d00" in kept and "sha256:d29" in kept
-    assert "sha256:d30" not in kept and "sha256:d34" not in kept
-    # Age window drops the 200-day-old digest but keeps the 10-day-old one.
-    assert "sha256:stale" not in kept
-    assert "sha256:fresh" in kept
+    # Per-tag cap keeps only the newest-by-created-at entries (i = 0..29).
+    assert len(refs) == scanner.RETENTION_MAX_PER_TAG
+    assert "d00" in refs and "d29" in refs
+    assert "d30" not in refs and "d34" not in refs
 
 
-def test_apply_retention_uses_scanned_at_when_last_active_missing():
+def test_apply_retention_ages_out_via_successor_created_at():
     now = datetime(2026, 6, 25, tzinfo=UTC)
-    images = {
-        "sha256:old": _entry("python:3.13", scanned_at=_iso(now - timedelta(days=200))),
-        "sha256:new": _entry("python:3.13", scanned_at=_iso(now - timedelta(days=5))),
+    tags = {
+        "python:3.12": {
+            "history": [
+                _entry("live", t=_iso(now - timedelta(days=5))),
+                _entry("mid", t=_iso(now - timedelta(days=200))),
+                _entry("old", t=_iso(now - timedelta(days=400))),
+            ]
+        }
     }
-    kept = scanner.apply_retention(images, now=now)
-    assert "sha256:old" not in kept
-    assert "sha256:new" in kept
+    kept = [e["d"] for e in scanner.apply_retention(tags, now=now)["python:3.12"]["history"]]
+    # "old" was superseded 200 days ago (> 180), so it ages out; the head never ages out and
+    # "mid" was superseded only 5 days ago, so both survive.
+    assert kept == ["live", "mid"]
+
+
+def test_apply_retention_head_never_ages_out():
+    now = datetime(2026, 6, 25, tzinfo=UTC)
+    tags = {"python:3.10": {"history": [_entry("ancient", t=_iso(now - timedelta(days=900)))]}}
+    kept = scanner.apply_retention(tags, now=now)
+    assert [e["d"] for e in kept["python:3.10"]["history"]] == ["ancient"]
+
+
+def test_apply_retention_undated_entry_sorts_last_and_is_retained():
+    now = datetime(2026, 6, 25, tzinfo=UTC)
+    tags = {
+        "python:3.9": {
+            "history": [
+                _entry("head", t=_iso(now - timedelta(days=1))),
+                _entry("undated", t=None),
+            ]
+        }
+    }
+    kept = [e["d"] for e in scanner.apply_retention(tags, now=now)["python:3.9"]["history"]]
+    # Undated entries never age out, sort last, and still count toward the cap.
+    assert kept == ["head", "undated"]
 
 
 def test_merge_with_history_keeps_old_digest_on_tag_move():
     now = datetime(2026, 6, 25, tzinfo=UTC)
-    moved = _iso(now - timedelta(days=3))
-    prior = {"images": {"sha256:old": _entry("python:3.13.15", total=1, last_active_at=moved)}}
-    fresh = {
-        "generated_at": _iso(now),
-        "trivy_version": "0.71.1",
-        "trivy_db_updated_at": "2026-06-14T12:00:00Z",
-        "images": {"sha256:new": _entry("python:3.13.15", total=2, last_active_at=_iso(now))},
-    }
+    prior = _report(
+        {"python:3.13.15": _tag(_entry("old", t=_iso(now - timedelta(days=3)), c=[0, 1, 0, 0, 0]))}
+    )
+    fresh = _report(
+        {"python:3.13.15": _tag(_entry("new", t=_iso(now), c=[0, 2, 0, 0, 0]))},
+        generated_at=_iso(now),
+        trivy_version="0.71.1",
+        trivy_db_updated_at="2026-06-14T12:00:00Z",
+    )
     merged = scanner.merge_with_history(fresh, prior, now=now)
-    assert set(merged["images"]) == {"sha256:old", "sha256:new"}
+    digests = {e["d"] for e in merged["tags"]["python:3.13.15"]["history"]}
+    assert digests == {"old", "new"}
     # Header metadata comes from the fresh run.
     assert merged["trivy_version"] == "0.71.1"
     assert merged["generated_at"] == _iso(now)
@@ -271,20 +381,20 @@ def test_merge_with_history_keeps_old_digest_on_tag_move():
 
 def test_merge_with_history_fresh_wins_per_digest():
     now = datetime(2026, 6, 25, tzinfo=UTC)
-    prior = {
-        "images": {
-            "sha256:x": _entry("go:1.22", total=9, last_active_at=_iso(now - timedelta(days=1)))
-        },
-        "trivy_version": "old",
-        "generated_at": _iso(now - timedelta(days=1)),
-    }
-    fresh = {
-        "images": {"sha256:x": _entry("go:1.22", total=3, last_active_at=_iso(now))},
-        "trivy_version": "new",
-        "generated_at": _iso(now),
-    }
+    prior = _report(
+        {"go:1.22": _tag(_entry("x", t=_iso(now - timedelta(days=1)), c=[0, 0, 9, 0, 0]))},
+        trivy_version="old",
+        generated_at=_iso(now - timedelta(days=1)),
+    )
+    fresh = _report(
+        {"go:1.22": _tag(_entry("x", t=_iso(now), c=[0, 0, 3, 0, 0]))},
+        trivy_version="new",
+        generated_at=_iso(now),
+    )
     merged = scanner.merge_with_history(fresh, prior, now=now)
-    assert merged["images"]["sha256:x"]["total"] == 3
+    history = merged["tags"]["go:1.22"]["history"]
+    assert len(history) == 1
+    assert history[0]["c"] == [0, 0, 3, 0, 0]
     assert merged["trivy_version"] == "new"
 
 
@@ -299,7 +409,11 @@ def _python_language():
 
 def test_build_report_rescans_retained_digest(monkeypatch):
     python = _python_language()
-    current = [scanner.ScanTarget("python:3.13.15", "python@sha256:new", "sha256:new")]
+    current = [
+        scanner.ScanTarget(
+            "python:3.13.15", "python@sha256:new", "sha256:new", "2026-06-20T00:00:00Z"
+        )
+    ]
     monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(current))
     monkeypatch.setattr(scanner, "trivy_version", lambda: "0.71.1")
     monkeypatch.setattr(scanner, "trivy_db_updated_at", lambda: "2026-06-14T12:00:00Z")
@@ -310,32 +424,31 @@ def test_build_report_rescans_retained_digest(monkeypatch):
 
     monkeypatch.setattr(scanner, "scan_image", _fake_scan)
 
-    prior = {
-        "images": {
-            "sha256:old": _entry(
-                "python:3.13.15",
-                total=2,
-                high=2,
-                scanned_at="2026-01-01T00:00:00Z",
-                last_active_at="2026-03-01T00:00:00Z",
-            )
-        }
-    }
+    prior = _report(
+        {"python:3.13.15": _tag(_entry("old", t="2026-03-01T00:00:00Z", c=[0, 2, 0, 0, 0]))}
+    )
     report = scanner.build_report((python,), prior=prior)
 
-    assert set(report["images"]) == {"sha256:new", "sha256:old"}
-    old = report["images"]["sha256:old"]
-    # Re-scored counts, refreshed scanned_at, but last_active_at preserved from the prior report.
-    assert old["high"] == 9
-    assert old["last_active_at"] == "2026-03-01T00:00:00Z"
-    assert old["scanned_at"] != "2026-01-01T00:00:00Z"
-    new = report["images"]["sha256:new"]
-    assert new["last_active_at"] == new["scanned_at"]
+    history = report["tags"]["python:3.13.15"]["history"]
+    by_d = {e["d"]: e for e in history}
+    assert set(by_d) == {"new", "old"}
+    # Re-scored counts, but the created-at (t) is preserved from the prior report.
+    assert by_d["old"]["c"] == [0, 9, 0, 0, 0]
+    assert by_d["old"]["t"] == "2026-03-01T00:00:00Z"
+    # The current digest takes its created-at from the enumerated target.
+    assert by_d["new"]["c"] == [0, 1, 0, 0, 0]
+    assert by_d["new"]["t"] == "2026-06-20T00:00:00Z"
+    # History is ordered newest-created-first, so the live digest is the head.
+    assert history[0]["d"] == "new"
 
 
 def test_build_report_carries_forward_failed_rescan(monkeypatch):
     python = _python_language()
-    current = [scanner.ScanTarget("python:3.13.15", "python@sha256:new", "sha256:new")]
+    current = [
+        scanner.ScanTarget(
+            "python:3.13.15", "python@sha256:new", "sha256:new", "2026-06-20T00:00:00Z"
+        )
+    ]
     monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(current))
     monkeypatch.setattr(scanner, "trivy_version", lambda: "0.71.1")
     monkeypatch.setattr(scanner, "trivy_db_updated_at", lambda: None)
@@ -347,17 +460,49 @@ def test_build_report_carries_forward_failed_rescan(monkeypatch):
 
     monkeypatch.setattr(scanner, "scan_image", _fake_scan)
 
-    prior_entry = _entry(
-        "python:3.13.15",
-        total=2,
-        high=2,
-        scanned_at="2026-01-01T00:00:00Z",
-        last_active_at="2026-03-01T00:00:00Z",
-    )
-    prior = {"images": {"sha256:old": dict(prior_entry)}}
+    prior_entry = _entry("old", t="2026-03-01T00:00:00Z", c=[0, 2, 0, 0, 0])
+    prior = _report({"python:3.13.15": _tag(dict(prior_entry))})
     report = scanner.build_report((python,), prior=prior)
-    # A retained digest that can't be re-scored keeps its last-known counts unchanged.
-    assert report["images"]["sha256:old"] == prior_entry
+
+    by_d = {e["d"]: e for e in report["tags"]["python:3.13.15"]["history"]}
+    # A retained digest that can't be re-scored keeps its last-known entry unchanged.
+    assert by_d["old"] == prior_entry
+
+
+def test_build_report_migrates_v2_prior(monkeypatch):
+    python = _python_language()
+    current = [
+        scanner.ScanTarget(
+            "python:3.13.15", "python@sha256:new", "sha256:new", "2026-06-20T00:00:00Z"
+        )
+    ]
+    monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(current))
+    monkeypatch.setattr(scanner, "trivy_version", lambda: "0.71.1")
+    monkeypatch.setattr(scanner, "trivy_db_updated_at", lambda: None)
+
+    def _fake_scan(image_ref):
+        high = 5 if image_ref.endswith("old") else 1
+        return {"critical": 0, "high": high, "medium": 0, "low": 0, "unknown": 0, "total": high}
+
+    monkeypatch.setattr(scanner, "scan_image", _fake_scan)
+
+    # Legacy v2 prior payload (flat-by-digest); history must survive the cutover.
+    prior = {
+        "images": {
+            "sha256:old": {
+                "reference": "python:3.13.15",
+                "high": 2,
+                "last_active_at": "2026-03-01T00:00:00Z",
+            }
+        }
+    }
+    report = scanner.build_report((python,), prior=prior)
+
+    by_d = {e["d"]: e for e in report["tags"]["python:3.13.15"]["history"]}
+    assert set(by_d) == {"new", "old"}
+    # The migrated digest keeps its created-at (from v2 last_active_at) and is re-scored.
+    assert by_d["old"]["t"] == "2026-03-01T00:00:00Z"
+    assert by_d["old"]["c"] == [0, 5, 0, 0, 0]
 
 
 # --- SBOM store and scoring ------------------------------------------------------------------
@@ -472,8 +617,27 @@ def test_score_sbom_surfaces_stderr_on_failure(monkeypatch, tmp_path, capsys):
 @respx.mock
 def test_fetch_prior_report_returns_dict():
     url = "https://example.test/report.json"
-    respx.get(url).mock(return_value=httpx.Response(200, json={"images": {"sha256:a": {}}}))
-    assert scanner.fetch_prior_report(url) == {"images": {"sha256:a": {}}}
+    payload = _report({"python:3.13.14": _tag(_entry("a", t=None))})
+    respx.get(url).mock(return_value=httpx.Response(200, json=payload))
+    assert scanner.fetch_prior_report(url) == payload
+
+
+@respx.mock
+def test_fetch_prior_report_accepts_legacy_v2_images():
+    url = "https://example.test/report.json"
+    v2 = {"images": {"sha256:a": {"reference": "python:3.13.14", "high": 1}}}
+    respx.get(url).mock(return_value=httpx.Response(200, json=v2))
+    # A legacy v2 payload is accepted so a cutover keeps prior history.
+    assert scanner.fetch_prior_report(url) == v2
+
+
+@respx.mock
+def test_fetch_prior_report_reads_gzip():
+    url = "https://example.test/report.json.gz"
+    payload = _report({"python:3.13.14": _tag(_entry("a", t=None))})
+    body = gzip.compress(json.dumps(payload).encode("utf-8"))
+    respx.get(url).mock(return_value=httpx.Response(200, content=body))
+    assert scanner.fetch_prior_report(url) == payload
 
 
 @respx.mock
@@ -512,26 +676,22 @@ def test_merge_main_with_prior_url_merges_history(tmp_path):
     partial = tmp_path / "report-python.json"
     partial.write_text(
         json.dumps(
-            {
-                "generated_at": _iso(now),
-                "trivy_version": "0.71.1",
-                "images": {
-                    "sha256:new": _entry("python:3.13.15", total=1, last_active_at=_iso(now))
-                },
-            }
+            _report(
+                {"python:3.13.15": _tag(_entry("new", t=_iso(now), c=[0, 0, 1, 0, 0]))},
+                generated_at=_iso(now),
+                trivy_version="0.71.1",
+            )
         ),
         encoding="utf-8",
     )
     url = "https://example.test/report.json"
-    prior_active = _iso(now - timedelta(days=5))
+    prior_created = _iso(now - timedelta(days=5))
     respx.get(url).mock(
         return_value=httpx.Response(
             200,
-            json={
-                "images": {
-                    "sha256:old": _entry("python:3.13.15", total=2, last_active_at=prior_active)
-                }
-            },
+            json=_report(
+                {"python:3.13.15": _tag(_entry("old", t=prior_created, c=[0, 0, 2, 0, 0]))}
+            ),
         )
     )
     out = tmp_path / "combined.json"
@@ -539,8 +699,30 @@ def test_merge_main_with_prior_url_merges_history(tmp_path):
     assert scanner.merge_main([str(partial), "--prior-url", url, "-o", str(out)]) == 0
 
     combined = json.loads(out.read_text(encoding="utf-8"))
-    assert set(combined["images"]) == {"sha256:new", "sha256:old"}
+    digests = {e["d"] for e in combined["tags"]["python:3.13.15"]["history"]}
+    assert digests == {"new", "old"}
     assert combined["trivy_version"] == "0.71.1"
+
+
+def test_merge_main_gzip_output(tmp_path):
+    now = datetime.now(UTC)
+    partial = tmp_path / "report-python.json"
+    partial.write_text(
+        json.dumps(
+            _report({"python:3.13.14": _tag(_entry("py", t=_iso(now)))}, generated_at=_iso(now))
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "combined.json"
+    gz = tmp_path / "combined.json.gz"
+
+    assert scanner.merge_main([str(partial), "-o", str(out), "--gzip-output", str(gz)]) == 0
+
+    assert out.exists()
+    raw = gz.read_bytes()
+    assert raw[:2] == b"\x1f\x8b"
+    loaded = json.loads(gzip.decompress(raw).decode("utf-8"))
+    assert loaded["tags"]["python:3.13.14"]["history"][0]["d"] == "py"
 
 
 def test_merge_main_publishes_retained_sboms(tmp_path):
@@ -548,10 +730,7 @@ def test_merge_main_publishes_retained_sboms(tmp_path):
     partial = tmp_path / "report-python.json"
     partial.write_text(
         json.dumps(
-            {
-                "generated_at": _iso(now),
-                "images": {"sha256:keep": _entry("python:3.13.15", last_active_at=_iso(now))},
-            }
+            _report({"python:3.13.15": _tag(_entry("keep", t=_iso(now)))}, generated_at=_iso(now))
         ),
         encoding="utf-8",
     )
@@ -574,7 +753,7 @@ def test_merge_main_publishes_retained_sboms(tmp_path):
 @pytest.mark.parametrize("flag", ["--sbom-src-dir", "--sbom-out-dir"])
 def test_merge_main_requires_both_sbom_dirs(tmp_path, flag):
     partial = tmp_path / "report-python.json"
-    partial.write_text(json.dumps({"images": {}}), encoding="utf-8")
+    partial.write_text(json.dumps(_report({})), encoding="utf-8")
     with pytest.raises(SystemExit) as exc:
         scanner.merge_main(
             [str(partial), flag, str(tmp_path / "d"), "-o", str(tmp_path / "o.json")]
@@ -585,16 +764,15 @@ def test_merge_main_requires_both_sbom_dirs(tmp_path, flag):
 def test_main_passes_prior_and_sbom_store(monkeypatch, tmp_path):
     monkeypatch.setattr(scanner.shutil, "which", lambda _: "/usr/bin/trivy")
     monkeypatch.setattr(scanner, "_update_db", lambda: None)
-    monkeypatch.setattr(scanner, "fetch_prior_report", lambda url: {"images": {}, "_url": url})
-    monkeypatch.setattr(scanner.json, "dumps", lambda *a, **k: "{}")
-    monkeypatch.setattr("pathlib.Path.write_text", lambda self, *a, **k: None)
+    monkeypatch.setattr(scanner, "fetch_prior_report", lambda url: {"tags": {}, "_url": url})
+    monkeypatch.setattr(scanner, "_write_report", lambda *a, **k: None)
 
     captured = {}
 
     def _fake_build(languages=scanner.LANGUAGES, **kwargs):
         captured.update(kwargs)
         captured["languages"] = languages
-        return {"images": {}}
+        return _report({})
 
     monkeypatch.setattr(scanner, "build_report", _fake_build)
 
@@ -612,6 +790,6 @@ def test_main_passes_prior_and_sbom_store(monkeypatch, tmp_path):
     )
 
     assert rc == 0
-    assert captured["prior"] == {"images": {}, "_url": "http://x/report.json"}
+    assert captured["prior"] == {"tags": {}, "_url": "http://x/report.json"}
     assert isinstance(captured["sbom_store"], scanner.SbomStore)
     assert captured["sbom_store"].base_url == "http://x"

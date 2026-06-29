@@ -56,7 +56,7 @@ def test_main_attaches_vulnerabilities_from_report(monkeypatch):
     fake = FakeProvider()
     python = LANGUAGES_BY_KEY["python"]
     report = VulnerabilityReport(
-        images={"sha256:deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)}
+        images={"deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)}
     )
 
     monkeypatch.setattr(cli, "make_client", _fake_client)
@@ -81,7 +81,7 @@ def test_main_threads_scan_source_from_report(monkeypatch):
     report = VulnerabilityReport(
         trivy_version="0.71.1",
         trivy_db_updated_at=datetime(2026, 6, 14, 12, 0, 0, tzinfo=UTC),
-        images={"sha256:deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)},
+        images={"deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)},
     )
 
     monkeypatch.setattr(cli, "make_client", _fake_client)
@@ -163,7 +163,7 @@ def test_main_json_non_interactive(monkeypatch, capsys):
     report = VulnerabilityReport(
         trivy_version="0.71.1",
         trivy_db_updated_at=datetime(2026, 6, 14, 12, 0, 0, tzinfo=UTC),
-        images={"sha256:deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)},
+        images={"deadbeef": ImageVulnerabilities(critical=1, high=2, total=7)},
     )
 
     monkeypatch.setattr(cli, "make_client", _fake_client)
