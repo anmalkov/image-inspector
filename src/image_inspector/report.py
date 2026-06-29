@@ -166,6 +166,7 @@ class VulnerabilityReport:
     trivy_db_updated_at: datetime | None = None
     images: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
     latest: dict[str, ImageVulnerabilities] = None  # type: ignore[assignment]
+    latest_digests: dict[str, str] = None  # type: ignore[assignment]
     source: ReportSource | None = None
 
     def __post_init__(self) -> None:
@@ -173,6 +174,8 @@ class VulnerabilityReport:
             object.__setattr__(self, "images", {})
         if self.latest is None:
             object.__setattr__(self, "latest", {})
+        if self.latest_digests is None:
+            object.__setattr__(self, "latest_digests", {})
 
     def lookup_digest(self, digest: str | None) -> ImageVulnerabilities | None:
         """Return counts for an image ``digest``, or ``None`` if not scanned.
@@ -190,6 +193,16 @@ class VulnerabilityReport:
             return None
         return self.latest.get(reference)
 
+    def latest_digest_for_tag(self, reference: str | None) -> str | None:
+        """Return the current (head) digest for a tag, or ``None`` if unknown.
+
+        The digest is returned in the stripped (no ``sha256:`` prefix) form the index
+        is keyed by, matching :meth:`lookup_digest`'s own normalisation.
+        """
+        if not reference:
+            return None
+        return self.latest_digests.get(reference)
+
     @classmethod
     def empty(cls) -> VulnerabilityReport:
         return cls()
@@ -198,13 +211,15 @@ class VulnerabilityReport:
     def from_dict(cls, data: dict) -> VulnerabilityReport:
         """Build a report from the v3 ``tags`` payload.
 
-        The per-digest index (``images``) and the per-tag head index (``latest``) are both
-        derived from each tag's newest-first ``history``. Each digest's ``scanned_at`` is
-        the report's ``generated_at``, since v3 keeps the scan time only in the header.
+        The per-digest index (``images``), the per-tag head counts (``latest``) and the
+        per-tag head digest (``latest_digests``) are all derived from each tag's newest-first
+        ``history``. Each digest's ``scanned_at`` is the report's ``generated_at``, since v3
+        keeps the scan time only in the header.
         """
         generated_at = _parse_dt(data.get("generated_at"))
         images: dict[str, ImageVulnerabilities] = {}
         latest: dict[str, ImageVulnerabilities] = {}
+        latest_digests: dict[str, str] = {}
         tags = data.get("tags")
         if isinstance(tags, dict):
             for reference, tag_data in tags.items():
@@ -223,12 +238,14 @@ class VulnerabilityReport:
                     images[_strip_digest(digest)] = vuln
                     if index == 0 and isinstance(reference, str):
                         latest[reference] = vuln
+                        latest_digests[reference] = _strip_digest(digest)
         return cls(
             generated_at=generated_at,
             trivy_version=data.get("trivy_version"),
             trivy_db_updated_at=_parse_dt(data.get("trivy_db_updated_at")),
             images=images,
             latest=latest,
+            latest_digests=latest_digests,
         )
 
 
