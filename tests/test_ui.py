@@ -401,8 +401,8 @@ def test_render_dockerfile_inspection_rich(capsys, monkeypatch):
     assert "DOCKERFILE" in out
     assert "3 FROM instruction(s)" in out
     assert "FROM python:3.13-slim" in out
-    assert "latest digest" in out
-    assert "differences" in out
+    assert "LATEST DIGEST" in out
+    assert "DIFFERENCES" in out
     assert "vulnerabilities" in out
     assert "created" in out
     assert "Jun 14, 2026" in out  # the latest digest's published date

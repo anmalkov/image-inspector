@@ -497,8 +497,8 @@ def _stage_sections(inspection: StageInspection) -> list[tuple[str | None, list[
     """
     sections: list[tuple[str | None, list[tuple[str, Text]]]] = [
         (None, _stage_head_rows(inspection)),
-        ("latest digest", _latest_section_rows(inspection)),
-        ("differences", _fix_diff_rows(inspection)),
+        ("LATEST DIGEST", _latest_section_rows(inspection)),
+        ("DIFFERENCES", _fix_diff_rows(inspection)),
     ]
     return [(title, rows) for title, rows in sections if rows]
 
@@ -526,7 +526,7 @@ def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> N
         console.print(_stage_title(inspection))
         for title, rows in _stage_sections(inspection):
             if title:
-                console.print(f"  {title}")
+                console.print(f"    {title}")
             width = max(len(label) for label, _ in rows)
             for label, value in rows:
                 _inspection_row(label, value, width=width)
@@ -561,7 +561,7 @@ def render_dockerfile_inspection(path: str, inspections: list[StageInspection]) 
         blocks.append(_stage_title(inspection))
         for title, rows in _stage_sections(inspection):
             if title:
-                blocks.append(Text(title, style="muted"))
+                blocks.append(Padding(Text(title, style="muted"), (0, 0, 0, 2)))
             blocks.append(Padding(_rows_grid(rows), (0, 0, 1, 2)))
 
     console.print(
