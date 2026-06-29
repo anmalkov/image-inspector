@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from .report import ImageVulnerabilities, ReportSource, VulnerabilityReport
+from .report import ImageVulnerabilities, ReportSource, Vulnerability, VulnerabilityReport
 
 
 class RegistryKind(StrEnum):
@@ -142,6 +142,7 @@ class ResolvedImage:
     created: datetime | None
     size: int | None = None
     vulnerabilities: ImageVulnerabilities | None = None
+    cve_details: tuple[Vulnerability, ...] = ()
     version: str | None = None
     variant: str | None = None
     is_lts: bool = False

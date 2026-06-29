@@ -71,9 +71,15 @@ class StageInspection:
     reference: str | None = None
     pinned_counts: ImageVulnerabilities | None = None
     latest_counts: ImageVulnerabilities | None = None
+    latest_digest: str | None = None
     fixed: tuple[Vulnerability, ...] = ()
     still_present: tuple[Vulnerability, ...] = ()
     note: str | None = None
+
+    @property
+    def pinned_digest(self) -> str | None:
+        """The digest pinned in the ``FROM`` line, if any (verbatim, ``sha256:`` form)."""
+        return self.stage.digest
 
 
 def _sorted_vulns(vulns: frozenset[Vulnerability]) -> tuple[Vulnerability, ...]:
@@ -130,6 +136,7 @@ def inspect_stage(
                 reference=reference,
                 pinned_counts=pinned_counts,
                 latest_counts=latest_counts,
+                latest_digest=latest_digest,
                 fixed=fixed,
                 still_present=still,
             )
@@ -140,6 +147,7 @@ def inspect_stage(
             status=StageStatus.PINNED_UNKNOWN,
             reference=reference,
             latest_counts=latest_counts,
+            latest_digest=latest_digest,
             note=note,
         )
 
@@ -149,6 +157,7 @@ def inspect_stage(
             status=StageStatus.TAG_KNOWN,
             reference=reference,
             latest_counts=latest_counts,
+            latest_digest=latest_digest,
         )
 
     return StageInspection(
