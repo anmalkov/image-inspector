@@ -472,20 +472,19 @@ def _stage_head_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
 
 
 def _latest_section_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
-    """Build the ``latest digest`` section: vulnerability count, created date, full FROM line."""
+    """Build the ``latest digest`` section: full FROM line, created date, vulnerability count."""
     if inspection.latest_counts is None and not inspection.latest_digest:
         return []
     vulns = format_vulnerabilities(inspection.latest_counts)
     if _latest_is_cleaner(inspection):
         vulns = vulns.copy()
         vulns.append("  ✓ cleaner", style="ok")
-    rows: list[tuple[str, Text]] = [
-        ("Vulnerabilities", vulns),
-        ("Created", Text(format_datetime(inspection.latest_created), style="value")),
-    ]
+    rows: list[tuple[str, Text]] = []
     full = _full_digest(inspection.latest_digest)
     if full and inspection.reference:
         rows.append(("FROM", Text(f"{inspection.reference}@{full}", style="value")))
+    rows.append(("Created", Text(format_datetime(inspection.latest_created), style="value")))
+    rows.append(("Vulnerabilities", vulns))
     return rows
 
 

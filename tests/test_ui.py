@@ -427,6 +427,13 @@ def test_render_dockerfile_inspection_plain(capsys, monkeypatch):
     assert "FROM python:3.13-slim" in out
     assert "fixed in 3.3.2" in out
     assert "33 → 5" in out
+    # Within the LATEST DIGEST section the rows run FROM -> Created -> Vulnerabilities.
+    latest = out[out.index("LATEST DIGEST") :]
+    assert (
+        latest.index("python:3.13-slim@sha256:latestdigest")
+        < latest.index("Created")
+        < latest.index("Vulnerabilities")
+    )
 
 
 def test_render_dockerfile_inspection_empty(capsys):
