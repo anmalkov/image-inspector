@@ -37,7 +37,9 @@ import httpx
 
 SCHEMA_VERSION = 3
 _REPORT_RESOURCE = "report.json.gz"
+_DETAILS_RESOURCE = "details.json.gz"
 _PAGES_URL = "https://anmalkov.github.io/image-inspector/report.json.gz"
+_DETAILS_PAGES_URL = "https://anmalkov.github.io/image-inspector/details.json.gz"
 # Short timeout so the picker never hangs at startup when offline.
 _FETCH_TIMEOUT = httpx.Timeout(3.0, connect=2.0)
 _CACHE_FILENAME = "report-cache.json"
@@ -471,3 +473,151 @@ def latest_pypi_version() -> str | None:
         return None
     version = info.get("version")
     return version if isinstance(version, str) and version else None
+
+
+# --- Lazy critical/high details sidecar -----------------------------------------------------
+#
+# The details sidecar is loaded only when the --dockerfile flow computes the "upgrading fixes
+# these" diff, so the always-loaded counts report stays small. It stores critical+high CVEs
+# only; medium/low/unknown remain counts-only. The format is a deduped ``vulns`` table plus a
+# ``digests`` map of stripped digest -> integer indices into that table.
+
+_DETAILS_SCHEMA_VERSION = SCHEMA_VERSION
+
+
+@dataclass(frozen=True)
+class Vulnerability:
+    """One deduped critical/high CVE record (no titles/URLs/CVSS — derivable from ``id``)."""
+
+    id: str
+    pkg: str = ""
+    sev: str = ""  # "C" or "H"
+    fix: str | None = None  # fixed version, or None when unfixed
+
+
+@dataclass(frozen=True)
+class DetailsReport:
+    """A loaded details sidecar: per-digest critical/high CVE sets and fix-diff helpers."""
+
+    vulns: tuple[Vulnerability, ...] = ()
+    digests: dict[str, tuple[int, ...]] = None  # type: ignore[assignment]
+
+    def __post_init__(self) -> None:
+        if self.digests is None:
+            object.__setattr__(self, "digests", {})
+
+    @classmethod
+    def empty(cls) -> DetailsReport:
+        return cls()
+
+    @classmethod
+    def from_dict(cls, data: dict) -> DetailsReport:
+        vulns: list[Vulnerability] = []
+        for record in data.get("vulns") or []:
+            if not isinstance(record, dict):
+                continue
+            cve_id = record.get("id")
+            if not isinstance(cve_id, str) or not cve_id:
+                continue
+            fix = record.get("fix")
+            pkg = record.get("pkg")
+            sev = record.get("sev")
+            vulns.append(
+                Vulnerability(
+                    id=cve_id,
+                    pkg=pkg if isinstance(pkg, str) else "",
+                    sev=sev if isinstance(sev, str) else "",
+                    fix=fix if isinstance(fix, str) and fix else None,
+                )
+            )
+        digests: dict[str, tuple[int, ...]] = {}
+        raw = data.get("digests")
+        if isinstance(raw, dict):
+            for digest, indices in raw.items():
+                if not isinstance(digest, str) or not isinstance(indices, list):
+                    continue
+                kept = tuple(i for i in indices if isinstance(i, int) and 0 <= i < len(vulns))
+                digests[_strip_digest(digest)] = kept
+        return cls(vulns=tuple(vulns), digests=digests)
+
+    def cve_set(self, digest: str | None) -> frozenset[Vulnerability]:
+        """Critical/high CVEs for a digest (``sha256:`` prefix tolerated); empty if unknown."""
+        if not digest:
+            return frozenset()
+        return frozenset(self.vulns[i] for i in self.digests.get(_strip_digest(digest), ()))
+
+    def fix_diff(
+        self, pinned: str | None, latest: str | None
+    ) -> tuple[frozenset[Vulnerability], frozenset[Vulnerability]]:
+        """Return ``(fixed, still_present)`` for upgrading from ``pinned`` to ``latest``.
+
+        ``fixed`` are critical/high CVEs in the pinned digest gone in the latest; matched by
+        CVE id so a CVE present in both (any pkg) counts as still-present. ``still_present`` are
+        the pinned CVEs whose id is also in the latest digest.
+        """
+        pinned_set = self.cve_set(pinned)
+        latest_ids = {v.id for v in self.cve_set(latest)}
+        fixed = frozenset(v for v in pinned_set if v.id not in latest_ids)
+        still_present = frozenset(v for v in pinned_set if v.id in latest_ids)
+        return fixed, still_present
+
+
+def _details_url() -> str:
+    return os.environ.get("IMAGE_INSPECTOR_DETAILS_URL", "").strip() or _DETAILS_PAGES_URL
+
+
+def _validate_details(body: str) -> dict | None:
+    """Parse ``body`` and return it only if it is a usable details sidecar payload."""
+    try:
+        data = json.loads(body)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(data, dict) or data.get("schema_version") != _DETAILS_SCHEMA_VERSION:
+        return None
+    if not isinstance(data.get("vulns"), list) or not isinstance(data.get("digests"), dict):
+        return None
+    return data
+
+
+def _fetch_details() -> dict | None:
+    """Fetch the hosted details sidecar; ``None`` on any failure (offline-safe, no caching)."""
+    try:
+        response = httpx.get(_details_url(), timeout=_FETCH_TIMEOUT, follow_redirects=True)
+    except httpx.HTTPError:
+        return None
+    if response.status_code != 200:
+        return None
+    body = _decode_report_bytes(response.content)
+    if body is None:
+        return None
+    return _validate_details(body)
+
+
+def _load_packaged_details() -> dict | None:
+    """Load + validate the packaged ``details.json.gz`` (``None`` on any failure)."""
+    try:
+        raw = resources.files(f"{__package__}.data").joinpath(_DETAILS_RESOURCE).read_bytes()
+    except (FileNotFoundError, ModuleNotFoundError, OSError):
+        return None
+    body = _decode_report_bytes(raw)
+    if body is None:
+        return None
+    return _validate_details(body)
+
+
+def load_details() -> DetailsReport:
+    """Lazily load the critical/high details sidecar: online-first, packaged fallback, empty.
+
+    Only the ``--dockerfile`` fix-diff needs this, so it is loaded on demand — never on the
+    always-on interactive path. Like :func:`load_report` it prefers the GitHub Pages copy and
+    falls back to the packaged snapshot (skipping the network when ``IMAGE_INSPECTOR_OFFLINE``
+    is set), returning an empty report so callers can always degrade gracefully.
+    """
+    if not _env_truthy("IMAGE_INSPECTOR_OFFLINE"):
+        payload = _fetch_details()
+        if payload is not None:
+            return DetailsReport.from_dict(payload)
+    packaged = _load_packaged_details()
+    if packaged is not None:
+        return DetailsReport.from_dict(packaged)
+    return DetailsReport.empty()

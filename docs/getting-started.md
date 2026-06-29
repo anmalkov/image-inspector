@@ -225,22 +225,27 @@ The scanner is a separate entry point. You need [Trivy](https://trivy.dev/) inst
 `PATH`:
 
 ```bash
-image-inspector-scan                # scan every image, writes the packaged data/report.json.gz
+image-inspector-scan                # scan every image, writes the packaged data/report.json.gz + details.json.gz
 image-inspector-scan -l alpine      # only scan Alpine (repeatable: -l python -l go)
 image-inspector-scan -o report.json # write somewhere else (a .gz suffix gzips, otherwise plain JSON)
 ```
 
 `--language`/`-l` accepts an image key (`python`, `dotnet`, `java`, `go`, `node`, `rust`, `cpp`,
-`ubuntu`, `debian`, `alpine`) and may be repeated; omit it to scan everything.
+`ubuntu`, `debian`, `alpine`) and may be repeated; omit it to scan everything. Each scan also writes
+a `details.json.gz` sidecar (`--details-output`) holding deduped critical/high CVE detail, loaded
+lazily only for the `--dockerfile` fix-diff.
 
 The nightly workflow uses this to **fan out one scan per language in a matrix**, then combines the
 per-language reports into a single report with `image-inspector-merge`, publishing both a plain
-`report.json` and a gzipped `report.json.gz` to GitHub Pages:
+`report.json` and a gzipped `report.json.gz` (plus the matching `details.json` sidecar) to GitHub Pages:
 
 ```bash
 image-inspector-merge report-python.json report-alpine.json \
   -o pages-dir/report.json \
-  --gzip-output pages-dir/report.json.gz
+  --gzip-output pages-dir/report.json.gz \
+  --details-inputs details-python.json details-alpine.json \
+  --details-output pages-dir/details.json \
+  --details-gzip-output pages-dir/details.json.gz
 ```
 
 `image-inspector-merge` takes any number of partial reports and unions their tag histories, so
@@ -302,9 +307,9 @@ src/image_inspector/
   registry.py   # RegistryProvider protocol + Docker Hub & MCR clients
   versions.py   # tag parsing, version-scheme selection (semver/major), variants
   ui.py         # theme, banner, prompts, spinners, result panel
-  report.py     # loads the Trivy vulnerability report (online-first, bundled offline fallback)
-  scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json.gz
-  data/         # report.json.gz fetched into the wheel at release time (git-ignored; live copy on GitHub Pages)
+  report.py     # loads the Trivy vulnerability report + lazy details sidecar (online-first, bundled offline fallback)
+  scanner.py    # `image-inspector-scan`: nightly Trivy scan -> report.json.gz + details.json.gz
+  data/         # report.json.gz + details.json.gz fetched into the wheel at release time (git-ignored; live copy on GitHub Pages)
 ```
 
 ## See also

@@ -161,7 +161,7 @@ def test_main_language_filter_selects_subset(monkeypatch):
 
     captured = {}
 
-    def _fake_build(languages=scanner.LANGUAGES):
+    def _fake_build(languages=scanner.LANGUAGES, **kwargs):
         captured["languages"] = languages
         return _report({})
 
@@ -179,7 +179,7 @@ def test_main_no_filter_scans_all(monkeypatch):
 
     captured = {}
 
-    def _fake_build(languages=scanner.LANGUAGES):
+    def _fake_build(languages=scanner.LANGUAGES, **kwargs):
         captured["languages"] = languages
         return _report({})
 
@@ -793,3 +793,141 @@ def test_main_passes_prior_and_sbom_store(monkeypatch, tmp_path):
     assert captured["prior"] == {"tags": {}, "_url": "http://x/report.json"}
     assert isinstance(captured["sbom_store"], scanner.SbomStore)
     assert captured["sbom_store"].base_url == "http://x"
+
+
+# --- Critical/high details sidecar ------------------------------------------------------------
+
+
+def _detail_payload(*ch, extra=()):
+    """Trivy JSON with the given (id, pkg, sev) C/H vulns plus optional extra severities."""
+    vulns = [
+        {"VulnerabilityID": i, "PkgName": p, "Severity": s, "FixedVersion": "1.0"} for i, p, s in ch
+    ]
+    vulns += [{"VulnerabilityID": i, "PkgName": p, "Severity": s} for i, p, s in extra]
+    return {"Results": [{"Vulnerabilities": vulns}]}
+
+
+def test_parse_trivy_details_keeps_only_critical_high():
+    payload = _detail_payload(
+        ("CVE-1", "openssl", "CRITICAL"),
+        ("CVE-2", "zlib", "HIGH"),
+        extra=[("CVE-3", "x", "MEDIUM"), ("CVE-4", "y", "LOW")],
+    )
+    records = scanner.parse_trivy_details(payload)
+    assert {r["id"] for r in records} == {"CVE-1", "CVE-2"}
+    assert {r["sev"] for r in records} == {"C", "H"}
+    assert records[0]["fix"] == "1.0"
+
+
+def test_parse_trivy_details_dedupes_and_nulls_fix():
+    payload = {
+        "Results": [
+            {
+                "Vulnerabilities": [
+                    {"VulnerabilityID": "CVE-1", "PkgName": "p", "Severity": "HIGH"},
+                    {"VulnerabilityID": "CVE-1", "PkgName": "p", "Severity": "HIGH"},
+                ]
+            }
+        ]
+    }
+    records = scanner.parse_trivy_details(payload)
+    assert records == [{"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None}]
+
+
+def test_build_details_sidecar_dedupes_table():
+    details = {
+        "sha256:a": [{"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None}],
+        "b": [
+            {"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None},
+            {"id": "CVE-2", "pkg": "q", "sev": "C", "fix": "2.0"},
+        ],
+    }
+    sidecar = scanner.build_details_sidecar(details)
+    assert len(sidecar["vulns"]) == 2
+    assert sidecar["digests"]["a"] == [0]
+    assert sorted(sidecar["digests"]["b"]) == [0, 1]
+
+
+def test_build_details_sidecar_trims_to_kept_digests():
+    details = {
+        "keep": [{"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None}],
+        "drop": [{"id": "CVE-2", "pkg": "q", "sev": "C", "fix": None}],
+    }
+    sidecar = scanner.build_details_sidecar(details, keep_digests={"keep"})
+    assert set(sidecar["digests"]) == {"keep"}
+    # CVE-2 was only referenced by the dropped digest, so the table sheds it.
+    assert [v["id"] for v in sidecar["vulns"]] == ["CVE-1"]
+
+
+def test_details_sidecar_roundtrip():
+    details = {"a": [{"id": "CVE-1", "pkg": "p", "sev": "C", "fix": "9"}]}
+    sidecar = scanner.build_details_sidecar(details)
+    assert scanner.details_from_sidecar(sidecar)["a"] == details["a"]
+
+
+def test_details_from_sidecar_rejects_wrong_schema():
+    sidecar = scanner.build_details_sidecar(
+        {"a": [{"id": "CVE-1", "pkg": "p", "sev": "C", "fix": None}]}
+    )
+    sidecar["schema_version"] = 99
+    assert scanner.details_from_sidecar(sidecar) == {}
+
+
+def test_build_report_collects_details(monkeypatch):
+    targets = [scanner.ScanTarget("python:3.13.14", "python@sha256:ok", "sha256:ok", "t")]
+    monkeypatch.setattr(scanner, "enumerate_targets", lambda *a, **k: iter(targets))
+    monkeypatch.setattr(scanner, "trivy_version", lambda: "0.71")
+    monkeypatch.setattr(scanner, "trivy_db_updated_at", lambda: None)
+    monkeypatch.setattr(
+        scanner,
+        "scan_image_full",
+        lambda ref: (
+            {"high": 1, "total": 1},
+            [{"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None}],
+        ),
+    )
+    out: dict = {}
+    scanner.build_report(details_out=out)
+    assert out["ok"] == [{"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None}]
+
+
+def test_merge_main_combines_details_trimmed_to_report(tmp_path):
+    now = datetime.now(UTC)
+    partial = tmp_path / "report-python.json"
+    partial.write_text(
+        json.dumps(
+            _report({"python:3.13.15": _tag(_entry("keep", t=_iso(now)))}, generated_at=_iso(now))
+        ),
+        encoding="utf-8",
+    )
+    det = tmp_path / "details-python.json"
+    det.write_text(
+        json.dumps(
+            scanner.build_details_sidecar(
+                {
+                    "keep": [{"id": "CVE-1", "pkg": "p", "sev": "H", "fix": None}],
+                    "drop": [{"id": "CVE-2", "pkg": "q", "sev": "C", "fix": None}],
+                }
+            )
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "combined.json"
+    det_out = tmp_path / "details.json"
+
+    rc = scanner.merge_main(
+        [
+            str(partial),
+            "-o",
+            str(out),
+            "--details-inputs",
+            str(det),
+            "--details-output",
+            str(det_out),
+        ]
+    )
+
+    assert rc == 0
+    sidecar = json.loads(det_out.read_text(encoding="utf-8"))
+    assert set(sidecar["digests"]) == {"keep"}
+    assert [v["id"] for v in sidecar["vulns"]] == ["CVE-1"]

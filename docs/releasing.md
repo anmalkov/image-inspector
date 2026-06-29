@@ -51,14 +51,14 @@ The version is derived **from the git tag** at release time:
 4. The **Release** workflow triggers automatically and will:
    - verify the tagged commit is on `main` (the release fails fast otherwise),
    - set the project version from the tag (`uv version`),
-   - **snapshot the latest report from GitHub Pages** into `src/image_inspector/data/report.json.gz`
-     so the wheel ships an offline fallback — a hard requirement; the release fails if the
-     report can't be fetched (see below),
-   - **verify the tool can read that bundled report** (`pytest -m integration`) and fail the
-     release otherwise,
+   - **snapshot the latest report and details sidecar from GitHub Pages** into
+     `src/image_inspector/data/report.json.gz` and `data/details.json.gz` so the wheel ships
+     offline fallbacks — a hard requirement; the release fails if either can't be fetched (see below),
+   - **verify the tool can read the bundled report and details sidecar** (`pytest -m integration`)
+     and fail the release otherwise,
    - build the source distribution and wheel (`uv build`),
    - **smoke-test the built wheel** by installing it into a throwaway venv and loading the
-     report offline, so the *published artifact* (not just the working tree) is validated,
+     report and details sidecar offline, so the *published artifact* (not just the working tree) is validated,
    - publish them to PyPI via Trusted Publishing (`uv publish`),
    - create a GitHub Release for the tag with auto-generated notes and the built
      artifacts attached.
@@ -81,6 +81,11 @@ it is a generated artifact (git-ignored) that the nightly scan job publishes to 
 workflow fetches the plain `report.json` from Pages, validates it, and gzips it into
 `src/image_inspector/data/report.json.gz` *before* `uv build`, so each release
 pins a fresh offline snapshot into the wheel.
+
+The same release step also snapshots the **critical/high CVE details sidecar**
+(`details.json.gz`) next to the report. The sidecar is loaded lazily — only the `--dockerfile`
+fix-diff needs it — so the always-on counts path stays small. It is bundled and gated identically:
+the wheel ships an offline copy, and a missing or unparseable sidecar fails the release.
 
 The snapshot is a **hard requirement, not fail-soft**: if the download fails, times out, or doesn't
 return parseable JSON, the release **fails**. There is no committed copy to fall back to, and

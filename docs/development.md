@@ -79,17 +79,22 @@ GitHub Pages into the package — the same file the release workflow bundles int
 # macOS / Linux
 curl --fail --location https://anmalkov.github.io/image-inspector/report.json.gz \
   -o src/image_inspector/data/report.json.gz
+curl --fail --location https://anmalkov.github.io/image-inspector/details.json.gz \
+  -o src/image_inspector/data/details.json.gz
 ```
 
 ```powershell
 # Windows (PowerShell)
 curl.exe --fail --location https://anmalkov.github.io/image-inspector/report.json.gz `
   -o src/image_inspector/data/report.json.gz
+curl.exe --fail --location https://anmalkov.github.io/image-inspector/details.json.gz `
+  -o src/image_inspector/data/details.json.gz
 ```
 
-The file is git-ignored, so it won't show up in `git status`. With it in place you can force the
-offline path with `IMAGE_INSPECTOR_OFFLINE=1 uv run image-inspector`, and run the integration tests
-(see below).
+Both files are git-ignored, so they won't show up in `git status`. With them in place you can force
+the offline path with `IMAGE_INSPECTOR_OFFLINE=1 uv run image-inspector`, and run the integration
+tests (see below). The `details.json.gz` sidecar holds critical/high CVE detail and is loaded lazily
+only for the `--dockerfile` fix-diff.
 
 ## Database stats (dev-only)
 
@@ -181,9 +186,10 @@ uv run pytest tests/test_cli.py::test_name
 
 ### Integration tests
 
-Integration tests (under `tests/integration/`) check the real bundled `report.json.gz` and are
-**deselected from the default `uv run pytest`** because they need that artifact. Download the
-snapshot first (see [above](#download-the-offline-report-snapshot-optional)), then run:
+Integration tests (under `tests/integration/`) check the real bundled `report.json.gz` and
+`details.json.gz` and are **deselected from the default `uv run pytest`** because they need those
+artifacts. Download the snapshots first (see [above](#download-the-offline-report-snapshot-optional)),
+then run:
 
 ```bash
 uv run pytest -m integration
