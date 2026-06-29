@@ -383,9 +383,11 @@ report is regenerated:
 Because of this, a digest you pinned long ago can eventually fall out of the retained history. When
 that happens the `--dockerfile` view reports the stage as `pinned_unknown` and compares against the
 tag's latest tracked digest instead — image-inspector never fabricates counts for a digest it no
-longer has data for. The companion **critical/high CVE detail** (used for the fix-diff) lives in a
-separate `details.json.gz` sidecar that is loaded **lazily**, only when you run `--dockerfile`, so the
-normal picker stays fast.
+longer has data for. The companion **critical/high CVE detail** lives in a separate `details.json.gz`
+sidecar that is loaded **lazily**, only when CVE detail is actually needed: for the `--dockerfile`
+fix-diff, and in the normal picker when a selected image has at least one critical/high finding to
+list. A clean image (or a run that never needs that detail) never fetches it, so the common path
+stays fast.
 
 ## Running a scan yourself
 

@@ -289,9 +289,11 @@ digest of a tag is never aged out. This is why a digest you pinned long ago may 
 ### Bundled format & critical/high sidecar
 
 The data ships as a gzipped `report.json.gz` (the counts) plus a `details.json.gz` **sidecar** that
-holds the deduplicated **critical/high CVE detail** used for the `--dockerfile` fix-diff. The sidecar
-is loaded **lazily** — only when you run `--dockerfile`, so the normal picker stays fast. Both are
-fetched from GitHub Pages when online, with copies bundled in the package as an offline fallback.
+holds the deduplicated **critical/high CVE detail**. The sidecar is loaded **lazily** — only when
+it's actually needed: when you run `--dockerfile` (for the fix-diff), and in the normal picker when a
+selected image has at least one critical/high finding to list. A clean image, or a run that never
+needs CVE detail, never fetches it, so the common path stays fast. Both files are fetched from GitHub
+Pages when online, with copies bundled in the package as an offline fallback.
 
 ## Limitations
 
