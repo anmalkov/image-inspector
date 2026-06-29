@@ -119,6 +119,8 @@ New here and want the full walkthrough? See the **[Getting started guide](https:
   from precomputed nightly Trivy data fetched from GitHub Pages (with a bundled offline fallback).
 - 🧱 **Many ecosystems, one interface** — Python, .NET, Java, Go, Node, Rust, C/C++, plus Ubuntu,
   Debian and Alpine base images.
+- 🔎 **Inspect an existing Dockerfile** — `--dockerfile <path>` compares each pinned `FROM`
+  image against the latest tracked digest and shows which critical/high CVEs upgrading would fix.
 - 🤖 **Automation-friendly** — `--json` for non-interactive use and `--plain` / `NO_COLOR` support.
 - 🎨 **Modern UI** — branded banner, themed menus, spinners, and a syntax-highlighted result panel.
 - ⌨️ **Arrow-key everything** — language, version, and variant are all pick-from-list menus. No typing.
@@ -157,6 +159,12 @@ image-inspector
 
 # Non-interactive, machine-readable output for scripts/CI:
 image-inspector --json -l ubuntu --version 24.04
+
+# Inspect an existing Dockerfile — compare each FROM against the latest tracked digest:
+image-inspector --dockerfile ./Dockerfile
+
+# ...as machine-readable JSON for CI:
+image-inspector --dockerfile ./Dockerfile --json
 ```
 
 A `--json` run prints a single object describing the resolved image. For example:
@@ -191,6 +199,67 @@ image-inspector --json -l python --version 3.13 --variant slim
 
 The full list of flags lives in the [Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md#command-line-options).
 
+## Inspect an existing Dockerfile
+
+Already have a `Dockerfile`? Point image-inspector at it to see, for every `FROM` line, how the
+**digest you pinned** compares to the **latest tracked digest** for that tag — and exactly which
+critical/high CVEs upgrading would fix:
+
+```bash
+image-inspector --dockerfile ./Dockerfile
+```
+
+For each `FROM` stage it shows the pinned digest's vulnerability counts, the latest tracked
+digest's counts (with a ready-to-paste `FROM` line), and a **differences** view. Sample output:
+
+```text
+✓ dockerfile
+  DOCKERFILE
+    Path     ./Dockerfile
+    Stages   2 FROM instruction(s)
+
+  [1] FROM python:3.13-slim@sha256:abc...
+    Status           pinned digest tracked
+    Vulnerabilities  Critical: 1  ·  High: 3  ·  Total: 27
+    LATEST DIGEST
+    FROM             python:3.13-slim@sha256:205e60d0b78f024817...
+    Created          Jun 22, 2026 · 00:00 UTC
+    Vulnerabilities  Critical: 0  ·  High: 1  ·  Total: 23  ✓ cleaner
+    DIFFERENCES
+    Fix-diff         latest fixes 3 of your critical/high CVE(s), 0 still present
+    Fixed            CVE-2026-1111 (critical, openssl → fixed in 3.3.2)
+    Med/low          18 → 22  (count only — no CVE detail)
+    Detail           per-CVE detail: critical/high only
+
+  [2] FROM build
+    Status           skipped — references build stage 'build'
+```
+
+> 📸 *Screenshot placeholder — add a real terminal capture of the `--dockerfile` panel here.*
+
+A few things to know about what you're seeing:
+
+- **Per-CVE detail is critical/high only.** The `Fixed` / `Still` lists name individual
+  **critical and high** CVEs. Medium, low and unknown findings are reflected in the counts and the
+  `Med/low` movement line, but are never listed one by one — so the "fixed by upgrading" list is a
+  critical/high view, not the full CVE set.
+- **"Latest tracked digest"** is the most recently built digest image-inspector has data for on that
+  tag (see [history & retention](#history--retention) below). It is not a live registry lookup — no
+  images are pulled and nothing is scanned on your machine.
+- **No data for a digest?** If the exact digest you pinned isn't tracked (e.g. it aged out, or the
+  tag is brand-new), image-inspector doesn't guess — it falls back to showing the latest tracked
+  digest for the tag, or reports the image/tag as not tracked. `FROM` lines that build on an earlier
+  stage or depend on an unresolved `ARG` are skipped with a note.
+
+For scripts and CI, add `--json` to get the same comparison as a single machine-readable object:
+
+```bash
+image-inspector --dockerfile ./Dockerfile --json
+```
+
+The [Getting started guide](https://github.com/anmalkov/image-inspector/blob/main/docs/getting-started.md#inspecting-a-dockerfile)
+documents the full per-stage statuses and the JSON payload shape.
+
 ## Vulnerability data
 
 The critical / high / total counts come from **precomputed nightly [Trivy](https://github.com/aquasecurity/trivy)
@@ -204,6 +273,25 @@ panel's `Source` row shows which you're seeing (`online (latest)` vs `offline (b
 `IMAGE_INSPECTOR_OFFLINE=1` to force the bundled copy, or `IMAGE_INSPECTOR_REPORT_URL` to point at a
 different report. Because the data is precomputed, counts reflect the most recent snapshot rather
 than a live, on-the-spot scan.
+
+### History & retention
+
+The report keeps a short **per-tag digest history**, not just the current image. Each tag (e.g.
+`python:3.13-slim`) tracks a list of the digests that have appeared on it over time, newest first.
+The newest entry is the **"latest tracked digest"** the `--dockerfile` comparison upgrades toward,
+and older entries let the tool still recognise a digest you pinned a while ago.
+
+History is bounded so the dataset stays small: a non-current digest is dropped once it has been
+superseded for more than **180 days**, and each tag keeps at most **30** digests. The current (head)
+digest of a tag is never aged out. This is why a digest you pinned long ago may eventually show up as
+"not tracked" — it has aged out of the retained history.
+
+### Bundled format & critical/high sidecar
+
+The data ships as a gzipped `report.json.gz` (the counts) plus a `details.json.gz` **sidecar** that
+holds the deduplicated **critical/high CVE detail** used for the `--dockerfile` fix-diff. The sidecar
+is loaded **lazily** — only when you run `--dockerfile`, so the normal picker stays fast. Both are
+fetched from GitHub Pages when online, with copies bundled in the package as an offline fallback.
 
 ## Limitations
 

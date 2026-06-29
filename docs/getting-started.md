@@ -16,7 +16,9 @@ New to the tool? The [README](../README.md) has a 60-second quick start. This pa
 - [Exit codes and environment](#exit-codes-and-environment)
 - [Troubleshooting](#troubleshooting)
 - [Automation and JSON output](#automation-and-json-output)
+- [Inspecting a Dockerfile](#inspecting-a-dockerfile)
 - [Vulnerability scanning](#vulnerability-scanning)
+- [History, retention and "latest tracked digest"](#history-retention-and-latest-tracked-digest)
 - [Running a scan yourself](#running-a-scan-yourself)
 - [Supported images in detail](#supported-images-in-detail)
 - [Common variants](#common-variants)
@@ -131,10 +133,11 @@ image-inspector --help
 | --- | --- |
 | `--no-banner` | Skip the launch banner. |
 | `--plain` | Plain, uncolored output (selection stays interactive). Also honored via the `NO_COLOR` environment variable. |
-| `--json` | Non-interactive: print the resolved image as JSON. Requires `--language` and `--version`. |
+| `--json` | Non-interactive: print the resolved image as JSON. Requires `--language` and `--version` — or use it with `--dockerfile` to print the per-stage comparison as JSON. |
 | `-l`, `--language` | Image key to resolve (`python`, `dotnet`, `java`, `go`, `node`, `rust`, `cpp`, `ubuntu`, `debian`, `alpine`). |
 | `--version VERSION` | Image version to resolve, e.g. `3.13.14` or `24.04`. |
 | `--variant VARIANT` | Image variant, e.g. `slim` or `alpine` (`'(none)'` for the plain tag). |
+| `--dockerfile PATH` | Inspect an existing Dockerfile: compare each `FROM` image's pinned digest against the latest tracked digest (see [Inspecting a Dockerfile](#inspecting-a-dockerfile)). Combine with `--json` for machine-readable output. |
 | `--app-version` | Print the `image-inspector` version and exit. |
 
 `NO_COLOR` is respected automatically (see <https://no-color.org>).
@@ -193,6 +196,142 @@ block (critical / high / medium / low / unknown / total, plus `scanned_at`), a `
 (`"online"`, `"offline"`, or `null`) telling you whether the counts came from the live GitHub Pages
 report or the bundled offline copy. When no scan data exists for the image, `vulnerabilities` is `null`.
 
+## Inspecting a Dockerfile
+
+If you already have a `Dockerfile`, `--dockerfile <path>` inspects every `FROM` instruction and
+compares the **digest you pinned** against the **latest tracked digest** for that tag, so you can see
+at a glance whether moving to the newest image would reduce your vulnerability exposure:
+
+```bash
+image-inspector --dockerfile ./Dockerfile
+```
+
+This reads the file, parses each `FROM` (resolving global `ARG` defaults and recognising
+multi-stage builds), and prints one block per stage. No images are pulled and nothing is scanned
+locally — the comparison is purely against the precomputed nightly data.
+
+### Per-stage status
+
+Each `FROM` stage is classified into one of these statuses:
+
+| Status | Meaning |
+| --- | --- |
+| `pinned_known` | A digest is pinned **and** the report has scan data for it. The full pinned-vs-latest diff (including the critical/high fix-diff) is shown. |
+| `pinned_unknown` | A digest is pinned but it is no longer tracked (it aged out, or is too new). The tag's latest tracked digest is shown instead, so you still get a comparison target. |
+| `tag_known` | No digest is pinned, but the tag's latest digest is tracked. The latest counts are shown. |
+| `untracked` | Neither the pinned digest nor the tag is in the report (e.g. an unsupported image, or a brand-new tag). Reported plainly, without guessing. |
+| `skipped` | The `FROM` references an earlier build stage (e.g. `FROM build`) or depends on an unresolved `ARG`, so there is nothing to look up. The reason is noted. |
+
+Docker Hub references are normalised, so `python`, `library/python` and `docker.io/library/python`
+all resolve to the same tracked image. Images on other registries (for example
+`mcr.microsoft.com/...`) are matched as-is.
+
+### Reading the output
+
+For a pinned image with scan data, a stage block shows the pinned digest's counts, a
+**LATEST DIGEST** section (the latest digest's counts, when it was built, and a ready-to-paste
+`FROM` line), and a **DIFFERENCES** section:
+
+```text
+✓ dockerfile
+  DOCKERFILE
+    Path     ./Dockerfile
+    Stages   2 FROM instruction(s)
+
+  [1] FROM python:3.13-slim@sha256:abc...
+    Status           pinned digest tracked
+    Vulnerabilities  Critical: 1  ·  High: 3  ·  Total: 27
+    LATEST DIGEST
+    FROM             python:3.13-slim@sha256:205e60d0b78f024817...
+    Created          Jun 22, 2026 · 00:00 UTC
+    Vulnerabilities  Critical: 0  ·  High: 1  ·  Total: 23  ✓ cleaner
+    DIFFERENCES
+    Fix-diff         latest fixes 3 of your critical/high CVE(s), 0 still present
+    Fixed            CVE-2026-1111 (critical, openssl → fixed in 3.3.2)
+    Med/low          18 → 22  (count only — no CVE detail)
+    Detail           per-CVE detail: critical/high only
+
+  [2] FROM build
+    Status           skipped — references build stage 'build'
+```
+
+> 📸 *Screenshot placeholder — add a real terminal capture of the `--dockerfile` panel here.*
+
+The **DIFFERENCES** section is the fix-diff: it lists the **critical/high** CVEs that upgrading to
+the latest digest would **fix**, the critical/high CVEs that would **still be present**, and a
+`Med/low` line summarising how the medium/low/unknown counts move.
+
+> **Per-CVE detail is critical/high only.** The named `Fixed` / `Still` CVE lists cover
+> **critical and high** severities only. Medium, low and unknown findings are counted (and shown in
+> the `Med/low` movement) but never listed individually — treat the "fixed by upgrading" list as a
+> critical/high view, not the complete CVE set.
+
+When the pinned digest has no data, or no digest is pinned, the stage simply shows the latest tracked
+digest for the tag; when nothing is tracked, it says so rather than inventing a number.
+
+### JSON output
+
+Add `--json` to emit the whole inspection as a single object — ideal for failing a CI job when a
+pinned base image has known critical/high vulnerabilities:
+
+```bash
+image-inspector --dockerfile ./Dockerfile --json
+```
+
+The payload has report-level metadata plus a `stages` array:
+
+```json
+{
+  "dockerfile": "./Dockerfile",
+  "generated_at": "2026-06-22T02:14:07+00:00",
+  "data_source": "online",
+  "scanner": { "name": "trivy", "version": "0.71.1", "db_updated_at": "2026-06-22T00:00:00+00:00" },
+  "stage_count": 2,
+  "stages": [
+    {
+      "index": 0,
+      "from": "FROM python:3.13-slim@sha256:abc...",
+      "raw": "python:3.13-slim@sha256:abc...",
+      "image": "python",
+      "tag": "3.13-slim",
+      "alias": null,
+      "reference": "python:3.13-slim",
+      "references_stage": false,
+      "status": "pinned_known",
+      "note": null,
+      "pinned": {
+        "digest": "sha256:abc...",
+        "vulnerabilities": { "critical": 1, "high": 3, "medium": 14, "low": 4, "unknown": 0, "total": 27, "scanned_at": "2026-06-22T02:14:07+00:00" }
+      },
+      "latest": {
+        "digest": "sha256:205e60d0b78f024817...",
+        "created": "2026-06-22T00:00:00+00:00",
+        "vulnerabilities": { "critical": 0, "high": 1, "medium": 18, "low": 4, "unknown": 0, "total": 23, "scanned_at": "2026-06-22T02:14:07+00:00" }
+      },
+      "critical_high": {
+        "detail_scope": "critical_high_only",
+        "fixed": [ { "id": "CVE-2026-1111", "package": "openssl", "severity": "critical", "fixed_version": "3.3.2" } ],
+        "still_present": []
+      },
+      "flags": { "has_data": true, "pinned_vulnerable": true, "latest_is_cleaner": true }
+    }
+  ]
+}
+```
+
+Field notes:
+
+- `status` is one of the per-stage statuses described above; `note` carries the reason a stage was
+  `skipped` or `untracked`.
+- `pinned` / `latest` each hold a `digest` and a full `vulnerabilities` block (all severities plus
+  `total` and `scanned_at`); either `vulnerabilities` is `null` when that side has no scan data.
+- `critical_high.detail_scope` is always `"critical_high_only"`, a reminder that the `fixed` and
+  `still_present` CVE arrays are limited to critical/high. Each CVE entry is
+  `{ id, package, severity, fixed_version }`.
+- `flags` are convenience booleans for scripting: `has_data` (any counts available),
+  `pinned_vulnerable` (the pinned digest has critical/high findings), and `latest_is_cleaner` (the
+  latest digest has fewer critical+high findings than the pinned one).
+
 ## Vulnerability scanning
 
 When you resolve an image, the **SECURITY** section shows how many vulnerabilities it has —
@@ -218,6 +357,35 @@ You can control this with environment variables:
 The report is keyed by the image's immutable **digest**, so the counts always match the exact
 `name:tag@sha256:…` reference the tool pins. If an image isn't in the report yet (e.g. a brand-new
 tag), the panel shows `no scan data` rather than guessing.
+
+## History, retention and "latest tracked digest"
+
+The report stores more than just the current image for each tag — it keeps a short **per-tag digest
+history**. Every tag (for example `python:3.13-slim`) tracks the digests that have appeared on it
+over time, ordered newest-first by build date. Internally each entry is a compact `{d, t, c}` record:
+the **d**igest, the build **t**ime, and the vulnerability **c**ounts.
+
+This history is what makes the `--dockerfile` comparison work:
+
+- The **head** (newest) entry of a tag's history is the **"latest tracked digest"** — the target the
+  comparison upgrades toward. It is the freshest digest image-inspector has data for, not a live
+  registry lookup.
+- The older entries let the tool still recognise a **specific digest you pinned earlier**, so it can
+  show you exactly which critical/high CVEs that pinned image carries versus the latest one.
+
+To keep the dataset small, history is pruned by a deterministic **retention policy** when the nightly
+report is regenerated:
+
+- **Age:** a non-current digest is dropped once it has been superseded for more than **180 days**. The
+  current (head) digest of a tag is the live image and is **never** aged out.
+- **Depth:** each tag keeps at most **30** digests; older entries beyond that are trimmed.
+
+Because of this, a digest you pinned long ago can eventually fall out of the retained history. When
+that happens the `--dockerfile` view reports the stage as `pinned_unknown` and compares against the
+tag's latest tracked digest instead — image-inspector never fabricates counts for a digest it no
+longer has data for. The companion **critical/high CVE detail** (used for the fix-diff) lives in a
+separate `details.json.gz` sidecar that is loaded **lazily**, only when you run `--dockerfile`, so the
+normal picker stays fast.
 
 ## Running a scan yourself
 
