@@ -403,8 +403,8 @@ def test_render_dockerfile_inspection_rich(capsys, monkeypatch):
     assert "FROM python:3.13-slim" in out
     assert "LATEST DIGEST" in out
     assert "DIFFERENCES" in out
-    assert "vulnerabilities" in out
-    assert "created" in out
+    assert "Vulnerabilities" in out
+    assert "Created" in out
     assert "Jun 14, 2026" in out  # the latest digest's published date
     assert "python:3.13-slim@sha256:latestdigest" in out  # full, copy-paste FROM line
     assert "cleaner" in out

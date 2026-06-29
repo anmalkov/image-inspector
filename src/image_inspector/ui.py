@@ -439,7 +439,7 @@ def _fix_diff_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
     rows: list[tuple[str, Text]] = []
     fixed, still = inspection.fixed, inspection.still_present
     if not fixed and not still:
-        rows.append(("fix-diff", Text("no critical/high CVEs to compare", style="ok")))
+        rows.append(("Fix-diff", Text("no critical/high CVEs to compare", style="ok")))
     else:
         summary = Text()
         summary.append(
@@ -448,14 +448,14 @@ def _fix_diff_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
         )
         summary.append(", ")
         summary.append(f"{len(still)} still present", style="warn" if still else "ok")
-        rows.append(("fix-diff", summary))
+        rows.append(("Fix-diff", summary))
         if fixed:
-            rows.append(("fixed", _cve_list_text(fixed)))
+            rows.append(("Fixed", _cve_list_text(fixed)))
         if still:
-            rows.append(("still", _cve_list_text(still)))
+            rows.append(("Still", _cve_list_text(still)))
     if inspection.pinned_counts is not None:
-        rows.append(("med/low", _movement_text(inspection.pinned_counts, inspection.latest_counts)))
-    rows.append(("detail", Text("per-CVE detail: critical/high only", style="muted")))
+        rows.append(("Med/low", _movement_text(inspection.pinned_counts, inspection.latest_counts)))
+    rows.append(("Detail", Text("per-CVE detail: critical/high only", style="muted")))
     return rows
 
 
@@ -465,9 +465,9 @@ def _stage_head_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
     status = _STATUS_LABELS[inspection.status]
     if inspection.note:
         status = f"{status} — {inspection.note}"
-    rows.append(("status", Text(status, style=_status_style(inspection))))
+    rows.append(("Status", Text(status, style=_status_style(inspection))))
     if inspection.pinned_digest:
-        rows.append(("pinned", format_vulnerabilities(inspection.pinned_counts)))
+        rows.append(("Vulnerabilities", format_vulnerabilities(inspection.pinned_counts)))
     return rows
 
 
@@ -480,8 +480,8 @@ def _latest_section_rows(inspection: StageInspection) -> list[tuple[str, Text]]:
         vulns = vulns.copy()
         vulns.append("  ✓ cleaner", style="ok")
     rows: list[tuple[str, Text]] = [
-        ("vulnerabilities", vulns),
-        ("created", Text(format_datetime(inspection.latest_created), style="value")),
+        ("Vulnerabilities", vulns),
+        ("Created", Text(format_datetime(inspection.latest_created), style="value")),
     ]
     full = _full_digest(inspection.latest_digest)
     if full and inspection.reference:
@@ -503,14 +503,19 @@ def _stage_sections(inspection: StageInspection) -> list[tuple[str | None, list[
     return [(title, rows) for title, rows in sections if rows]
 
 
-def _rows_grid(rows: list[tuple[str, Text]]) -> Table:
-    """Build a two-column ``label  value`` grid for one stage section."""
+def _rows_grid(rows: list[tuple[str, Text]], width: int) -> Table:
+    """Build a two-column ``label  value`` grid for a stage section, labels padded to ``width``."""
     grid = Table.grid(padding=(0, 2))
     grid.add_column(style="label", justify="left")
     grid.add_column()
     for label, value in rows:
-        grid.add_row(label, value)
+        grid.add_row(label.ljust(width), value)
     return grid
+
+
+def _stage_label_width(sections: list[tuple[str | None, list[tuple[str, Text]]]]) -> int:
+    """Widest row label across all of a stage's sections, so every label column lines up."""
+    return max((len(label) for _, rows in sections for label, _ in rows), default=0)
 
 
 def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> None:
@@ -524,10 +529,11 @@ def _render_dockerfile_plain(path: str, inspections: list[StageInspection]) -> N
     for inspection in inspections:
         console.print()
         console.print(_stage_title(inspection))
-        for title, rows in _stage_sections(inspection):
+        sections = _stage_sections(inspection)
+        width = _stage_label_width(sections)
+        for title, rows in sections:
             if title:
                 console.print(f"    {title}")
-            width = max(len(label) for label, _ in rows)
             for label, value in rows:
                 _inspection_row(label, value, width=width)
 
@@ -559,10 +565,12 @@ def render_dockerfile_inspection(path: str, inspections: list[StageInspection]) 
         blocks.append(Padding(Text("No FROM instructions found.", style="muted"), (0, 0, 0, 2)))
     for inspection in inspections:
         blocks.append(_stage_title(inspection))
-        for title, rows in _stage_sections(inspection):
+        sections = _stage_sections(inspection)
+        width = _stage_label_width(sections)
+        for title, rows in sections:
             if title:
                 blocks.append(Padding(Text(title, style="muted"), (0, 0, 0, 2)))
-            blocks.append(Padding(_rows_grid(rows), (0, 0, 1, 2)))
+            blocks.append(Padding(_rows_grid(rows, width), (0, 0, 1, 2)))
 
     console.print(
         Panel(

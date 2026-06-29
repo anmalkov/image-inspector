@@ -214,9 +214,9 @@ def test_cli_dockerfile_end_to_end(monkeypatch, tmp_path, capsys) -> None:
 
     out = capsys.readouterr().out
     assert "FROM python:3.13.14-slim" in out
-    assert "pinned" in out
-    assert "latest" in out
-    assert "fix-diff" in out
+    assert "Vulnerabilities" in out
+    assert "LATEST DIGEST" in out
+    assert "Fix-diff" in out
     assert "CVE-A" in out
     assert "CVE-B" in out
 
